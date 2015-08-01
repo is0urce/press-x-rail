@@ -32,7 +32,10 @@
     <ClCompile Include="tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="map.cpp">
+    <ClCompile Include="coordinate_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="map_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

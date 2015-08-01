@@ -49,7 +49,7 @@ namespace px
 		map(point range, const element &initial)
 		{
 			init(range);
-			fill(initial)
+			fill(initial);
 		}
 		map(point range, std::function<element(const point&)> generator_fn)
 		{
@@ -63,8 +63,8 @@ namespace px
 	private:
 		void init(point range) // constructor helper
 		{
-			m_range = range;
 			if (range.X <= 0 || range.Y <= 0) throw std::runtime_error("map<_T>::init(point range) invalid range (x or y <= 0)");
+			m_range = range;
 			m_tiles.reset(new _T[range.size()]);
 		}
 
@@ -80,6 +80,10 @@ namespace px
 		{
 			std::swap(m_range, that.m_range);
 			m_tiles.swap(that.m_tiles);
+		}
+		void resize(int w, int h)
+		{
+			resize(point(w, h));
 		}
 		void resize(const point &range)
 		{

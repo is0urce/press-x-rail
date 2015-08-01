@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 
-#include <iostream>
+#define CATCH_CONFIG_RUNNER // providing own main
+#include "catch.hpp"
 
-int _tmain(int argc, _TCHAR* argv[])
+int _tmain(int argc, char* const argv[])
 {
-	std::cout << "tests passed";
+	Catch::Session().run(argc, argv);
 	return 0;
 }
-
