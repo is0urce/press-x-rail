@@ -92,6 +92,7 @@
     <ClInclude Include="src\color.h" />
     <ClInclude Include="src\coordinate.h" />
     <ClInclude Include="src\glsl.h" />
+    <ClInclude Include="src\tile.h" />
     <ClInclude Include="src\map.h" />
     <ClInclude Include="src\opengl.h" />
     <ClInclude Include="src\point.h" />

@@ -10,6 +10,7 @@
 #include "glsl.h"
 #include "point.h"
 #include "color.h"
+#include "tile.h"
 
 #include <stdexcept>
 
@@ -18,7 +19,7 @@ using namespace px::shell;
 
 namespace
 {
-	static const unsigned int range_width = 3;
+	static const unsigned int range_width = 5;
 	static const unsigned int range_height = range_width;
 	static const unsigned int range_size = range_width * range_height;
 	static const unsigned int vertice_depth = 2;
@@ -42,7 +43,6 @@ renderer::~renderer()
 
 void renderer::fill_bg()
 {
-	point range(range_width, range_height);
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
 	std::vector<GLfloat> colors(range_size * points_quad * color_depth);
 	std::vector<GLuint> indices(range_size * index_quad);
@@ -50,7 +50,7 @@ void renderer::fill_bg()
 	// vertex attributes
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
-	range.enumerate([&](const point &position)
+	point(range_width, range_height).enumerate([&](const point &position)
 	{
 		position.moved(point(0, 0)).write(&vertices[vertex_offset + 0 * vertice_depth]);
 		position.moved(point(0, 1)).write(&vertices[vertex_offset + 1 * vertice_depth]);
@@ -58,7 +58,7 @@ void renderer::fill_bg()
 		position.moved(point(1, 0)).write(&vertices[vertex_offset + 3 * vertice_depth]);
 		for (unsigned int i = 0; i < points_quad; ++i)
 		{
-			//perception.GetAppearance(position).GetColor().Write(&color[coloroffset + i * colordepth]);
+			color(1.0, 1.0, 0.0).write(&colors[color_offset + i * color_depth]);
 		}
 
 		vertex_offset += vertice_depth * points_quad;
@@ -83,16 +83,19 @@ void renderer::fill_bg()
 void renderer::draw(double span)
 {
 	m_opengl->update(m_width, m_height);
+	if (m_width <= 0 || m_height <= 0) return;
+
 	m_aspect = m_width;
 	m_aspect /= m_height;
 
+	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+
 	glUseProgram(m_program);
-	//GLfloat vertice[] = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f };
-	//GLfloat color[] = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f };
-	//GLuint ax[] = { 0, 1, 2 };
-	//m_background.fill(3, 3, { vertice, color }, ax);
+	glUniform1f(glGetUniformLocation(m_program, "aspect"), (GLfloat)m_aspect);
+	glUniform1f(glGetUniformLocation(m_program, "scale"), 0.1f);
 
 	fill_bg();
+
 	m_background.draw();
 
 	m_opengl->swap();
