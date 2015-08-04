@@ -31,6 +31,14 @@ namespace px
 
 		class font
 		{
+		public:
+			struct font_texture
+			{
+				unsigned int width;
+				unsigned int height;
+				const char* data;
+			};
+
 		private:
 			static unsigned int m_count;
 			static FT_Library m_lib;
@@ -42,14 +50,7 @@ namespace px
 			std::unique_ptr<char[]> m_atlas;
 			unsigned int m_width, m_height; // atlas size
 			unsigned int m_penx, m_peny, m_next_line;
-
-			struct font_texture
-			{
-				unsigned int width;
-				unsigned int height;
-				const char* data;
-			} m_texture;
-
+			font_texture m_texture;
 			bool m_dirty; // is updated?
 
 		public:

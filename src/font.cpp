@@ -67,6 +67,10 @@ font::font(const char* path, unsigned int size)
 		}
 	}
 	error = FT_Set_Pixel_Sizes(m_face, 0, m_size);
+	if (error)
+	{
+		throw std::runtime_error("FT_Set_Pixel_Sizes");
+	}
 
 	m_width = 1;
 	while (m_width < m_size * multiplier)
@@ -98,11 +102,6 @@ font::~font()
 	{
 		FT_Done_FreeType(m_lib);
 	}
-}
-
-void font::include(unsigned int unicode_plus)
-{
-	include(unicode_plus, unicode_plus);
 }
 
 std::unique_ptr<glyph> font::raster(unsigned int unicode_plus)
@@ -159,8 +158,15 @@ std::unique_ptr<glyph> font::raster(unsigned int unicode_plus)
 	return g;
 }
 
+void font::include(unsigned int unicode_plus)
+{
+	include(unicode_plus, unicode_plus);
+}
+
 void font::include(unsigned int uplus, unsigned int into)
 {
+	if (into < base_fill) return;
+
 	auto &g = m_letters[into];
 	if (!g)
 	{

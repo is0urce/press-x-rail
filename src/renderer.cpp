@@ -7,8 +7,10 @@
 
 #include "renderer.h"
 
+#include "font.h"
 #include "glsl.h"
 #include "point.h"
+#include "vector.h"
 #include "map.h"
 #include "color.h"
 #include "tile.h"
@@ -20,36 +22,71 @@ using namespace px::shell;
 
 namespace
 {
-	static const unsigned int range_width = 5;
-	static const unsigned int range_height = range_width;
-	static const unsigned int range_size = range_width * range_height;
-	static const unsigned int vertice_depth = 2;
-	static const unsigned int color_depth = 4;
-	static const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
-	static const unsigned int index_quad = 6;
+	const unsigned int range_width = 5;
+	const unsigned int range_height = range_width;
+	const unsigned int range_size = range_width * range_height;
+	const unsigned int vertice_depth = 2;
+	const unsigned int color_depth = 4;
+	const unsigned int texcoord_depth = 2;
+	const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
+	const unsigned int index_quad = 6;
 
 	const char* font_path_ui = "code2000.ttf";
 	const char* font_path_notify = "code2000.ttf";
 	const char* font_path_unit = "code2000.ttf";
-	const unsigned int font_size_ui = 16;
+	const unsigned int font_size_ui = 32;
 	const unsigned int font_size_notify = 16;
 	const unsigned int font_size_unit = 32;
 }
 
-renderer::renderer(renderer::opengl_handle opengl) : 
-	m_ui_font(font_path_ui, font_size_ui),
-	m_notify_font(font_path_notify, font_size_unit),
-	m_unit_font(font_path_unit, font_size_unit)
+renderer::renderer(renderer::opengl_handle opengl)
 {
 	if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
 
 	m_opengl.swap(opengl);
-	m_background.init({ vertice_depth, color_depth });
-	m_program = glsl::program("shaders\\ground");
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	m_ui.font.reset(new font(font_path_ui, font_size_ui));
+	m_notify.font.reset(new font(font_path_notify, font_size_unit));
+	m_glyph.font.reset(new font(font_path_unit, font_size_unit));
+
+	m_background.vao.init({ vertice_depth, color_depth });
+	m_background.program = glsl::program("shaders\\ground");
+
+	m_units.vao.init({ vertice_depth, texcoord_depth, color_depth });
+	m_units.program = glsl::program("shaders\\units");
+
+	m_camera = 0.5;
+
+	glGenTextures(1, &m_ui.texture);
+	glGenTextures(1, &m_notify.texture);
+	glGenTextures(1, &m_glyph.texture);
+
+	const font::font_texture &ui_texture = m_ui.font->texture();
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, ui_texture.width, ui_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, ui_texture.data);
+	glEnable(GL_TEXTURE_2D);
+	glGenerateMipmap(GL_TEXTURE_2D);  // generate mipmaps here.
+	// mipmap filters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); // filtering, sharp switching between mipmaps
 }
 
 renderer::~renderer()
 {
+	m_background.vao.clear();
+
+	glDeleteTextures(1, &m_ui.texture);
+	glDeleteTextures(1, &m_notify.texture);
+	glDeleteTextures(1, &m_glyph.texture);
 }
 
 void renderer::fill_bg()
@@ -88,7 +125,62 @@ void renderer::fill_bg()
 	}
 
 	// bind
-	m_background.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
+	m_background.vao.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
+}
+
+void renderer::fill_units()
+{
+	unsigned int unit_num = 1;
+	std::vector<GLfloat> vertices(unit_num * points_quad * vertice_depth);
+	std::vector<GLfloat> texture(unit_num * points_quad * vertice_depth);
+	std::vector<GLfloat> colors(unit_num * points_quad * color_depth);
+	std::vector<GLuint> indices(unit_num * index_quad);
+
+	// vertex attributes
+	font &font = *m_ui.font;
+	unsigned int vertex_offset = 0;
+	unsigned int color_offset = 0;
+	unsigned int texture_offset = 0;
+	for (unsigned int i = 0; i < unit_num; ++i)
+	{
+		auto g = font['?'];
+		point position;
+
+		double width = g.width / 2;
+		double height = g.height / 2;
+		(position + vector(0.5f - width, 0.5f - height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
+		(position + vector(0.5f - width, 0.5f + height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
+		(position + vector(0.5f + width, 0.5f + height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
+		(position + vector(0.5f + width, 0.5f - height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
+		
+		texture[texture_offset + 0] = texture[texture_offset + 2] = (GLfloat)g.left;
+		texture[texture_offset + 1] = texture[texture_offset + 7] = (GLfloat)g.bottom;
+		texture[texture_offset + 4] = texture[texture_offset + 6] = (GLfloat)g.right;
+		texture[texture_offset + 3] = texture[texture_offset + 5] = (GLfloat)g.top;
+
+		for (unsigned int i = 0; i < points_quad; ++i)
+		{
+			color(1.0, 0.0, 1.0, 1.0).write(&colors[color_offset + i * color_depth]);
+		}
+
+		vertex_offset += vertice_depth * points_quad;
+		color_offset += color_depth * points_quad;
+		texture_offset += texcoord_depth * points_quad;
+	};
+
+	// indices
+	unsigned int indexoffset = 0;
+	for (unsigned int i = 0; i < unit_num; ++i)
+	{
+		indices[indexoffset + 0] = indices[indexoffset + 3] = i * points_quad + 0;
+		indices[indexoffset + 1] = indices[indexoffset + 5] = i * points_quad + 2;
+		indices[indexoffset + 2] = i * points_quad + 1;
+		indices[indexoffset + 4] = i * points_quad + 3;
+		indexoffset += index_quad;
+	}
+
+	// bind
+	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
 }
 
 void renderer::draw(double span)
@@ -96,18 +188,34 @@ void renderer::draw(double span)
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;
 
-	m_aspect = m_width;
-	m_aspect /= m_height;
+	fill_bg();
+	fill_units(); 
+
+	GLfloat aspect = (GLfloat)(m_width) / m_height;
+	GLfloat scale = (GLfloat)m_camera;
 
 	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(m_program);
-	glUniform1f(glGetUniformLocation(m_program, "aspect"), (GLfloat)m_aspect);
-	glUniform1f(glGetUniformLocation(m_program, "scale"), 0.1f);
+	glUseProgram(m_background.program);
+	glUniform1f(glGetUniformLocation(m_background.program, "aspect"), aspect);
+	glUniform1f(glGetUniformLocation(m_background.program, "scale"), scale);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	m_background.vao.draw();
 
-	fill_bg();
-
-	m_background.draw();
+	glUseProgram(m_units.program);
+	glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
+	glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
+	glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	m_units.vao.draw();
 
 	m_opengl->swap();
+}
+
+void renderer::scale(double pan)
+{
+	m_camera *= 1.0 + (pan / 1000.0);
+	m_camera = (std::min)(m_camera, 10.0);
+	m_camera = (std::max)(m_camera, 0.01);
 }

@@ -12,7 +12,7 @@
 
 namespace px
 {
-	class vector : public coordinate<float>
+	class vector : public coordinate<double>
 	{
 	public:
 		vector() : coordinate() {}
