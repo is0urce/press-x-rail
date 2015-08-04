@@ -11,6 +11,7 @@
 
 #include "opengl.h"
 #include "vao.h"
+#include "font.h"
 
 namespace px
 {
@@ -27,6 +28,9 @@ namespace px
 			int m_width, m_height;
 			double m_aspect;
 			double m_camera;
+			font m_ui_font;
+			font m_notify_font;
+			font m_unit_font;
 
 			vao m_background;
 			GLuint m_program;

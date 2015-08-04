@@ -91,6 +91,7 @@
     <ClInclude Include="src\automata.h" />
     <ClInclude Include="src\color.h" />
     <ClInclude Include="src\coordinate.h" />
+    <ClInclude Include="src\font.h" />
     <ClInclude Include="src\glsl.h" />
     <ClInclude Include="src\tile.h" />
     <ClInclude Include="src\map.h" />
@@ -106,6 +107,7 @@
     <ClInclude Include="src\wingl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\opengl.cpp" />
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\renderer.cpp" />

@@ -66,6 +66,9 @@
     <ClInclude Include="src\tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\wingl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

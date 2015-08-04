@@ -9,6 +9,7 @@
 
 #include "glsl.h"
 #include "point.h"
+#include "map.h"
 #include "color.h"
 #include "tile.h"
 
@@ -26,9 +27,19 @@ namespace
 	static const unsigned int color_depth = 4;
 	static const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
 	static const unsigned int index_quad = 6;
+
+	const char* font_path_ui = "code2000.ttf";
+	const char* font_path_notify = "code2000.ttf";
+	const char* font_path_unit = "code2000.ttf";
+	const unsigned int font_size_ui = 8;
+	const unsigned int font_size_notify = 8;
+	const unsigned int font_size_unit = 32;
 }
 
-renderer::renderer(renderer::opengl_handle opengl)
+renderer::renderer(renderer::opengl_handle opengl) : 
+	m_ui_font(font_path_ui, font_size_ui),
+	m_notify_font(font_path_notify, font_size_unit),
+	m_unit_font(font_path_unit, font_size_unit)
 {
 	if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
 
