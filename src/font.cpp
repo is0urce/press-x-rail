@@ -129,20 +129,20 @@ std::unique_ptr<glyph> font::raster(unsigned int unicode_plus)
 		throw std::runtime_error("atlas too small");
 	}
 
-	std::unique_ptr<glyph> glyph(new glyph());
-	glyph->advance = (m_face->glyph->advance.x >> 6) / double(m_size);
-	glyph->top    = double(m_peny)     / m_height;
-	glyph->bottom = double(m_peny + h) / m_height;
-	glyph->left   = double(m_penx)     / m_width;
-	glyph->right  = double(m_penx + w) / m_width;
-	glyph->pixwidth  = w;
-	glyph->pixheight = h;
-	glyph->pixvertical   = m_face->glyph->bitmap_left;
-	glyph->pixhorisontal = m_face->glyph->bitmap_top;
-	glyph->width  = double(w) / m_size;
-	glyph->height = double(h) / m_size;
-	glyph->vertical   = (m_face->glyph->bitmap_left) / double(m_size);
-	glyph->horisontal = (m_face->glyph->bitmap_top)  / double(m_size);
+	std::unique_ptr<glyph> g(new glyph());
+	g->advance = (m_face->glyph->advance.x >> 6) / double(m_size);
+	g->top = double(m_peny) / m_height;
+	g->bottom = double(m_peny + h) / m_height;
+	g->left = double(m_penx) / m_width;
+	g->right = double(m_penx + w) / m_width;
+	g->pixwidth = w;
+	g->pixheight = h;
+	g->pixvertical = m_face->glyph->bitmap_left;
+	g->pixhorisontal = m_face->glyph->bitmap_top;
+	g->width = double(w) / m_size;
+	g->height = double(h) / m_size;
+	g->vertical = (m_face->glyph->bitmap_left) / double(m_size);
+	g->horisontal = (m_face->glyph->bitmap_top) / double(m_size);
 
 	// copy bitmap
 	for (int i = 0; i < w; i++)
@@ -156,12 +156,16 @@ std::unique_ptr<glyph> font::raster(unsigned int unicode_plus)
 	m_next_line = (std::max<unsigned int>)(m_next_line, ystride);
 
 	m_dirty = true;
-	return glyph;
+	return g;
 }
 
 void font::include(unsigned int uplus, unsigned int into)
 {
-	m_letters[into] = raster(uplus);
+	auto &g = m_letters[into];
+	if (!g)
+	{
+		g = raster(uplus);
+	}
 }
 
 const glyph& font::operator[](unsigned int uplus)

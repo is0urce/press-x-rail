@@ -31,8 +31,8 @@ namespace
 	const char* font_path_ui = "code2000.ttf";
 	const char* font_path_notify = "code2000.ttf";
 	const char* font_path_unit = "code2000.ttf";
-	const unsigned int font_size_ui = 8;
-	const unsigned int font_size_notify = 8;
+	const unsigned int font_size_ui = 16;
+	const unsigned int font_size_notify = 16;
 	const unsigned int font_size_unit = 32;
 }
 
