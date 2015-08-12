@@ -7,10 +7,11 @@
 #include "renderer.h"
 #include "wingl.h"
 #include "key_bindings.h"
+#include "key.h"
 
 using namespace px::shell;
 
-std::unique_ptr<key_bindings<WPARAM, int>> bindings;
+std::unique_ptr<key_bindings<WPARAM, key>> bindings;
 std::unique_ptr<renderer> graphics;
 
 #define MAX_LOADSTRING 100
@@ -53,9 +54,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	try
 	{
 		graphics.reset(new renderer(renderer::opengl_handle(new wingl(hWnd))));
-		bindings.reset(new key_bindings<WPARAM, int>());
+		bindings.reset(new key_bindings<WPARAM, key>());
 
-		bindings->bind(VK_UP, 0);
+		bindings->bind('W', VK_UP, VK_NUMPAD8, key::direction_north);
+		bindings->bind('A', VK_DOWN, VK_NUMPAD2, key::direction_south);
+		bindings->bind('S', VK_LEFT, VK_NUMPAD4, key::direction_west);
+		bindings->bind('D', VK_RIGHT, VK_NUMPAD6, key::direction_east);
 
 		bool run = true;
 		while (run)
@@ -161,7 +165,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == VK_ESCAPE) PostQuitMessage(0);
 
-		int vkey;
+		key vkey;
 		if (bindings && bindings->find(wParam, vkey))
 		{
 			//

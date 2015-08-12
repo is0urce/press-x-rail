@@ -72,6 +72,12 @@
     <ClInclude Include="src\key_bindings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\key.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\unit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -90,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\unit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

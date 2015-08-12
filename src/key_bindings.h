@@ -21,7 +21,8 @@ namespace px
 			~key_bindings() {}
 
 			void bind(_SK key, _VK vkey) { m_bindings[key] = vkey; }
-			_VK operator[](_SK key) const { return m_bindings.at(key); }
+			void bind(_SK key1, _SK key2, _VK vkey) { bind(key1, vkey); bind(key2, vkey); }
+			void bind(_SK key1, _SK key2, _SK key3, _VK vkey) { bind(key1, vkey); bind(key2, vkey); bind(key3, vkey); }
 			bool find(_SK key, _VK& vkey) const
 			{
 				auto i = m_bindings.find(key);
@@ -32,6 +33,7 @@ namespace px
 				}
 				return false;
 			}
+			_VK operator[](_SK key) const { return m_bindings.at(key); }
 		};
 	}
 }
