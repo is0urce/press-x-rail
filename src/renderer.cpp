@@ -22,6 +22,7 @@ using namespace px::shell;
 
 namespace
 {
+	const double camera_default = 0.1;
 	const unsigned int range_width = 5;
 	const unsigned int range_height = range_width;
 	const unsigned int range_size = range_width * range_height;
@@ -39,7 +40,7 @@ namespace
 	const unsigned int font_size_unit = 32;
 }
 
-renderer::renderer(renderer::opengl_handle opengl)
+renderer::renderer(renderer::opengl_handle opengl) : m_camera(camera_default)
 {
 	if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
 
@@ -57,10 +58,11 @@ renderer::renderer(renderer::opengl_handle opengl)
 	m_background.vao.init({ vertice_depth, color_depth });
 	m_background.program = glsl::program("shaders\\ground");
 
+	m_tiles.vao.init({ vertice_depth, texcoord_depth, color_depth });
+	m_tiles.program = glsl::program("shaders\\units");
+
 	m_units.vao.init({ vertice_depth, texcoord_depth, color_depth });
 	m_units.program = glsl::program("shaders\\units");
-
-	m_camera = 0.5;
 
 	glGenTextures(1, &m_ui.texture);
 	glGenTextures(1, &m_notify.texture);
@@ -83,6 +85,12 @@ renderer::renderer(renderer::opengl_handle opengl)
 renderer::~renderer()
 {
 	m_background.vao.clear();
+	m_tiles.vao.clear();
+	m_units.vao.clear();
+
+	glDeleteProgram(m_background.program);
+	glDeleteProgram(m_tiles.program);
+	glDeleteProgram(m_units.program);
 
 	glDeleteTextures(1, &m_ui.texture);
 	glDeleteTextures(1, &m_notify.texture);
@@ -128,6 +136,59 @@ void renderer::fill_bg()
 	m_background.vao.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
 }
 
+void renderer::fill_tiles()
+{
+	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
+	std::vector<GLfloat> texture(range_size * points_quad * vertice_depth);
+	std::vector<GLfloat> colors(range_size * points_quad * color_depth);
+	std::vector<GLuint> indices(range_size * index_quad);
+
+	// vertex attributes
+	font &font = *m_ui.font;
+	unsigned int vertex_offset = 0;
+	unsigned int color_offset = 0;
+	unsigned int texture_offset = 0;
+	point(range_width, range_height).enumerate([&](const point &position)
+	{
+		auto g = font['?'];
+
+		double width = g.width / 2;
+		double height = g.height / 2;
+		(position + vector(0.5f - width, 0.5f - height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
+		(position + vector(0.5f - width, 0.5f + height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
+		(position + vector(0.5f + width, 0.5f + height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
+		(position + vector(0.5f + width, 0.5f - height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
+
+		texture[texture_offset + 0] = texture[texture_offset + 2] = (GLfloat)g.left;
+		texture[texture_offset + 1] = texture[texture_offset + 7] = (GLfloat)g.bottom;
+		texture[texture_offset + 4] = texture[texture_offset + 6] = (GLfloat)g.right;
+		texture[texture_offset + 3] = texture[texture_offset + 5] = (GLfloat)g.top;
+
+		for (unsigned int i = 0; i < points_quad; ++i)
+		{
+			color(1.0, 1.0, 1.00).write(&colors[color_offset + i * color_depth]);
+		}
+
+		vertex_offset += vertice_depth * points_quad;
+		color_offset += color_depth * points_quad;
+		texture_offset += texcoord_depth * points_quad;
+	});
+
+	// indices
+	unsigned int indexoffset = 0;
+	for (unsigned int i = 0; i < range_size; ++i)
+	{
+		indices[indexoffset + 0] = indices[indexoffset + 3] = i * points_quad + 0;
+		indices[indexoffset + 1] = indices[indexoffset + 5] = i * points_quad + 2;
+		indices[indexoffset + 2] = i * points_quad + 1;
+		indices[indexoffset + 4] = i * points_quad + 3;
+		indexoffset += index_quad;
+	}
+
+	// bind
+	m_tiles.vao.fill(range_size * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
+}
+
 void renderer::fill_units()
 {
 	unsigned int unit_num = 1;
@@ -143,7 +204,7 @@ void renderer::fill_units()
 	unsigned int texture_offset = 0;
 	for (unsigned int i = 0; i < unit_num; ++i)
 	{
-		auto g = font['?'];
+		auto g = font['#'];
 		point position;
 
 		double width = g.width / 2;
@@ -152,7 +213,7 @@ void renderer::fill_units()
 		(position + vector(0.5f - width, 0.5f + height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
 		(position + vector(0.5f + width, 0.5f + height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
 		(position + vector(0.5f + width, 0.5f - height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
-		
+
 		texture[texture_offset + 0] = texture[texture_offset + 2] = (GLfloat)g.left;
 		texture[texture_offset + 1] = texture[texture_offset + 7] = (GLfloat)g.bottom;
 		texture[texture_offset + 4] = texture[texture_offset + 6] = (GLfloat)g.right;
@@ -160,7 +221,7 @@ void renderer::fill_units()
 
 		for (unsigned int i = 0; i < points_quad; ++i)
 		{
-			color(1.0, 0.0, 1.0, 1.0).write(&colors[color_offset + i * color_depth]);
+			color(1.0, 0.0, 0.0).write(&colors[color_offset + i * color_depth]);
 		}
 
 		vertex_offset += vertice_depth * points_quad;
@@ -189,7 +250,8 @@ void renderer::draw(double span)
 	if (m_width <= 0 || m_height <= 0) return;
 
 	fill_bg();
-	fill_units(); 
+	fill_tiles();
+	fill_units();
 
 	GLfloat aspect = (GLfloat)(m_width) / m_height;
 	GLfloat scale = (GLfloat)m_camera;
@@ -203,6 +265,13 @@ void renderer::draw(double span)
 	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	m_background.vao.draw();
 
+	glUseProgram(m_tiles.program);
+	glUniform1f(glGetUniformLocation(m_tiles.program, "aspect"), aspect);
+	glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), scale);
+	glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	m_tiles.vao.draw();
+
 	glUseProgram(m_units.program);
 	glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
@@ -215,7 +284,7 @@ void renderer::draw(double span)
 
 void renderer::scale(double pan)
 {
-	m_camera *= 1.0 + (pan / 1000.0);
+	m_camera *= 1.0f + (pan / 1000.0f);
 	m_camera = (std::min)(m_camera, 10.0);
 	m_camera = (std::max)(m_camera, 0.01);
 }

@@ -42,6 +42,7 @@ namespace px
 
 		private:
 			void fill_bg();
+			void fill_tiles();
 			void fill_units();
 
 		public:

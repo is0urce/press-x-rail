@@ -6,30 +6,34 @@
 
 #include "renderer.h"
 #include "wingl.h"
+#include "key_bindings.h"
+
 using namespace px::shell;
+
+std::unique_ptr<key_bindings<WPARAM, int>> bindings;
+std::unique_ptr<renderer> graphics;
 
 #define MAX_LOADSTRING 100
 
 // Global Variables:
 HWND hWnd;
-HINSTANCE hInst;								// current instance
-TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
-
+HINSTANCE hInst;
+TCHAR szTitle[MAX_LOADSTRING];
+TCHAR szWindowClass[MAX_LOADSTRING];
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: Place code here.
+	// TODO: Place code here.
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -39,16 +43,20 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow))
+	if (!InitInstance(hInstance, nCmdShow))
 	{
-		return FALSE; 
+		return FALSE;
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PRESSX));
 
 	try
 	{
-		renderer graphics(renderer::opengl_handle(new wingl(hWnd)));
+		graphics.reset(new renderer(renderer::opengl_handle(new wingl(hWnd))));
+		bindings.reset(new key_bindings<WPARAM, int>());
+
+		bindings->bind(VK_UP, 0);
+
 		bool run = true;
 		while (run)
 		{
@@ -62,7 +70,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 					DispatchMessage(&msg);
 				}
 			}
-			graphics.draw(0);
+			graphics->draw(0);
 		}
 	}
 	catch (std::runtime_error &exc)
@@ -71,9 +79,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		MultiByteToWideChar(CP_ACP, 0, exc.what(), -1, message, 1024);
 		MessageBox(NULL, message, NULL, NULL);
 	}
+
+	graphics.reset();
+	bindings.reset();
+
 	_CrtDumpMemoryLeaks();
 
-	return (int) msg.wParam;
+	return (int)msg.wParam;
 }
 
 
@@ -89,17 +101,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PRESSX));
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = hInstance;
+	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PRESSX));
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = 0;// MAKEINTRESOURCE(IDC_PRESSX);
-	wcex.lpszClassName	= szWindowClass;
-	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+	wcex.lpszClassName = szWindowClass;
+	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return RegisterClassEx(&wcex);
 }
@@ -116,19 +128,19 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // Store instance handle in our global variable
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+	hInst = hInstance; // Store instance handle in our global variable
+	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	if (!hWnd)
+	{
+		return FALSE;
+	}
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-   return TRUE;
+	return TRUE;
 }
 
 //
@@ -145,6 +157,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_KEYDOWN:
+	{
+		if (wParam == VK_ESCAPE) PostQuitMessage(0);
+
+		int vkey;
+		if (bindings && bindings->find(wParam, vkey))
+		{
+			//
+		}
+	}
+	break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

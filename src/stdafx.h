@@ -17,5 +17,9 @@
 #include <memory.h>
 #include <tchar.h>
 
+#ifdef _DEBUG
+#define new new( _NORMAL_BLOCK, __FILE__, __LINE__)
+#endif 
+
 
 // TODO: reference additional headers your program requires here

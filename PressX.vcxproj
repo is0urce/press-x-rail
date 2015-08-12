@@ -88,6 +88,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\key_bindings.h" />
     <ClInclude Include="src\automata.h" />
     <ClInclude Include="src\color.h" />
     <ClInclude Include="src\coordinate.h" />
