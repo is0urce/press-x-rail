@@ -2,6 +2,7 @@
 
 #include "game_control.h"
 #include "unit.h"
+#include "perception.h"
 
 namespace px
 {
@@ -11,9 +12,10 @@ namespace px
 		{
 		private:
 			std::shared_ptr<rl::unit> m_player;
+			perception m_perception;
 
 		public:
-			game()
+			game() : m_perception(point(10, 10))
 			{
 				m_player.reset(new rl::unit());
 			}
@@ -25,12 +27,28 @@ namespace px
 				if (m_player)
 				{
 					m_player->position(m_player->position() + move);
+					fill_perception();
 				}
 				return true;
 			}
 			virtual bool command_control(key command) override
 			{
 				return true;
+			}
+
+		private:
+			void fill_perception()
+			{
+				m_perception.range().enumerate([&](const point& position)
+				{
+					m_perception.ground(position, color(1.0, 0.0, 0.0));
+				});
+			}
+
+		public:
+			const perception& perception() const
+			{
+				return m_perception;
 			}
 		};
 	}

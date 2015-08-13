@@ -97,6 +97,7 @@
     <ClInclude Include="src\coordinate.h" />
     <ClInclude Include="src\font.h" />
     <ClInclude Include="src\glsl.h" />
+    <ClInclude Include="src\perception.h" />
     <ClInclude Include="src\tile.h" />
     <ClInclude Include="src\map.h" />
     <ClInclude Include="src\opengl.h" />
@@ -114,6 +115,7 @@
   <ItemGroup>
     <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\opengl.cpp" />
+    <ClCompile Include="src\perception.cpp" />
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\stdafx.cpp">

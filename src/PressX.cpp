@@ -12,8 +12,8 @@
 
 using namespace px::shell;
 
-std::unique_ptr<key_bindings<WPARAM, key>> bindings;
-std::unique_ptr<renderer> graphics;
+std::unique_ptr<key_bindings<WPARAM, key>> g_bindings;
+std::unique_ptr<renderer> g_graphics;
 std::unique_ptr<game> g_game;
 
 #define MAX_LOADSTRING 100
@@ -55,14 +55,15 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	try
 	{
-		graphics.reset(new renderer(renderer::opengl_handle(new wingl(hWnd))));
-		bindings.reset(new key_bindings<WPARAM, key>());
+		g_graphics.reset(new renderer(renderer::opengl_handle(new wingl(hWnd))));
+		g_bindings.reset(new key_bindings<WPARAM, key>());
 		g_game.reset(new game());
 
-		bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
-		bindings->bind('A', VK_DOWN, VK_NUMPAD2, key::move_south);
-		bindings->bind('S', VK_LEFT, VK_NUMPAD4, key::move_west);
-		bindings->bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
+		g_bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
+		g_bindings->bind('A', VK_DOWN, VK_NUMPAD2, key::move_south);
+		g_bindings->bind('S', VK_LEFT, VK_NUMPAD4, key::move_west);
+		g_bindings->bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
+		g_bindings->bind(VK_SPACE, key::move_none);
 
 		bool run = true;
 		while (run)
@@ -77,7 +78,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 					DispatchMessage(&msg);
 				}
 			}
-			graphics->draw(*g_game, 0);
+			g_graphics->draw(g_game->perception(), 0);
 		}
 	}
 	catch (std::runtime_error &exc)
@@ -87,8 +88,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		MessageBox(NULL, message, NULL, NULL);
 	}
 
-	graphics.reset();
-	bindings.reset();
+	g_graphics.reset();
+	g_bindings.reset();
+	g_game.reset();
 
 	_CrtDumpMemoryLeaks();
 
@@ -168,8 +170,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == VK_ESCAPE) PostQuitMessage(0);
 
+		if (!g_bindings || !g_game) break;
+
 		key vkey;
-		if (bindings && bindings->find(wParam, vkey))
+		if (g_bindings->find(wParam, vkey))
 		{
 			g_game->press(vkey);
 		}

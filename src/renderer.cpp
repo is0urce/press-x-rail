@@ -11,11 +11,12 @@
 #include "glsl.h"
 #include "point.h"
 #include "vector.h"
-#include "map.h"
 #include "color.h"
-#include "tile.h"
+#include "perception.h"
 
+#include <memory>
 #include <stdexcept>
+#include <vector>
 
 using namespace px;
 using namespace px::shell;
@@ -97,7 +98,7 @@ renderer::~renderer()
 	glDeleteTextures(1, &m_glyph.texture);
 }
 
-void renderer::fill_bg()
+void renderer::fill_bg(const perception_t& perception)
 {
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
 	std::vector<GLfloat> colors(range_size * points_quad * color_depth);
@@ -114,7 +115,7 @@ void renderer::fill_bg()
 		position.moved(point(1, 0)).write(&vertices[vertex_offset + 3 * vertice_depth]);
 		for (unsigned int i = 0; i < points_quad; ++i)
 		{
-			color(1.0, 1.0, 0.0).write(&colors[color_offset + i * color_depth]);
+			perception.ground(position).write(&colors[color_offset + i * color_depth]);
 		}
 
 		vertex_offset += vertice_depth * points_quad;
@@ -136,7 +137,7 @@ void renderer::fill_bg()
 	m_background.vao.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
 }
 
-void renderer::fill_tiles()
+void renderer::fill_tiles(const perception_t& perception)
 {
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
 	std::vector<GLfloat> texture(range_size * points_quad * vertice_depth);
@@ -189,7 +190,7 @@ void renderer::fill_tiles()
 	m_tiles.vao.fill(range_size * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
 }
 
-void renderer::fill_units()
+void renderer::fill_units(const perception_t& perception)
 {
 	unsigned int unit_num = 1;
 	std::vector<GLfloat> vertices(unit_num * points_quad * vertice_depth);
@@ -249,9 +250,9 @@ void renderer::draw(const perception_t &perception, double span)
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;
 
-	fill_bg();
-	fill_tiles();
-	fill_units();
+	fill_bg(perception);
+	fill_tiles(perception);
+	fill_units(perception);
 
 	GLfloat aspect = (GLfloat)(m_width) / m_height;
 	GLfloat scale = (GLfloat)m_camera;

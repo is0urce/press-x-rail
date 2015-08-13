@@ -19,12 +19,13 @@ namespace px
 	namespace shell
 	{
 		class font;
+		class perception;
 
 		class renderer
 		{
 		public:
 			typedef std::unique_ptr<opengl> opengl_handle;
-			typedef game perception_t;
+			typedef perception perception_t;
 
 		private:
 			opengl_handle m_opengl;
@@ -44,9 +45,9 @@ namespace px
 			} m_background, m_tiles, m_units;
 
 		private:
-			void fill_bg();
-			void fill_tiles();
-			void fill_units();
+			void fill_bg(const perception_t&);
+			void fill_tiles(const perception_t&);
+			void fill_units(const perception_t&);
 
 		public:
 			renderer(opengl_handle opengl);

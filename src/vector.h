@@ -33,8 +33,10 @@ namespace px
 			return *this;
 		}
 
-		vector moved(const vector& move) const { vector result = *this; return result += move; };
+		vector moved(const vector& move) const { vector result = *this; return result += move; }
 		vector clamped(const vector& min, const vector& max) const { return vector((std::min)((std::max)(min.X, X), max.X), (std::min)((std::max)(min.Y, Y), max.Y)); }
+		void normalize() { auto len = magnitude(); X /= len; Y /= len; }
+		vector normalized() { vector result = *this; result.normalize(); return result; }
 	};
 
 	inline vector operator+(vector lhs, const vector& rhs) { lhs += rhs; return lhs; }
