@@ -12,6 +12,8 @@
 #include "opengl.h"
 #include "vao.h"
 
+#include "game.h"
+
 namespace px
 {
 	namespace shell
@@ -22,6 +24,7 @@ namespace px
 		{
 		public:
 			typedef std::unique_ptr<opengl> opengl_handle;
+			typedef game perception_t;
 
 		private:
 			opengl_handle m_opengl;
@@ -49,7 +52,7 @@ namespace px
 			renderer(opengl_handle opengl);
 			virtual ~renderer();
 
-			void draw(double phase);
+			void draw(const perception_t &perception, double phase);
 			void scale(double pan);
 		};
 	}

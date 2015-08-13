@@ -3,22 +3,25 @@
 // desc: system virtual key enum
 // auth: is0urce
 
+#pragma once
+
 namespace px
 {
 	namespace shell
 	{
 		enum class key : int
 		{
-			direction_north,
-			direction_south,
-			direction_west,
-			direction_east,
-			direction_northwest,
-			direction_northeast,
-			direction_southwest,
-			direction_southeast,
+			move_none,
+			move_north,
+			move_south,
+			move_west,
+			move_east,
+			move_northwest,
+			move_northeast,
+			move_southwest,
+			move_southeast,
 
-			max_value = direction_southeast
+			max_value = move_southeast
 		};
 	}
 }

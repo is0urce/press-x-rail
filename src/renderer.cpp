@@ -244,7 +244,7 @@ void renderer::fill_units()
 	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
 }
 
-void renderer::draw(double span)
+void renderer::draw(const perception_t &perception, double span)
 {
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;
