@@ -81,7 +81,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			g_graphics->draw(g_game->perception(), 0);
 		}
 	}
-	catch (std::runtime_error &exc)
+	catch (std::exception &exc)
 	{
 		wchar_t message[1025];
 		MultiByteToWideChar(CP_ACP, 0, exc.what(), -1, message, 1024);

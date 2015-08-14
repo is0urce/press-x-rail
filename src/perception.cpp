@@ -67,6 +67,7 @@ const color& perception::light_previous(const point &position) const
 	return m_color_prev->in_range(prev) ? m_color_prev->at(prev) : black_color; // _color->getelement(position); // to fade in
 }
 
+
 const perception::ground_t& perception::ground(const point &position) const
 {
 	return m_ground->at(position);
@@ -77,7 +78,12 @@ void perception::appearance(const point &position, const perception::appearance_
 	m_appearance.at(position) = tile;
 }
 
-void perception::light(const point &position, const color& color)
+void perception::light(const point &position, const color& light_value)
 {
-	m_color->at(position) = color;
+	m_color->at(position) = light_value;
+}
+
+void perception::ground(const point &position, const perception::ground_t &ground_value)
+{
+	m_ground->at(position) = ground_value;
 }

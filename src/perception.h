@@ -53,17 +53,17 @@ namespace px
 			bool in_range(const point &position) const;
 			const point& range() const;
 
-			const ground_t& ground(const point &position) const;
-			const ground_t& ground_previous(const point &position) const;
 			const appearance_t& appearance(const point &position) const;
 			const color& light(const point &position) const;
 			const color& light_previous(const point &position) const;
+			const ground_t& ground(const point &position) const;
+			const ground_t& ground_previous(const point &position) const;
 
-			const ground_t& ground(const point &position, const ground_t &ground_value);
-			const ground_t& ground_previous(const point &position, const ground_t &ground_value);
 			void appearance(const point &position, const appearance_t &tile);
 			void light(const point &position, const color &color_value);
 			void light_previous(const point &position, const color &color_value);
+			void ground(const point &position, const ground_t &ground_value);
+			void ground_previous(const point &position, const ground_t &ground_value);
 
 			//void add(Avatar avatar);
 			//void AddUnit(Appearance appearance, Point position, Point previous);

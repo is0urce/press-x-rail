@@ -24,7 +24,7 @@ using namespace px::shell;
 namespace
 {
 	const double camera_default = 0.1;
-	const unsigned int range_width = 5;
+	const unsigned int range_width = 10;
 	const unsigned int range_height = range_width;
 	const unsigned int range_size = range_width * range_height;
 	const unsigned int vertice_depth = 2;
@@ -247,6 +247,8 @@ void renderer::fill_units(const perception_t& perception)
 
 void renderer::draw(const perception_t &perception, double span)
 {
+	if (perception.width() < range_width || perception.height() < range_height) throw std::logic_error("renderer::draw(..) - perception < range");
+
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;
 

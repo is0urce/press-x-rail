@@ -10,14 +10,18 @@ namespace px
 	{
 		class game : public game_control
 		{
+			static const unsigned int perc_range = 10;
+			static const unsigned int perc_width = perc_range * 2 + 1;
+			static const unsigned int perc_height = perc_range * 2 + 1;
 		private:
 			std::shared_ptr<rl::unit> m_player;
 			perception m_perception;
 
 		public:
-			game() : m_perception(point(10, 10))
+			game() : m_perception(point(perc_width, perc_height))
 			{
 				m_player.reset(new rl::unit());
+				fill_perception();
 			}
 			~game() {}
 
@@ -39,9 +43,14 @@ namespace px
 		private:
 			void fill_perception()
 			{
-				m_perception.range().enumerate([&](const point& position)
+				if (!m_player) return;
+
+				point start = m_player->position() - point(perc_range, perc_range);
+				m_perception.range().enumerate([&](const point& range_point)
 				{
-					m_perception.ground(position, color(1.0, 0.0, 0.0));
+					point position = start + range_point;
+					auto& floor = position.X % 5 == 0  || position.Y % 5 == 0 ? color(1, 0, 0) : color(0, 0, 0);
+					m_perception.ground(range_point, floor);
 				});
 			}
 
