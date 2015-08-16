@@ -10,7 +10,7 @@ namespace px
 	{
 		class game : public game_control
 		{
-			static const unsigned int perc_range = 10;
+			static const unsigned int perc_range = 2;
 			static const unsigned int perc_width = perc_range * 2 + 1;
 			static const unsigned int perc_height = perc_range * 2 + 1;
 		private:
@@ -18,7 +18,7 @@ namespace px
 			perception m_perception;
 
 		public:
-			game() : m_perception(point(perc_width, perc_height))
+			game() : m_perception(point(perc_width, perc_height), point(0, 0))
 			{
 				m_player.reset(new rl::unit());
 				fill_perception();
@@ -46,12 +46,20 @@ namespace px
 				if (!m_player) return;
 
 				point start = m_player->position() - point(perc_range, perc_range);
+				m_perception.swap(start);
+
+				// tiles
 				m_perception.range().enumerate([&](const point& range_point)
 				{
 					point position = start + range_point;
 					auto& floor = position.X % 5 == 0  || position.Y % 5 == 0 ? color(1, 0, 0) : color(0, 0, 0);
 					m_perception.ground(range_point, floor);
 				});
+
+				// units
+				point position = m_player->position() - start;
+				point position_prev = m_player->previous_position() - start;
+				m_perception.add_unit(m_player->appearance(), position, position_prev);
 			}
 
 		public:

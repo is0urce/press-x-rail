@@ -88,6 +88,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\avatar.h" />
     <ClInclude Include="src\game_control.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\key.h" />

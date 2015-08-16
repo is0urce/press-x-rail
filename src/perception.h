@@ -8,44 +8,44 @@
 #include "point.h"
 #include "map.h"
 #include "color.h"
+#include "avatar.h"
 
 #include <list>
 #include <string>
 #include <memory>
+#include <functional>
 
 namespace px
 {
-	namespace rl
-	{
-		class unit;
-	}
-
 	namespace shell
 	{
 		class perception
 		{
 		public:
 			typedef color ground_t;
+			typedef unsigned int tile_t;
 			typedef unsigned int appearance_t;
-			typedef std::list<rl::unit> unit_list;
-			//typedef UnitList::iterator unit_list_iterator;
-			//typedef std::pair<UnitIterator, UnitIterator> UnitRange;
+			typedef avatar<appearance_t> avatar_t;
+			typedef std::list<avatar_t> unit_list;
+			typedef std::function<void(const avatar_t&)> enum_fn;
 
 		private:
-			map<appearance_t> m_appearance;
+			map<tile_t> m_appearance;
 			std::unique_ptr<map<ground_t>> m_ground;
 			std::unique_ptr<map<ground_t>> m_ground_prev;
 			std::unique_ptr<map<color>> m_color;
 			std::unique_ptr<map<color>> m_color_prev;
-			point m_center;
-			point m_center_prev;
+			point m_start;
+			point m_start_prev;
 			unit_list m_units;
 
 		public:
-			perception(const point& range);
+			perception(point range);
+			perception(point range, point start);
 			~perception();
 		private:
 			perception(const perception&); // disable copy
+			void init(point range, point start);
 
 		public:
 			int width() const;
@@ -53,29 +53,31 @@ namespace px
 			bool in_range(const point &position) const;
 			const point& range() const;
 
-			const appearance_t& appearance(const point &position) const;
+			const tile_t& appearance(const point &position) const;
 			const color& light(const point &position) const;
 			const color& light_previous(const point &position) const;
 			const ground_t& ground(const point &position) const;
 			const ground_t& ground_previous(const point &position) const;
 
-			void appearance(const point &position, const appearance_t &tile);
+			void appearance(const point &position, const tile_t &tile);
 			void light(const point &position, const color &color_value);
 			void light_previous(const point &position, const color &color_value);
 			void ground(const point &position, const ground_t &ground_value);
 			void ground_previous(const point &position, const ground_t &ground_value);
 
-			//void add(Avatar avatar);
-			//void AddUnit(Appearance appearance, Point position, Point previous);
-			//const UnitList& GetUnits() const;
+			void add_unit(appearance_t appearance, point position, point position_previous);
+			unit_list::size_type unit_count() const;
+			void enumerate_units(enum_fn fn) const;
 
 			//void AddNotification(Point position, Color color, NotifyString text);
 			//const NotifyList& GetNotifications() const;
 
-			//void SetStart(Point point);
-			//Point GetStart() const;
+			void start(point point);
+			point start() const;
+			point start_previous() const;
+
 			//Point GetMovement() const;
-			//std::unique_ptr<Perception> Reassemble(const Point& movement);
+			void swap(const point& start);
 		};
 	}
 }

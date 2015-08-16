@@ -17,14 +17,26 @@ namespace
 	const color black_color(0);
 }
 
-perception::perception(const point& range)
-	:
-	m_appearance(range),
-	m_ground(new map<perception::ground_t>(range)),
-	m_ground_prev(new map<perception::ground_t>(range)),
-	m_color(new map<color>(range)),
-	m_color_prev(new map<color>(range))
+perception::perception(point range) :
+	m_appearance(range)
 {
+	init(range, point());
+}
+
+perception::perception(point range, point start) :
+	m_appearance(range),
+	m_start(start)
+{
+	init(range, start);
+}
+
+void perception::init(point range, point start)
+{
+	m_start = start;
+	m_ground.reset(new map<perception::ground_t>(range));
+	m_ground_prev.reset(new map<perception::ground_t>(range));
+	m_color.reset(new map<color>(range));
+	m_color_prev.reset(new map<color>(range));
 }
 
 perception::~perception()
@@ -67,7 +79,6 @@ const color& perception::light_previous(const point &position) const
 	return m_color_prev->in_range(prev) ? m_color_prev->at(prev) : black_color; // _color->getelement(position); // to fade in
 }
 
-
 const perception::ground_t& perception::ground(const point &position) const
 {
 	return m_ground->at(position);
@@ -86,4 +97,47 @@ void perception::light(const point &position, const color& light_value)
 void perception::ground(const point &position, const perception::ground_t &ground_value)
 {
 	m_ground->at(position) = ground_value;
+}
+
+void perception::add_unit(perception::appearance_t appearance, point position, point position_previous)
+{
+	m_units.emplace_back(appearance, position, position_previous);
+}
+
+void perception::enumerate_units(perception::enum_fn fn) const
+{
+	if (!fn) throw std::logic_error("perception::enumerate_units - fn is null");
+
+	std::for_each(m_units.begin(), m_units.end(), fn);
+}
+
+perception::unit_list::size_type perception::unit_count() const
+{
+	return m_units.size();
+}
+
+void perception::start(point start)
+{
+	m_start = start;
+}
+
+point perception::start() const
+{
+	return m_start;
+}
+
+point perception::start_previous() const
+{
+	return m_start_prev;
+}
+
+void perception::swap(const point& start)
+{
+	m_units.clear();
+
+	std::swap(m_ground, m_ground_prev);
+	std::swap(m_color, m_color_prev);
+
+	std::swap(m_start, m_start_prev);
+	m_start = start;
 }

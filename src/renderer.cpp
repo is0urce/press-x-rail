@@ -24,7 +24,7 @@ using namespace px::shell;
 namespace
 {
 	const double camera_default = 0.1;
-	const unsigned int range_width = 10;
+	const unsigned int range_width = 5;
 	const unsigned int range_height = range_width;
 	const unsigned int range_size = range_width * range_height;
 	const unsigned int vertice_depth = 2;
@@ -192,7 +192,8 @@ void renderer::fill_tiles(const perception_t& perception)
 
 void renderer::fill_units(const perception_t& perception)
 {
-	unsigned int unit_num = 1;
+	unsigned int unit_num = perception.unit_count();
+
 	std::vector<GLfloat> vertices(unit_num * points_quad * vertice_depth);
 	std::vector<GLfloat> texture(unit_num * points_quad * vertice_depth);
 	std::vector<GLfloat> colors(unit_num * points_quad * color_depth);
@@ -203,10 +204,10 @@ void renderer::fill_units(const perception_t& perception)
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
 	unsigned int texture_offset = 0;
-	for (unsigned int i = 0; i < unit_num; ++i)
+	perception.enumerate_units([&](const perception::avatar_t& avatar)
 	{
 		auto g = font['#'];
-		point position;
+		point position = avatar.position();
 
 		double width = g.width / 2;
 		double height = g.height / 2;
@@ -228,7 +229,7 @@ void renderer::fill_units(const perception_t& perception)
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
 		texture_offset += texcoord_depth * points_quad;
-	};
+	});
 
 	// indices
 	unsigned int indexoffset = 0;
