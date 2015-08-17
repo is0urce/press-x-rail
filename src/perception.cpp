@@ -14,7 +14,7 @@ using namespace px::shell;
 
 namespace
 {
-	const color black_color(0);
+	static const color black_color(0);
 }
 
 perception::perception(point range) :
@@ -32,11 +32,14 @@ perception::perception(point range, point start) :
 
 void perception::init(point range, point start)
 {
+	m_version = 0;
 	m_start = start;
 	m_ground.reset(new map<perception::ground_t>(range));
 	m_ground_prev.reset(new map<perception::ground_t>(range));
 	m_color.reset(new map<color>(range));
 	m_color_prev.reset(new map<color>(range));
+	m_hide.reset(new map<bool>(range));
+	m_hide_prev.reset(new map<bool>(range));
 }
 
 perception::~perception()
@@ -75,7 +78,7 @@ const color& perception::light(const point &position) const
 
 const color& perception::light_previous(const point &position) const
 {
-	point prev = point();// position + _movement;
+	point prev = position - m_move;
 	return m_color_prev->in_range(prev) ? m_color_prev->at(prev) : black_color; // _color->getelement(position); // to fade in
 }
 
@@ -84,24 +87,40 @@ const perception::ground_t& perception::ground(const point &position) const
 	return m_ground->at(position);
 }
 
+const perception::ground_t& perception::ground_previous(const point &position) const
+{
+	point prev = position - m_move;
+	return m_ground_prev->in_range(prev) ? m_color_prev->at(prev) : black_color; // m_ground->at(position);
+}
+
+bool perception::hide(const point &position) const
+{
+	return m_hide->at(position);
+}
+
 void perception::appearance(const point &position, const perception::appearance_t &tile)
 {
 	m_appearance.at(position) = tile;
+	++m_version;
 }
 
 void perception::light(const point &position, const color& light_value)
 {
 	m_color->at(position) = light_value;
+	++m_version;
 }
 
 void perception::ground(const point &position, const perception::ground_t &ground_value)
 {
 	m_ground->at(position) = ground_value;
+	++m_version;
 }
 
 void perception::add_unit(perception::appearance_t appearance, point position, point position_previous)
 {
 	m_units.emplace_back(appearance, position - m_start, position_previous - m_start_prev);
+	m_hide->at(position - m_start) = true;
+	++m_version;
 }
 
 void perception::enumerate_units(perception::enum_fn fn) const
@@ -119,6 +138,7 @@ perception::unit_list::size_type perception::unit_count() const
 void perception::start(point start)
 {
 	m_start = start;
+	++m_version;
 }
 
 point perception::start() const
@@ -138,6 +158,17 @@ void perception::swap(const point& start)
 	std::swap(m_ground, m_ground_prev);
 	std::swap(m_color, m_color_prev);
 
+	std::swap(m_hide, m_hide_prev);
+	m_hide->fill(false);
+
 	std::swap(m_start, m_start_prev);
 	m_start = start;
+	m_move = m_start - m_start_prev;
+
+	++m_version;
+}
+
+unsigned int perception::version() const
+{
+	return m_version;
 }

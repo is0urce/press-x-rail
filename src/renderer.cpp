@@ -168,7 +168,7 @@ void renderer::fill_tiles(const perception_t& perception)
 
 		for (unsigned int i = 0; i < points_quad; ++i)
 		{
-			color(1.0, 1.0, 1.00).write(&colors[color_offset + i * color_depth]);
+			(perception.hide(position) ? color(0) : color(1.0, 1.0, 1.0)).write(&colors[color_offset + i * color_depth]);
 		}
 
 		vertex_offset += vertice_depth * points_quad;

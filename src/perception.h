@@ -30,13 +30,17 @@ namespace px
 			typedef std::function<void(const avatar_t&)> enum_fn;
 
 		private:
+			unsigned int m_version;
 			map<tile_t> m_appearance;
 			std::unique_ptr<map<ground_t>> m_ground;
 			std::unique_ptr<map<ground_t>> m_ground_prev;
 			std::unique_ptr<map<color>> m_color;
 			std::unique_ptr<map<color>> m_color_prev;
+			std::unique_ptr<map<bool>> m_hide;
+			std::unique_ptr<map<bool>> m_hide_prev;
 			point m_start;
 			point m_start_prev;
+			point m_move; // current-prev start
 			unit_list m_units;
 
 		public:
@@ -58,6 +62,7 @@ namespace px
 			const color& light_previous(const point &position) const;
 			const ground_t& ground(const point &position) const;
 			const ground_t& ground_previous(const point &position) const;
+			bool hide(const point &position) const;
 
 			void appearance(const point &position, const tile_t &tile);
 			void light(const point &position, const color &color_value);
@@ -78,6 +83,7 @@ namespace px
 
 			//Point GetMovement() const;
 			void swap(const point& start);
+			unsigned int version() const;
 		};
 	}
 }

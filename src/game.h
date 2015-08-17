@@ -11,7 +11,7 @@ namespace px
 		class game : public game_control
 		{
 		public:
-			static const unsigned int perc_range = 2;
+			static const unsigned int perc_range = 3;
 			static const unsigned int perc_width = perc_range * 2 + 1;
 			static const unsigned int perc_height = perc_range * 2 + 1;
 
