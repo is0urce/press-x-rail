@@ -11,8 +11,11 @@ namespace px
 	{
 		class  game_control
 		{
+		private:
+			bool m_shutdown;
+
 		public:
-			game_control() {}
+			game_control() : m_shutdown(false) {}
 			virtual ~game_control() {}
 
 		protected:
@@ -57,6 +60,18 @@ namespace px
 					break;
 				}
 				return result;
+			}
+			void shutdown(bool shutdown)
+			{
+				m_shutdown = shutdown;
+			}
+			void shutdown()
+			{
+				shutdown(true);
+			}
+			bool finished() const
+			{
+				return m_shutdown;
 			}
 		};
 	}

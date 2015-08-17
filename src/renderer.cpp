@@ -13,6 +13,7 @@
 #include "vector.h"
 #include "color.h"
 #include "perception.h"
+#include "game.h"
 
 #include <memory>
 #include <stdexcept>
@@ -24,8 +25,8 @@ using namespace px::shell;
 namespace
 {
 	const double camera_default = 0.1;
-	const unsigned int range_width = 5;
-	const unsigned int range_height = range_width;
+	const unsigned int range_width = game::perc_width;
+	const unsigned int range_height = game::perc_height;
 	const unsigned int range_size = range_width * range_height;
 	const unsigned int vertice_depth = 2;
 	const unsigned int color_depth = 4;
@@ -151,7 +152,7 @@ void renderer::fill_tiles(const perception_t& perception)
 	unsigned int texture_offset = 0;
 	point(range_width, range_height).enumerate([&](const point &position)
 	{
-		auto g = font['?'];
+		auto g = font[perception.appearance(position)];
 
 		double width = g.width / 2;
 		double height = g.height / 2;
@@ -204,10 +205,10 @@ void renderer::fill_units(const perception_t& perception)
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
 	unsigned int texture_offset = 0;
-	perception.enumerate_units([&](const perception::avatar_t& avatar)
+	perception.enumerate_units([&](const perception::avatar_t& unit)
 	{
-		auto g = font['#'];
-		point position = avatar.position();
+		auto g = font[unit.appearance()];
+		point position = unit.position();
 
 		double width = g.width / 2;
 		double height = g.height / 2;
@@ -223,7 +224,7 @@ void renderer::fill_units(const perception_t& perception)
 
 		for (unsigned int i = 0; i < points_quad; ++i)
 		{
-			color(1.0, 0.0, 0.0).write(&colors[color_offset + i * color_depth]);
+			color(1.0, 1.0, 1.0).write(&colors[color_offset + i * color_depth]);
 		}
 
 		vertex_offset += vertice_depth * points_quad;
@@ -257,8 +258,11 @@ void renderer::draw(const perception_t &perception, double span)
 	fill_tiles(perception);
 	fill_units(perception);
 
+	point center = perception.range() / 2;
 	GLfloat aspect = (GLfloat)(m_width) / m_height;
 	GLfloat scale = (GLfloat)m_camera;
+	GLfloat x_center = (GLfloat)center.X;
+	GLfloat y_center = (GLfloat)center.Y;
 
 	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -266,12 +270,14 @@ void renderer::draw(const perception_t &perception, double span)
 	glUseProgram(m_background.program);
 	glUniform1f(glGetUniformLocation(m_background.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_background.program, "scale"), scale);
+	glUniform2f(glGetUniformLocation(m_background.program, "center"), x_center, y_center);
 	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	m_background.vao.draw();
 
 	glUseProgram(m_tiles.program);
 	glUniform1f(glGetUniformLocation(m_tiles.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), scale);
+	glUniform2f(glGetUniformLocation(m_tiles.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
 	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	m_tiles.vao.draw();
@@ -279,6 +285,7 @@ void renderer::draw(const perception_t &perception, double span)
 	glUseProgram(m_units.program);
 	glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
+	glUniform2f(glGetUniformLocation(m_units.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
 	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	m_units.vao.draw();

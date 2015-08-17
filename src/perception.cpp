@@ -101,7 +101,7 @@ void perception::ground(const point &position, const perception::ground_t &groun
 
 void perception::add_unit(perception::appearance_t appearance, point position, point position_previous)
 {
-	m_units.emplace_back(appearance, position, position_previous);
+	m_units.emplace_back(appearance, position - m_start, position_previous - m_start_prev);
 }
 
 void perception::enumerate_units(perception::enum_fn fn) const

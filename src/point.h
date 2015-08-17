@@ -32,6 +32,10 @@ namespace px
 			Y -= rhs.Y;
 			return *this;
 		}
+		point operator*(component c) const { return point(X * c, Y * c); };
+		point operator/(component c) const { return point(X / c, Y / c); };
+		point operator*=(component c) { *this = *this * c; return *this; };
+		point operator/=(component c) { *this = *this / c; return *this; };
 
 		point moved(const point& move) const { point result = *this; return result += move; }
 		point moved(component x, component y) const { return moved(point(x, y)); }

@@ -60,13 +60,15 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_game.reset(new game());
 
 		g_bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
-		g_bindings->bind('A', VK_DOWN, VK_NUMPAD2, key::move_south);
-		g_bindings->bind('S', VK_LEFT, VK_NUMPAD4, key::move_west);
+		g_bindings->bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
+		g_bindings->bind('S', VK_DOWN, VK_NUMPAD2, key::move_south);
 		g_bindings->bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
-		g_bindings->bind(VK_SPACE, key::move_none);
+		g_bindings->bind(VK_SPACE, VK_NUMPAD5, key::move_none);
+		g_bindings->bind(VK_RETURN, key::command_ok);
+		g_bindings->bind(VK_ESCAPE, key::command_cancel);
 
 		bool run = true;
-		while (run)
+		while (run && !g_game->finished())
 		{
 			// windows dispatcher
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
@@ -83,7 +85,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 	catch (std::exception &exc)
 	{
-		wchar_t message[1025];
+		wchar_t message[1028];
 		MultiByteToWideChar(CP_ACP, 0, exc.what(), -1, message, 1024);
 		MessageBox(NULL, message, NULL, NULL);
 	}
@@ -168,13 +170,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:
 	{
-		if (wParam == VK_ESCAPE) PostQuitMessage(0);
-
 		if (!g_bindings || !g_game) break;
 
 		key vkey;
 		if (g_bindings->find(wParam, vkey))
 		{
+			if (vkey == key::command_cancel) g_game->shutdown();
+
 			g_game->press(vkey);
 		}
 	}

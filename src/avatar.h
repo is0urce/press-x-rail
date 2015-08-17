@@ -30,7 +30,7 @@ namespace px
 		public:
 			const point& position() const { return m_current; };
 			const point& position_previous() const { return m_previous; };
-			const _A& getappearance() const { return m_appearance; };
+			const _A& appearance() const { return m_appearance; };
 		};
 	}
 }
