@@ -14,14 +14,14 @@ using namespace px::rl;
 
 namespace
 {
-	static const int cell_width = 100;
-	static const int cell_height = cell_width;
+	static const unsigned int cell_width = 100;
+	static const unsigned int cell_height = cell_width;
 	static const point cell_range(cell_width, cell_height);
 }
 
 scene::scene() :
 	m_map(new map<tile_t>(cell_range)),
-	m_units([](const point& a, const point& b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
+	m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 {
 }
 
@@ -29,17 +29,17 @@ scene::~scene()
 {
 }
 
-scene::tile_t& scene::tile(const point& point)
+scene::tile_t& scene::tile(const point &position)
 {
-	return m_map->in_range(point) ? m_default : m_map->at(point);
+	return m_map->in_range(position) ? m_map->at(position) : m_default;
 }
 
-const scene::tile_t& scene::tile(const point& point) const
+const scene::tile_t& scene::tile(const point &position) const
 {
-	return m_map->in_range(point) ? m_default : m_map->at(point);
+	return m_map->in_range(position) ? m_map->at(position) : m_default;
 }
 
-bool scene::transparent(const point& point) const
+bool scene::transparent(const point &point) const
 {
 	if (!tile(point).transparent()) return false;
 
@@ -48,33 +48,10 @@ bool scene::transparent(const point& point) const
 
 	return find->second->transparent();
 
-	//return readtile(point).istransparent();
-
-	//auto find = _objects.find(point);
-	//// serch forward
-	//for (auto it = find; it != _objects.end(); ++it)
-	//{
-	//	if (it->second->getposition() != point) break; // leaving key range
-	//	if (!it->second->istransparent())
-	//	{
-	//		return false;
-	//	}
-	//}
-	//// backward
-	//for (auto it = find; it != _objects.begin(); /**/ )
-	//{
-	//	--it;
-
-	//	if (it->second->getposition() != point) break; // leaving key range
-	//	if (!it->second->istransparent())
-	//	{
-	//		return false;
-	//	}
-	//}
 	return true;
 }
 
-bool scene::traversable(const point& point) const
+bool scene::traversable(const point &point) const
 {
 	if (!tile(point).traversable()) return false;
 
@@ -84,7 +61,7 @@ bool scene::traversable(const point& point) const
 	return find->second->traversable();
 }
 
-bool scene::traversable(const point& point, unsigned int layer) const
+bool scene::traversable(const point &point, unsigned int layer) const
 {
 	if (!tile(point).traversable(layer)) return false;
 
@@ -94,13 +71,13 @@ bool scene::traversable(const point& point, unsigned int layer) const
 	return find->second->traversable();
 }
 
-void scene::add(unit_ptr unit, const point& position)
+void scene::add(unit_ptr unit, const point &position)
 {
 	unit->position(position);
 	m_units.emplace(position, unit);
 }
 
-void scene::move(unit_ptr unit, const point& position)
+void scene::move(unit_ptr unit, const point &position)
 {
 	remove(unit);
 	add(unit, position);
@@ -109,8 +86,8 @@ void scene::move(unit_ptr unit, const point& position)
 void scene::remove(unit_ptr unit)
 {
 	auto find = m_units.find(unit->position());
-	if (find == m_units.end()) throw std::logic_error("assert 1: scene::remove unit not found or position invalid");
-	if (find->second != unit) throw std::logic_error("assert 2: scene::remove unit position invalid or scene corrupted");
+	if (find == m_units.end()) throw std::logic_error("scene::remove assert #1: scene::remove unit not found or position invalid");
+	if (find->second != unit) throw std::logic_error("scene::remove assert #2: scene::remove unit position invalid or scene corrupted");
 	m_units.erase(find);
 }
 

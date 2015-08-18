@@ -37,12 +37,12 @@ namespace px
 			scene();
 			virtual ~scene();
 		private:
-			scene(const scene& none); // disable copy
+			scene(const scene &none); // disable copy
 
 			// methods
 		public:
-			tile_t& tile(const point& point);
-			const tile_t& tile(const point& point) const;
+			tile_t& tile(const point &position);
+			const tile_t& tile(const point &position) const;
 			const unit_list& units() const;
 			void add(unit_ptr unit, const point& position);
 			void move(unit_ptr unit, const point& position);
@@ -51,10 +51,10 @@ namespace px
 			unsigned int count() const;
 			void tick(timer_t ticks);
 			void enumerate_units(enum_fn fn) const;
-			bool transparent(const point& point) const;
-			bool traversable(const point& point) const;
-			bool traversable(const point& point, unsigned int layer) const;
-			unit_ptr blocking(const point& point) const;
+			bool transparent(const point &position) const;
+			bool traversable(const point &position) const;
+			bool traversable(const point &position, unsigned int layer) const;
+			unit_ptr blocking(const point &position) const;
 		};
 	}
 }

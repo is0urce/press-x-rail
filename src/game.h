@@ -27,6 +27,15 @@ namespace px
 				m_player.reset(new rl::unit());
 				m_player->appearance('@');
 
+				point(25, 25).enumerate([&](const point &position) 
+				{
+					bool wall = position.X % 5 == 0 || position.Y % 5 == 0;
+					auto &tile = m_scene.tile(position);
+					tile.appearance() = wall ? ' ' : '.';
+					tile.transparent(!wall);
+					tile.traversable(wall);
+				});
+
 				m_scene.add(m_player, point(5, 5));
 				fill_perception();
 			}
@@ -59,9 +68,10 @@ namespace px
 				m_perception.range().enumerate([&](const point& range_point)
 				{
 					point position = start + range_point;
-					bool floor = position.X % 5 != 0 && position.Y % 5 != 0;
+					auto &tile = m_scene.tile(position);
+					bool floor = tile.traversable();
 					m_perception.ground(range_point, floor ? color(0.1, 0.1, 0.1) : color(0.7, 0.7, 0.5));
-					m_perception.appearance(range_point, floor ? '.' : ' ');
+					m_perception.appearance(range_point, tile.appearance());
 					m_perception.light(range_point, color(1, 1, 1));
 				});
 

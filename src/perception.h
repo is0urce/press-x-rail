@@ -82,7 +82,7 @@ namespace px
 			point start_previous() const;
 
 			//Point GetMovement() const;
-			void swap(const point& start);
+			void swap(const point &start);
 			unsigned int version() const;
 		};
 	}

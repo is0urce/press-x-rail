@@ -63,7 +63,7 @@ namespace px
 	private:
 		void init(point range) // constructor helper
 		{
-			if (range.X <= 0 || range.Y <= 0) throw std::runtime_error("map<_T>::init(point range) invalid range (x or y <= 0)");
+			if (range.X <= 0 || range.Y <= 0) throw std::logic_error("map<_T>::init(point range) invalid range (x or y <= 0)");
 			m_range = range;
 			m_tiles.reset(new _T[range.size()]);
 		}
@@ -95,12 +95,12 @@ namespace px
 		_T& at(const point &point, _T& outer) { return return in_range(position) ? m_tiles[m_range.X * position.Y + position.X] : outer; }
 		const _T& at(const point& position) const
 		{
-			if (!in_range(position)) throw std::runtime_error("_T& map<_T>::at(point position) argument out of range");
+			if (!in_range(position)) throw std::logic_error("_T& map<_T>::at(point position) argument out of range");
 			return m_tiles[m_range.X * position.Y + position.X];
 		}
 		_T& at(const point& position)
 		{
-			if (!in_range(position)) throw std::runtime_error("_T& map<_T>::at(point position) argument out of range");
+			if (!in_range(position)) throw std::logic_error("_T& map<_T>::at(point position) argument out of range");
 			return m_tiles[m_range.X * position.Y + position.X];
 		}
 		void fill(const _T &tile)
@@ -113,7 +113,7 @@ namespace px
 		};
 		void fill(const map &source)
 		{
-			if (source.m_range != m_range) throw std::runtime_error("void fill(const map &source) different ranges");
+			if (source.m_range != m_range) throw std::logic_error("void fill(const map &source) different ranges");
 
 			int len = size();
 			for (int i = 0; i < len; ++i)
@@ -124,8 +124,8 @@ namespace px
 		template<typename _C>
 		void fill(const map<_C>& map, std::function<element(const _C&)> converter_fn)
 		{
-			if (map.m_range != m_range) throw std::runtime_error("void fill(const map<_C>& map, std::function<element(const _C&)> converter_fn) different ranges");
-			if (!converter_fn) throw std::runtime_error("void fill(const map<_C>& map, std::function<element(const _C&)> converter_fn) - converter empty");
+			if (map.m_range != m_range) throw std::logic_error("void fill(const map<_C>& map, std::function<element(const _C&)> converter_fn) different ranges");
+			if (!converter_fn) throw std::logic_error("void fill(const map<_C>& map, std::function<element(const _C&)> converter_fn) - converter empty");
 
 			int len = size();
 			for (int i = 0; i < len; ++i)
@@ -135,7 +135,7 @@ namespace px
 		}
 		void fill(std::function<element()> generator_fn)
 		{
-			if (!generator_fn) throw std::runtime_error("void fill(std::function<element()> generator_fn) - generator empty");
+			if (!generator_fn) throw std::logic_error("void fill(std::function<element()> generator_fn) - generator empty");
 
 			int len = size();
 			for (int i = 0; i < len; ++i)
@@ -145,7 +145,7 @@ namespace px
 		};
 		void fill_indexed(std::function<element(const point&)> generator_fn)
 		{
-			if (!generator_fn) throw std::runtime_error("void fill(std::function<element()> generator_fn) - generator empty");
+			if (!generator_fn) throw std::logic_error("void fill(std::function<element()> generator_fn) - generator empty");
 
 			m_range.enumerate([&] (const point& position)
 			{
