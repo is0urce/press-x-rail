@@ -3,6 +3,7 @@
 #include "game_control.h"
 #include "unit.h"
 #include "perception.h"
+#include "scene.h"
 
 namespace px
 {
@@ -16,6 +17,7 @@ namespace px
 			static const unsigned int perc_height = perc_range * 2 + 1;
 
 		private:
+			rl::scene m_scene;
 			std::shared_ptr<rl::unit> m_player;
 			perception m_perception;
 
@@ -24,6 +26,8 @@ namespace px
 			{
 				m_player.reset(new rl::unit());
 				m_player->appearance('@');
+
+				m_scene.add(m_player, point(5, 5));
 				fill_perception();
 			}
 			~game() {}
@@ -55,9 +59,9 @@ namespace px
 				m_perception.range().enumerate([&](const point& range_point)
 				{
 					point position = start + range_point;
-					bool wall = position.X % 5 == 0 || position.Y % 5 == 0;
-					m_perception.ground(range_point, !wall ? color(0, 0, 0) : color(0.7, 0.7, 0.5));
-					m_perception.appearance(range_point, !wall ? '.' : ' ');
+					bool floor = position.X % 5 != 0 && position.Y % 5 != 0;
+					m_perception.ground(range_point, floor ? color(0.1, 0.1, 0.1) : color(0.7, 0.7, 0.5));
+					m_perception.appearance(range_point, floor ? '.' : ' ');
 					m_perception.light(range_point, color(1, 1, 1));
 				});
 

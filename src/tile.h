@@ -40,7 +40,7 @@ namespace px
 			void transparent(bool val) { m_transparent = val; }
 
 			bool traversable(unsigned int layer) const { return m_traversable.test(layer); }
-			bool traversable() const { return traversable(0) }
+			bool traversable() const { return traversable(0); }
 			bool traversable(bitset l) const { return (m_traversable & l).any(); }
 			void traversable(unsigned int layer, bool val) { m_traversable.set(layer, val); }
 			void traversable(bool val) { traversable(0, val); }

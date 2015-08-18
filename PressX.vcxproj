@@ -99,6 +99,7 @@
     <ClInclude Include="src\font.h" />
     <ClInclude Include="src\glsl.h" />
     <ClInclude Include="src\perception.h" />
+    <ClInclude Include="src\scene.h" />
     <ClInclude Include="src\tile.h" />
     <ClInclude Include="src\map.h" />
     <ClInclude Include="src\opengl.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="src\perception.cpp" />
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
