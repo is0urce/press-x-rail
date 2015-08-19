@@ -9,7 +9,6 @@
 
 #include "font.h"
 #include "glsl.h"
-#include "point.h"
 #include "vector.h"
 #include "color.h"
 #include "perception.h"
@@ -24,22 +23,23 @@ using namespace px::shell;
 
 namespace
 {
-	const double camera_default = 0.1;
-	const unsigned int range_width = game::perc_width;
-	const unsigned int range_height = game::perc_height;
-	const unsigned int range_size = range_width * range_height;
-	const unsigned int vertice_depth = 2;
-	const unsigned int color_depth = 4;
-	const unsigned int texcoord_depth = 2;
-	const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
-	const unsigned int index_quad = 6;
+	static const double camera_default = 0.1;
+	static const unsigned int range_width = game::perc_width;
+	static const unsigned int range_height = game::perc_height;
+	static const point range(range_width, range_height);
+	static const unsigned int range_size = range_width * range_height;
+	static const unsigned int vertice_depth = 2;
+	static const unsigned int color_depth = 4;
+	static const unsigned int texcoord_depth = 2;
+	static const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
+	static const unsigned int index_quad = 6;
 
-	const char* font_path_ui = "code2000.ttf";
-	const char* font_path_notify = "code2000.ttf";
-	const char* font_path_unit = "code2000.ttf";
-	const unsigned int font_size_ui = 32;
-	const unsigned int font_size_notify = 16;
-	const unsigned int font_size_unit = 32;
+	static const char* font_path_ui = "code2000.ttf";
+	static const char* font_path_notify = "code2000.ttf";
+	static const char* font_path_unit = "code2000.ttf";
+	static const unsigned int font_size_ui = 32;
+	static const unsigned int font_size_notify = 16;
+	static const unsigned int font_size_unit = 32;
 }
 
 renderer::renderer(renderer::opengl_handle opengl) : m_camera(camera_default)
@@ -99,7 +99,7 @@ renderer::~renderer()
 	glDeleteTextures(1, &m_glyph.texture);
 }
 
-void renderer::fill_bg(const perception_t& perception)
+void renderer::fill_bg(const perception_t &perception)
 {
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
 	std::vector<GLfloat> colors(range_size * points_quad * color_depth);
@@ -108,16 +108,14 @@ void renderer::fill_bg(const perception_t& perception)
 	// vertex attributes
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
-	point(range_width, range_height).enumerate([&](const point &position)
+	range.enumerate([&](const point &position)
 	{
-		position.moved(point(0, 0)).write(&vertices[vertex_offset + 0 * vertice_depth]);
-		position.moved(point(0, 1)).write(&vertices[vertex_offset + 1 * vertice_depth]);
-		position.moved(point(1, 1)).write(&vertices[vertex_offset + 2 * vertice_depth]);
-		position.moved(point(1, 0)).write(&vertices[vertex_offset + 3 * vertice_depth]);
-		for (unsigned int i = 0; i < points_quad; ++i)
-		{
-			perception.ground(position).write(&colors[color_offset + i * color_depth]);
-		}
+		(position + vector(-0.5, -0.5)).write(&vertices[vertex_offset + 0 * vertice_depth]);
+		(position + vector(-0.5,  0.5)).write(&vertices[vertex_offset + 1 * vertice_depth]);
+		(position + vector( 0.5,  0.5)).write(&vertices[vertex_offset + 2 * vertice_depth]);
+		(position + vector( 0.5, -0.5)).write(&vertices[vertex_offset + 3 * vertice_depth]);
+
+		perception.ground(position).write(&colors[color_offset], points_quad);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
@@ -138,7 +136,7 @@ void renderer::fill_bg(const perception_t& perception)
 	m_background.vao.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
 }
 
-void renderer::fill_tiles(const perception_t& perception)
+void renderer::fill_tiles(const perception_t &perception)
 {
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
 	std::vector<GLfloat> texture(range_size * points_quad * vertice_depth);
@@ -156,20 +154,17 @@ void renderer::fill_tiles(const perception_t& perception)
 
 		double width = g.width / 2;
 		double height = g.height / 2;
-		(position + vector(0.5f - width, 0.5f - height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
-		(position + vector(0.5f - width, 0.5f + height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
-		(position + vector(0.5f + width, 0.5f + height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
-		(position + vector(0.5f + width, 0.5f - height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
+		(position + vector(-width, -height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
+		(position + vector(-width,  height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
+		(position + vector( width,  height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
+		(position + vector( width, -height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
 
 		texture[texture_offset + 0] = texture[texture_offset + 2] = (GLfloat)g.left;
 		texture[texture_offset + 1] = texture[texture_offset + 7] = (GLfloat)g.bottom;
 		texture[texture_offset + 4] = texture[texture_offset + 6] = (GLfloat)g.right;
 		texture[texture_offset + 3] = texture[texture_offset + 5] = (GLfloat)g.top;
 
-		for (unsigned int i = 0; i < points_quad; ++i)
-		{
-			(perception.hide(position) ? color(0, 0, 0, 0.0) : color(1, 1, 1, 1.0)).write(&colors[color_offset + i * color_depth]);
-		}
+		(perception.hide(position) ? color(0, 0, 0, 0.0) : color(1, 1, 1, 1.0)).write(&colors[color_offset], points_quad);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
@@ -191,7 +186,7 @@ void renderer::fill_tiles(const perception_t& perception)
 	m_tiles.vao.fill(range_size * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
 }
 
-void renderer::fill_units(const perception_t& perception)
+void renderer::fill_units(const perception_t &perception)
 {
 	unsigned int unit_num = perception.unit_count();
 
@@ -205,27 +200,24 @@ void renderer::fill_units(const perception_t& perception)
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
 	unsigned int texture_offset = 0;
-	perception.enumerate_units([&](const perception::avatar_t& unit)
+	perception.enumerate_units([&](const perception::avatar_t &unit)
 	{
 		auto g = font[unit.appearance()];
 		point position = unit.position();
 
 		double width = g.width / 2;
 		double height = g.height / 2;
-		(position + vector(0.5f - width, 0.5f - height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
-		(position + vector(0.5f - width, 0.5f + height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
-		(position + vector(0.5f + width, 0.5f + height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
-		(position + vector(0.5f + width, 0.5f - height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
+		(position + vector(-width, -height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
+		(position + vector(-width,  height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
+		(position + vector( width,  height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
+		(position + vector( width, -height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
 
 		texture[texture_offset + 0] = texture[texture_offset + 2] = (GLfloat)g.left;
 		texture[texture_offset + 1] = texture[texture_offset + 7] = (GLfloat)g.bottom;
 		texture[texture_offset + 4] = texture[texture_offset + 6] = (GLfloat)g.right;
 		texture[texture_offset + 3] = texture[texture_offset + 5] = (GLfloat)g.top;
 
-		for (unsigned int i = 0; i < points_quad; ++i)
-		{
-			color(1.0, 1.0, 1.0, 1.0).write(&colors[color_offset + i * color_depth]);
-		}
+		color(1.0, 1.0, 1.0, 1.0).write(&colors[color_offset], points_quad);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
@@ -249,7 +241,7 @@ void renderer::fill_units(const perception_t& perception)
 
 void renderer::draw(const perception_t &perception, double span)
 {
-	if (perception.width() < range_width || perception.height() < range_height) throw std::logic_error("renderer::draw(..) - perception < range");
+	if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
 
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;

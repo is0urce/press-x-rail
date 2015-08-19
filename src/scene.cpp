@@ -23,6 +23,14 @@ scene::scene() :
 	m_map(new map<tile_t>(cell_range)),
 	m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 {
+	cell_range.enumerate([&](const point &position)
+	{
+		bool rail = position.Y == 9 || position.Y == 10;
+		auto &t = tile(position);
+		t.appearance() = rail ? '+' : '.';
+		t.transparent(rail);
+		t.traversable(rail);
+	});
 }
 
 scene::~scene()
@@ -73,18 +81,24 @@ bool scene::traversable(const point &point, unsigned int layer) const
 
 void scene::add(unit_ptr unit, const point &position)
 {
+	if (!unit) throw new std::logic_error("scene::add - unit is null");
+
 	unit->position(position);
 	m_units.emplace(position, unit);
 }
 
 void scene::move(unit_ptr unit, const point &position)
 {
+	if (!unit) throw new std::logic_error("scene::move - unit is null");
+
 	remove(unit);
 	add(unit, position);
 }
 
 void scene::remove(unit_ptr unit)
 {
+	if (!unit) throw new std::logic_error("scene::remove - unit is null");
+
 	auto find = m_units.find(unit->position());
 	if (find == m_units.end()) throw std::logic_error("scene::remove assert #1: scene::remove unit not found or position invalid");
 	if (find->second != unit) throw std::logic_error("scene::remove assert #2: scene::remove unit position invalid or scene corrupted");

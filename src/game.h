@@ -1,9 +1,12 @@
 #pragma once
 
 #include "game_control.h"
-#include "unit.h"
+
 #include "perception.h"
 #include "scene.h"
+#include "unit.h"
+
+#include <memory>
 
 namespace px
 {
@@ -12,7 +15,7 @@ namespace px
 		class game : public game_control
 		{
 		public:
-			static const unsigned int perc_range = 3;
+			static const unsigned int perc_range = 10;
 			static const unsigned int perc_width = perc_range * 2 + 1;
 			static const unsigned int perc_height = perc_range * 2 + 1;
 
@@ -27,16 +30,8 @@ namespace px
 				m_player.reset(new rl::unit());
 				m_player->appearance('@');
 
-				point(25, 25).enumerate([&](const point &position) 
-				{
-					bool wall = position.X % 5 == 0 || position.Y % 5 == 0;
-					auto &tile = m_scene.tile(position);
-					tile.appearance() = wall ? ' ' : '.';
-					tile.transparent(!wall);
-					tile.traversable(wall);
-				});
-
 				m_scene.add(m_player, point(5, 5));
+
 				fill_perception();
 			}
 			~game() {}

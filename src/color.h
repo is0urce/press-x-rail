@@ -15,6 +15,7 @@ namespace px
 	namespace
 	{
 		const static double pi = 3.141592653589793238463; // more than enought
+		const static unsigned int depth = 4;
 	}
 	class color
 	{
@@ -61,15 +62,18 @@ namespace px
 		color operator/=(component c) { *this = *this / c; return *this; };
 
 		template <typename _M>
-		void write(_M* memory) const { memory[0] = (_M)R; memory[1] = (_M)G; memory[2] = (_M)B; memory[3] = (_M)A; };
-		void write(component* memory) const { memory[0] = R; memory[1] = G; memory[2] = B; memory[3] = A; };
+		void write(_M *memory) const { memory[0] = (_M)R; memory[1] = (_M)G; memory[2] = (_M)B; memory[3] = (_M)A; };
+		template <typename _M>
+		void write(_M *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
+		void write(component *memory) const { memory[0] = R; memory[1] = G; memory[2] = B; memory[3] = A; };
+		void write(component *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
 		void set_rgba(int r, int g, int b, int a) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = a / 255.0; }
 		void set_rgb(int r, int g, int b) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = 1.0; }
 		void set_hex(unsigned int hex) { set_rgb(hex / 256 / 256 % 256, hex / 256 % 256, hex % 256); };
 		void shift_hue(double angle) { *this = transform_hue(*this, angle); };
 		void shift_hsv(double hue, double saturation, double v) { *this = transform_hsv(*this, hue, saturation, v); };
 		color transform_hsv(double hue, double saturation, double v) const { return transform_hsv(*this, hue, saturation, v); };
-		color average(const color& other) const { return (*this + other) / 2; };
+		color average(const color &other) const { return (*this + other) / 2; };
 		double luminance() const { return 0.2125 * R + 0.7154 * G + 0.0721 * B; };
 
 		// hue - hue shift (in degrees) saturation - saturation multiplier (scalar), v - value multiplier (scalar)
