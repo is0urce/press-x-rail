@@ -107,12 +107,15 @@ namespace px
 
 				m_length = length;
 				glBindVertexArray(m_vao);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_values[0]) * length, index_values, GL_STATIC_DRAW);
+				if (index_values)
+				{
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_values[0]) * length, index_values, GL_STATIC_DRAW);
+				}
 
 				for (unsigned int i = 0; i < m_num; ++i)
 				{
-					if (attribute_values[i]) // nullptr
+					if (attribute_values[i])
 					{
 						glBindBuffer(GL_ARRAY_BUFFER, m_buffers[i]);
 						glBufferData(GL_ARRAY_BUFFER, sizeof(attribute_values[i][0]) * points * m_depth[i], attribute_values[i], GL_STATIC_DRAW);
@@ -125,19 +128,23 @@ namespace px
 
 				fill(points, length, &attribute_values[0], index_values);
 			}
-			inline void fill(unsigned int points, const std::vector<GLfloat*> &attribute_values, const std::vector<GLuint> &index_values)
+			inline void fill(unsigned int points, const std::vector<const GLfloat*> &attribute_values, const std::vector<GLuint> &index_values)
 			{
 				if (attribute_values.size() != m_num)  throw std::runtime_error("vao::fill - attribute num missmatch");
 
-				fill(points, index_values.size(), &attribute_values[0], &index_values[0]);
+				fill(points, index_values.size(), &attribute_values[0], index_values.size() == 0 ? nullptr : &index_values[0]);
 			}
 
-			inline void draw() const
+			inline void draw(GLuint element_type) const
 			{
 				if (!m_init) throw std::runtime_error("vao::draw - not initialized");
 
 				glBindVertexArray(m_vao);
-				glDrawElements(GL_TRIANGLES, m_length, GL_UNSIGNED_INT, 0);
+				glDrawElements(element_type, m_length, GL_UNSIGNED_INT, 0);
+			}
+			inline void draw() const
+			{
+				draw(GL_TRIANGLES);
 			}
 
 			inline void draw(int points, int length, GLfloat** values, GLuint* index_values)

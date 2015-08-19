@@ -42,9 +42,14 @@ namespace px
 			{
 				vao vao;
 				GLuint program;
-			} m_background, m_tiles, m_units;
+			} m_background, m_tiles, m_units, m_scene_vao;
+
+			GLuint m_lightmap, m_lightmap_min, m_scene;
+			GLuint m_scene_texture, m_lightmap_texture, m_lightmap_min_texture;
+			unsigned int m_scene_size;
 
 		private:
+			void setup_scene();
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&);
 			void fill_units(const perception_t&);
