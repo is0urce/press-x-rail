@@ -61,10 +61,10 @@ renderer::renderer(renderer::opengl_handle opengl) : m_camera(camera_default), m
 	m_units.vao.init({ vertice_depth, texcoord_depth, color_depth });
 	m_units.program = glsl::program("shaders\\units");
 
-	m_scene_vao.vao.init({ vertice_depth, texcoord_depth });
-	m_scene_vao.program = glsl::program("shaders\\scene");
+	m_scene.vao.init({ vertice_depth, texcoord_depth });
+	m_scene.program = glsl::program("shaders\\scene");
 
-	glGenFramebuffers(1, &m_scene);
+	glGenFramebuffers(1, &m_scene_frame);
 	glGenFramebuffers(1, &m_lightmap);
 	glGenFramebuffers(1, &m_lightmap);
 
@@ -107,7 +107,7 @@ void renderer::setup_scene()
 		glBindTexture(GL_TEXTURE_2D, m_scene_texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_scene_size, m_scene_size, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, m_scene);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_scene_texture, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("framebuffer not complete");
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -128,7 +128,7 @@ void renderer::setup_scene()
 		indices[1] = indices[5] = 2;
 		indices[2] = 1;
 		indices[4] = 3;
-		m_scene_vao.vao.fill(points_quad, { &vertices[0], &texture[0] }, indices);
+		m_scene.vao.fill(points_quad, { &vertices[0], &texture[0] }, indices);
 	}
 }
 
@@ -142,7 +142,7 @@ renderer::~renderer()
 	glDeleteProgram(m_tiles.program);
 	glDeleteProgram(m_units.program);
 
-	glDeleteFramebuffers(1, &m_scene);
+	glDeleteFramebuffers(1, &m_scene_frame);
 	glDeleteFramebuffers(1, &m_lightmap);
 	glDeleteFramebuffers(1, &m_lightmap);
 
@@ -314,7 +314,7 @@ void renderer::draw(const perception_t &perception, double span)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_scene);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
 	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -347,10 +347,10 @@ void renderer::draw(const perception_t &perception, double span)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glViewport(0, 0, m_scene_size, m_scene_size);
-	glUseProgram(m_scene_vao.program);
-	glUniform1i(glGetUniformLocation(m_scene_vao.program, "img"), 0);
+	glUseProgram(m_scene.program);
+	glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
 	glBindTexture(GL_TEXTURE_2D, m_scene_texture);
-	m_scene_vao.vao.draw();
+	m_scene.vao.draw();
 
 	m_opengl->swap();
 

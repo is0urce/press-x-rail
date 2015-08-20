@@ -20,14 +20,14 @@ namespace
 }
 
 scene::scene() :
-	m_map(new map<tile_t>(cell_range)),
-	m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
+m_map(new map<tile_t>(cell_range)),
+m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 {
 	cell_range.enumerate([&](const point &position)
 	{
 		bool rail = position.Y == 9 || position.Y == 10;
 		auto &t = tile(position);
-		t.appearance() = rail ? '+' : '.';
+		t.appearance({ rail ? (unsigned int)'+' : '.', rail ? color(0.5, 0.6, 0.7) : color(0.2, 0.2, 0.2) });
 		t.transparent(rail);
 		t.traversable(rail);
 	});

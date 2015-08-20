@@ -91,6 +91,7 @@
     <ClInclude Include="src\avatar.h" />
     <ClInclude Include="src\game_control.h" />
     <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\appearance.h" />
     <ClInclude Include="src\key.h" />
     <ClInclude Include="src\key_bindings.h" />
     <ClInclude Include="src\automata.h" />

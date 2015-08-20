@@ -42,9 +42,9 @@ namespace px
 			{
 				vao vao;
 				GLuint program;
-			} m_background, m_tiles, m_units, m_scene_vao;
+			} m_background, m_tiles, m_units, m_scene;
 
-			GLuint m_lightmap, m_lightmap_min, m_scene;
+			GLuint m_lightmap, m_lightmap_min, m_scene_frame;
 			GLuint m_scene_texture, m_lightmap_texture, m_lightmap_min_texture;
 			unsigned int m_scene_size;
 

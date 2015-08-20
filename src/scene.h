@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "appearance.h"
 #include "tile.h"
 #include "map.h"
 
@@ -20,7 +21,7 @@ namespace px
 		class scene
 		{
 		public:
-			typedef tile<unsigned int, 1> tile_t;
+			typedef tile<appearance<unsigned int>, 1> tile_t;
 			typedef std::shared_ptr<unit> unit_ptr;
 			typedef std::map<point, unit_ptr, std::function<bool(const point&, const point&)>> unit_list;
 			typedef std::function<void(unit_ptr)> enum_fn;

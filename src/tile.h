@@ -35,6 +35,7 @@ namespace px
 		public:
 			_A& appearance() { return m_appearance; }
 			const _A& appearance() const { return m_appearance; }
+			void appearance(_A a) { m_appearance = a; }
 
 			bool transparent() const { return m_transparent; }
 			void transparent(bool val) { m_transparent = val; }
