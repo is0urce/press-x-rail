@@ -137,6 +137,16 @@
     <Image Include="PressX.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="config\shaders\ground.frag" />
+    <None Include="config\shaders\ground.vert" />
+    <None Include="config\shaders\scene.frag" />
+    <None Include="config\shaders\scene.vert" />
+    <None Include="config\shaders\tiles.frag" />
+    <None Include="config\shaders\tiles.vert" />
+    <None Include="config\shaders\units.frag" />
+    <None Include="config\shaders\units.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

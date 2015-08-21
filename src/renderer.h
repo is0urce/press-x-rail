@@ -30,7 +30,8 @@ namespace px
 		private:
 			opengl_handle m_opengl;
 			int m_width, m_height;
-			double m_camera;
+			double m_aspect;
+			double m_scale;
 
 			struct s_font
 			{
@@ -60,6 +61,7 @@ namespace px
 
 			void draw(const perception_t &perception, double phase);
 			void scale(double pan);
+			point world(const point &screen) const;
 		};
 	}
 }

@@ -11,6 +11,9 @@ namespace px
 	{
 		class  game_control
 		{
+		public:
+			typedef unsigned int button_t;
+
 		private:
 			bool m_shutdown;
 
@@ -21,6 +24,8 @@ namespace px
 		protected:
 			virtual bool step_control(const point& move) = 0;
 			virtual bool command_control(key command) = 0;
+			virtual bool hover_control(point position) = 0;
+			virtual bool click_control(point position, button_t button) = 0;
 
 		public:
 			bool step(const point& move)
@@ -60,6 +65,14 @@ namespace px
 					break;
 				}
 				return result;
+			}
+			bool hover(point position)
+			{
+				return hover_control(position);
+			}
+			bool click(point position, button_t button)
+			{
+				return click_control(position, button);
 			}
 			void shutdown(bool shutdown)
 			{

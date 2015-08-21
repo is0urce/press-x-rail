@@ -22,6 +22,8 @@ namespace px
 			perception m_perception;
 			rl::scene m_scene;
 			std::shared_ptr<rl::unit> m_player;
+			std::weak_ptr<rl::unit> m_target;
+			point m_hover;
 
 		public:
 			game();
@@ -30,6 +32,8 @@ namespace px
 		protected:
 			virtual bool step_control(const point& move) override;
 			virtual bool command_control(key command) override;
+			virtual bool hover_control(point position) override;
+			virtual bool click_control(point position, button_t button) override;
 
 		private:
 			void fill_perception();

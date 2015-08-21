@@ -42,7 +42,7 @@ namespace
 	static const unsigned int font_size_unit = 32;
 }
 
-renderer::renderer(renderer::opengl_handle opengl) : m_camera(camera_default), m_scene_size(0)
+renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera_default), m_scene_size(0)
 {
 	if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
 
@@ -298,6 +298,8 @@ void renderer::draw(const perception_t &perception, double span)
 
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;
+	m_aspect = m_width;
+	m_aspect /= m_height;
 
 	setup_scene(); // framebuffers & their textures
 
@@ -306,8 +308,8 @@ void renderer::draw(const perception_t &perception, double span)
 	fill_units(perception);
 
 	point center = perception.range() / 2;
-	GLfloat aspect = (GLfloat)(m_width) / m_height;
-	GLfloat scale = (GLfloat)m_camera;
+	GLfloat aspect = (GLfloat)m_aspect;
+	GLfloat scale = (GLfloat)m_scale;
 	GLfloat x_center = (GLfloat)center.X;
 	GLfloat y_center = (GLfloat)center.Y;
 
@@ -364,7 +366,16 @@ void renderer::draw(const perception_t &perception, double span)
 
 void renderer::scale(double pan)
 {
-	m_camera *= 1.0 + (pan / 1000.0);
-	m_camera = (std::min)(m_camera, 10.0);
-	m_camera = (std::max)(m_camera, 0.01);
+	m_scale *= 1.0 + (pan / 1000.0);
+	m_scale = (std::min)(m_scale, 10.0);
+	m_scale = (std::max)(m_scale, 0.01);
+}
+
+point renderer::world(const point &screen) const
+{
+	double fx = 2.0 * screen.X / m_width - 1.0;
+	double fy = -2.0 * screen.Y / m_height + 1.0;
+	fx = std::round(fx / m_scale);
+	fy = std::round(fy / m_scale / m_aspect);
+	return { (int)fx, (int)fy };
 }

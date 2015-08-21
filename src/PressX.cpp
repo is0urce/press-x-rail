@@ -169,18 +169,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-	{
-		if (!g_bindings || !g_game) break;
-
-		key vkey;
-		if (g_bindings->find(wParam, vkey))
 		{
-			if (vkey == key::command_cancel) g_game->shutdown();
+			if (!g_bindings || !g_game) break;
 
-			g_game->press(vkey);
+			key vkey;
+			if (g_bindings->find(wParam, vkey))
+			{
+				if (vkey == key::command_cancel) g_game->shutdown();
+
+				g_game->press(vkey);
+			}
 		}
-	}
-	break;
+		break;
+	case WM_MOUSEMOVE:
+		{
+			auto position = g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			g_game->hover(position);
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		{
+			auto position = g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			g_game->click(position, 1);
+		}
+		break;
+	case WM_RBUTTONDOWN:
+		{
+			auto position = g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			g_game->click(position, 2);
+		}
+		break;
+	case WM_MOUSEWHEEL:
+		g_graphics->scale(GET_WHEEL_DELTA_WPARAM(wParam));
+		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

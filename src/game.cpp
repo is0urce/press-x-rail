@@ -67,3 +67,25 @@ const perception& game::perception() const
 {
 	return m_perception;
 }
+
+bool game::click_control(point positon, game::button_t button)
+{
+	hover_control(positon);
+	if (m_player && button == 1)
+	{
+		int dx = (positon.X == 0 || std::abs(positon.X) < std::abs(positon.Y) / 2) ? 0 : positon.X > 0 ? 1 : -1;
+		int dy = (positon.Y == 0 || std::abs(positon.Y) < std::abs(positon.X) / 2) ? 0 : positon.Y > 0 ? 1 : -1;
+		return step_control({ dx, dy });
+	}
+	return false;
+}
+
+bool game::hover_control(point position)
+{
+	if (m_player)
+	{
+		m_hover = m_player->position() + position;
+		m_target = m_scene.blocking(m_hover);
+	}
+	return true;
+}
