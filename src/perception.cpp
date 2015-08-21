@@ -20,7 +20,7 @@ namespace
 perception::perception(point range) :
 	m_appearance(range)
 {
-	init(range, point());
+	init(range, {});
 }
 
 perception::perception(point range, point start) :

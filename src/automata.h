@@ -26,16 +26,16 @@ namespace px
 	private:
 
 		// clip out-of-range access to bounds
-		_C& sample(point position)
+		const _C& sample(const point &position) const
 		{
 			return at(position.clamped(point(0, 0), range().moved(-1, -1)));
 		}
 
 	public:
 		template<typename _A>
-		void execute(std::function<_A(_A, const _C& element)> fold, _A start, std::function<_C(_A)> select, int generations)
+		void execute(std::function<_A(_A, const _C& element)> fold, _A start, std::function<_C(_A)> select, unsigned int generations)
 		{
-			for (int i = 0; i < generations; ++i)
+			for (unsigned int i = 0; i < generations; ++i)
 			{
 				std::unique_ptr<map<_C>> generation(new map<_C>(range(), [&] (const point &pos)
 				{
@@ -59,7 +59,7 @@ namespace px
 		template<typename _A>
 		void execute(std::function<_A(_A, const _C& element)> fold, _A start, std::function<_C(_A)> select)
 		{
-			Execute(fold, start, select, 1);
+			execute(fold, start, select, 1);
 		}
 	};
 }

@@ -34,9 +34,9 @@ namespace
 	static const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
 	static const unsigned int index_quad = 6;
 
-	static const char* font_path_ui = "code2000.ttf";
-	static const char* font_path_notify = "code2000.ttf";
-	static const char* font_path_unit = "code2000.ttf";
+	static const char *font_path_ui = "code2000.ttf";
+	static const char *font_path_notify = "code2000.ttf";
+	static const char *font_path_unit = "code2000.ttf";
 	static const unsigned int font_size_ui = 32;
 	static const unsigned int font_size_notify = 16;
 	static const unsigned int font_size_unit = 32;

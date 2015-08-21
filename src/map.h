@@ -79,7 +79,7 @@ namespace px
 		void swap(map &that)
 		{
 			std::swap(m_range, that.m_range);
-			m_tiles.swap(that.m_tiles);
+			std::swap(m_tiles, that.m_tiles);
 		}
 		void resize(int w, int h)
 		{
