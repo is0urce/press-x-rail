@@ -349,6 +349,7 @@ void renderer::draw(const perception_t &perception, double span)
 	glViewport(0, 0, m_scene_size, m_scene_size);
 	glUseProgram(m_scene.program);
 	glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
+	glUniform3f(glGetUniformLocation(m_scene.program, "rng"), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100));
 	glBindTexture(GL_TEXTURE_2D, m_scene_texture);
 	m_scene.vao.draw();
 
