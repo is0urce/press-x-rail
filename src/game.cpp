@@ -1,4 +1,7 @@
 // name: game.cpp
+// type: c++
+// desc: class implementation
+// auth: is0urce
 
 #include "stdafx.h"
 
@@ -23,10 +26,6 @@ game::game() : m_perception(perc_reach)
 	m_player->appearance('@');
 
 	m_scene.add(m_player, { 5, 5 });
-
-	std::shared_ptr<rl::unit> mob(new rl::unit());
-	mob->appearance('g');
-	m_scene.add(mob, { 6, 6 });
 
 	fill_perception();
 }

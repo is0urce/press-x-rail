@@ -8,6 +8,7 @@
 #include "scene.h"
 
 #include "unit.h"
+#include "vector.h"
 
 using namespace px;
 using namespace px::rl;
@@ -21,17 +22,9 @@ namespace
 
 scene::scene()
 	:
-	m_map(new map(cell_range)),
 	m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 {
-	cell_range.enumerate([&](const point &position)
-	{
-		bool rail = position.Y == 9 || position.Y == 10;
-		auto &t = tile(position);
-		t.appearance({ rail ? (unsigned int)'+' : '.', rail ? color(0.5, 0.6, 0.7) : color(0.2, 0.2, 0.2) });
-		t.transparent(rail);
-		t.traversable(rail);
-	});
+	focus({ 0, 0 }, true);
 }
 
 scene::~scene()
@@ -40,12 +33,12 @@ scene::~scene()
 
 scene::tile_t& scene::tile(const point &position)
 {
-	return m_map->in_range(position) ? m_map->at(position) : m_default;
+	return m_map->at(position, m_default);
 }
 
 const scene::tile_t& scene::tile(const point &position) const
 {
-	return m_map->in_range(position) ? m_map->at(position) : m_default;
+	return m_map->at(position, m_default);
 }
 
 bool scene::transparent(const point &point) const
@@ -149,7 +142,17 @@ scene::unit_ptr scene::blocking(const point& place) const
 	return hint == m_units.end() ? nullptr : hint->second;
 }
 
+void scene::focus(point center, bool force)
+{
+	point focus = (vector(center) / cell_range).floor();
+	if (force || m_focus != focus)
+	{
+		m_focus = focus;
+		m_map.swap(m_world.generate(m_focus, [this](unit_ptr unit) { add(unit); }));
+	}
+}
+
 void scene::focus(point center)
 {
-	m_focus = center;
+	focus(center, false);
 }

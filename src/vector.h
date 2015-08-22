@@ -24,9 +24,13 @@ namespace px
 		vector& operator+=(const vector &rhs) { move(rhs); return *this; }
 		vector& operator-=(const vector &rhs) { move(-rhs); return *this; }
 		vector operator*(component c) const { return { X * c, Y * c }; };
+		vector operator*(const vector &v) const { return { X * v.X, Y * v.Y }; }
 		vector operator/(component c) const { return { X / c, Y / c }; };
+		vector operator/(const vector &v) const { return{ X / v.X, Y / v.Y }; };
 		vector& operator*=(component c) { *this = *this * c; return *this; };
+		vector& operator*=(const vector &v) { *this = *this * v; return *this; };
 		vector& operator/=(component c) { *this = *this / c; return *this; };
+		vector& operator/=(const vector &v) { *this = *this / v; return *this; };
 
 		vector moved(const vector &move) const { vector result = *this; return result += move; }
 		vector multiplied(const vector &c) const { return { X * c.X, Y * c.Y }; }
@@ -35,6 +39,10 @@ namespace px
 		vector clamped(const vector &min, const vector &max) const { return vector((std::min)((std::max)(min.X, X), max.X), (std::min)((std::max)(min.Y, Y), max.Y)); }
 		void normalize() { auto len = magnitude(); X /= len; Y /= len; }
 		vector normalized() { vector result = *this; result.normalize(); return result; }
+
+		point floor() const { return { (point::component)std::floor(X), (point::component)std::floor(Y) }; }
+		point ceil() const { return { (point::component)std::ceil(X), (point::component)std::ceil(Y) }; }
+		point round() const { return { (point::component)std::round(X), (point::component)std::round(Y) }; }
 	};
 
 	inline vector operator+(vector lhs, const vector &rhs) { lhs += rhs; return lhs; }

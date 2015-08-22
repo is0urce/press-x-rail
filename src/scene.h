@@ -8,6 +8,7 @@
 #include "appearance.h"
 #include "tile.h"
 #include "map.h"
+#include "world.h"
 
 #include <memory>
 #include <map>
@@ -22,15 +23,16 @@ namespace px
 		{
 		public:
 			typedef tile<appearance<unsigned int>, 1> tile_t;
-			typedef map<tile_t> map;
+			typedef map<tile_t> map_t;
 			typedef std::shared_ptr<unit> unit_ptr;
 			typedef std::map<point, unit_ptr, std::function<bool(const point&, const point&)>> unit_list;
 			typedef int timer_t;
 
 			// attributes
 		private:
+			world m_world;
 			tile_t m_default;
-			std::unique_ptr<map> m_map;
+			std::unique_ptr<map_t> m_map;
 			point m_focus;
 			unit_list m_units;
 
@@ -62,6 +64,7 @@ namespace px
 
 			void tick(timer_t ticks);
 			void focus(point center);
+			void focus(point center, bool force);
 		};
 	}
 }

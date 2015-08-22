@@ -1,3 +1,8 @@
+// name: game.h
+// type: c++ header
+// desc: class declaration
+// auth: is0urce
+
 #pragma once
 
 #include "game_control.h"

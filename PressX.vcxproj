@@ -92,6 +92,7 @@
     <ClInclude Include="src\game_control.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\appearance.h" />
+    <ClInclude Include="src\world.h" />
     <ClInclude Include="src\key.h" />
     <ClInclude Include="src\key_bindings.h" />
     <ClInclude Include="src\automata.h" />
@@ -130,6 +131,7 @@
     </ClCompile>
     <ClCompile Include="src\unit.cpp" />
     <ClCompile Include="src\wingl.cpp" />
+    <ClCompile Include="src\world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="src\PressX.rc" />
