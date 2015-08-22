@@ -100,6 +100,7 @@
     <ClInclude Include="src\font.h" />
     <ClInclude Include="src\glsl.h" />
     <ClInclude Include="src\perception.h" />
+    <ClInclude Include="src\performance_timer.h" />
     <ClInclude Include="src\scene.h" />
     <ClInclude Include="src\tile.h" />
     <ClInclude Include="src\map.h" />

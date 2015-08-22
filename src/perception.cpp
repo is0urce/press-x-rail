@@ -151,6 +151,11 @@ point perception::start_previous() const
 	return m_start_prev;
 }
 
+point perception::movement() const
+{
+	return m_move;
+}
+
 void perception::swap(const point& start)
 {
 	m_units.clear();

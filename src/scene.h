@@ -45,6 +45,7 @@ namespace px
 			tile_t& tile(const point &position);
 			const tile_t& tile(const point &position) const;
 			const unit_list& units() const;
+			void add(unit_ptr unit);
 			void add(unit_ptr unit, const point& position);
 			void move(unit_ptr unit, const point& position);
 			void remove(unit_ptr unit);

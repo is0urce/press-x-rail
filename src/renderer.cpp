@@ -66,14 +66,13 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	glGenFramebuffers(1, &m_scene_frame);
 	glGenFramebuffers(1, &m_lightmap);
-	glGenFramebuffers(1, &m_lightmap);
+	glGenFramebuffers(1, &m_lightmap_min);
 
 	glEnable(GL_TEXTURE_2D);
 
 	glGenTextures(1, &m_ui.texture);
 	glGenTextures(1, &m_notify.texture);
 	glGenTextures(1, &m_glyph.texture);
-
 	glGenTextures(1, &m_scene_texture);
 
 	const font::font_texture &ui_texture = m_ui.font->texture();
@@ -87,11 +86,6 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); // filtering, sharp switching between mipmaps
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void renderer::setup_scene()
@@ -144,7 +138,7 @@ renderer::~renderer()
 
 	glDeleteFramebuffers(1, &m_scene_frame);
 	glDeleteFramebuffers(1, &m_lightmap);
-	glDeleteFramebuffers(1, &m_lightmap);
+	glDeleteFramebuffers(1, &m_lightmap_min);
 
 	glDeleteTextures(1, &m_ui.texture);
 	glDeleteTextures(1, &m_notify.texture);
@@ -292,7 +286,7 @@ void renderer::fill_units(const perception_t &perception)
 	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
 }
 
-void renderer::draw(const perception_t &perception, double span)
+void renderer::draw(const perception_t &perception, double time)
 {
 	if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
 
@@ -307,7 +301,8 @@ void renderer::draw(const perception_t &perception, double span)
 	fill_tiles(perception);
 	fill_units(perception);
 
-	point center = perception.range() / 2;
+	double movement_phase = std::min(time * 5.0, 1.0);
+	vector center = perception.range() / 2 - (vector)perception.movement() * (1.0 - movement_phase);
 	GLfloat aspect = (GLfloat)m_aspect;
 	GLfloat scale = (GLfloat)m_scale;
 	GLfloat x_center = (GLfloat)center.X;

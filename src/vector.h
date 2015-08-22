@@ -32,8 +32,15 @@ namespace px
 			Y -= rhs.Y;
 			return *this;
 		}
+		vector operator*(component c) const { return { X * c, Y * c }; };
+		vector operator/(component c) const { return { X / c, Y / c }; };
+		vector operator*=(component c) { *this = *this * c; return *this; };
+		vector operator/=(component c) { *this = *this / c; return *this; };
 
 		vector moved(const vector& move) const { vector result = *this; return result += move; }
+		vector multiplied(const vector &c) const { return{ X * c.X, Y * c.Y }; }
+		vector multiplied(component w, component h) const { return multiplied({ w, h }); }
+		vector multiplied(component c) const { return multiplied({ c, c }); }
 		vector clamped(const vector& min, const vector& max) const { return vector((std::min)((std::max)(min.X, X), max.X), (std::min)((std::max)(min.Y, Y), max.Y)); }
 		void normalize() { auto len = magnitude(); X /= len; Y /= len; }
 		vector normalized() { vector result = *this; result.normalize(); return result; }

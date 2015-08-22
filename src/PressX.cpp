@@ -2,8 +2,10 @@
 //
 
 #include "stdafx.h"
+
 #include "PressX.h"
 
+#include "performance_timer.h"
 #include "renderer.h"
 #include "wingl.h"
 #include "key_bindings.h"
@@ -59,6 +61,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings.reset(new key_bindings<WPARAM, key>());
 		g_game.reset(new game());
 
+		px::timer time;
+		std::srand((unsigned int)time.counter());
+
 		g_bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
 		g_bindings->bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
 		g_bindings->bind('S', VK_DOWN, VK_NUMPAD2, key::move_south);
@@ -67,10 +72,23 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind(VK_RETURN, key::command_ok);
 		g_bindings->bind(VK_ESCAPE, key::command_cancel);
 
+		auto turn = g_game->perception().version();
 		bool run = true;
 		while (run && !g_game->finished())
 		{
-			// windows dispatcher
+			// restart timer on new perception frame
+			auto &perception = g_game->perception();
+			auto current = perception.version();
+			if (turn != current)
+			{
+				turn = current;
+				time.start();
+			}
+
+			// draw before windows destruction
+			g_graphics->draw(perception, time.counter());
+
+			// dispatch windows messages
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
 			{
 				run &= (GetMessage(&msg, NULL, 0, 0) == TRUE);
@@ -80,7 +98,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 					DispatchMessage(&msg);
 				}
 			}
-			g_graphics->draw(g_game->perception(), 0);
 		}
 	}
 	catch (std::exception &exc)
@@ -169,37 +186,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
+	{
+		if (!g_bindings || !g_game) break;
+
+		key vkey;
+		if (g_bindings->find(wParam, vkey))
 		{
-			if (!g_bindings || !g_game) break;
+			if (vkey == key::command_cancel) g_game->shutdown();
 
-			key vkey;
-			if (g_bindings->find(wParam, vkey))
-			{
-				if (vkey == key::command_cancel) g_game->shutdown();
-
-				g_game->press(vkey);
-			}
+			g_game->press(vkey);
 		}
-		break;
+	}
+	break;
 	case WM_MOUSEMOVE:
-		{
-			auto position = g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-			g_game->hover(position);
-		}
+		if (!g_game || !g_graphics) break;
+		g_game->hover(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }));
 		break;
 	case WM_LBUTTONDOWN:
-		{
-			auto position = g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-			g_game->click(position, 1);
-		}
+		if (!g_game || !g_graphics) break;
+		g_game->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 1);
 		break;
 	case WM_RBUTTONDOWN:
-		{
-			auto position = g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-			g_game->click(position, 2);
-		}
+		if (!g_game || !g_graphics) break;
+		g_game->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 2);
 		break;
 	case WM_MOUSEWHEEL:
+		if (!g_graphics) break;
 		g_graphics->scale(GET_WHEEL_DELTA_WPARAM(wParam));
 		break;
 	default:

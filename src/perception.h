@@ -80,6 +80,7 @@ namespace px
 			void start(point point);
 			point start() const;
 			point start_previous() const;
+			point movement() const;
 
 			//Point GetMovement() const;
 			void swap(const point &start);

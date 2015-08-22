@@ -79,6 +79,13 @@ bool scene::traversable(const point &point, unsigned int layer) const
 	return find->second->traversable();
 }
 
+void scene::add(unit_ptr unit)
+{
+	if (!unit) throw new std::logic_error("scene::add - unit is null");
+
+	add(unit, unit->position());
+}
+
 void scene::add(unit_ptr unit, const point &position)
 {
 	if (!unit) throw new std::logic_error("scene::add - unit is null");
