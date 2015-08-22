@@ -15,13 +15,14 @@ using namespace px::rl;
 
 namespace
 {
-	static const unsigned int cell_width = 100;
-	static const unsigned int cell_height = cell_width;
-	static const point cell_range(cell_width, cell_height);
+	static const unsigned int sight_reach = 1;
+	static const point sight_range(sight_reach * 2 + 1, sight_reach * 2 + 1);
+	static const point sight_center(sight_reach, sight_reach);
 }
 
 scene::scene()
 	:
+	m_maps(sight_range),
 	m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 {
 	focus({ 0, 0 }, true);
@@ -33,12 +34,16 @@ scene::~scene()
 
 scene::tile_t& scene::tile(const point &position)
 {
-	return m_map->at(position, m_default);
+	point c = cell(position);
+	auto *map = select_map(c);
+	return map ? map->at(position - c * world::cell_range) : m_default;
 }
 
 const scene::tile_t& scene::tile(const point &position) const
 {
-	return m_map->at(position, m_default);
+	point c = cell(position);
+	auto *map = select_map(c);
+	return map ? map->at(position - c * world::cell_range) : m_default;
 }
 
 bool scene::transparent(const point &point) const
@@ -127,9 +132,7 @@ const scene::unit_list& scene::units() const
 
 void scene::enumerate_units(std::function<void(scene::unit_ptr)> fn) const
 {
-	auto i = m_units.begin();
-	auto end = m_units.end();
-	while (i != end)
+	for (auto i = m_units.begin(), end = m_units.end(); i != end;)
 	{
 		fn(i->second);
 		++i;
@@ -142,17 +145,48 @@ scene::unit_ptr scene::blocking(const point& place) const
 	return hint == m_units.end() ? nullptr : hint->second;
 }
 
-void scene::focus(point center, bool force)
+void scene::focus(point absolute, bool force)
 {
-	point focus = (vector(center) / cell_range).floor();
+	point focus = cell(absolute);
 	if (force || m_focus != focus)
 	{
 		m_focus = focus;
-		m_map.swap(m_world.generate(m_focus, [this](unit_ptr unit) { add(unit); }));
+
+		// generate neighbour maps
+		sight_range.enumerate([&](const point &range_point)
+		{
+			m_maps.at(range_point).swap(m_world.generate(m_focus + range_point - sight_center, [&](unit_ptr unit) { add(unit); }));
+		});
+
+		// store out-of-range units back in world
+		for (auto i = m_units.begin(), end = m_units.end(); i != end; )
+		{
+			if (!select_map(cell(i->first)))
+			{
+				m_world.store(i->second);
+				i = m_units.erase(i);
+			}
+			else
+			{
+				++i;
+			}
+		}
 	}
 }
 
-void scene::focus(point center)
+void scene::focus(point absolute)
 {
-	focus(center, false);
+	focus(absolute, false);
+}
+
+point scene::cell(const point &absolute) const
+{
+	return (vector(absolute) / world::cell_range).floor();
+}
+
+scene::map_t* scene::select_map(const point &cell) const
+{
+	//point p = cell - m_focus + sight_center;
+	//if (m_maps.in_range(p)) return m_maps.at(p).get(); else return nullptr;
+	return m_maps.at(cell - m_focus + sight_center, nullptr).get();
 }

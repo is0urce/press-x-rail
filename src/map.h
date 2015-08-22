@@ -95,7 +95,7 @@ namespace px
 		_T& at(const point &position, _T& outer) { return in_range(position) ? m_tiles[m_range.X * position.Y + position.X] : outer; }
 		const _T& at(const point& position) const
 		{
-			if (!in_range(position)) throw std::logic_error("_T& map<_T>::at(point position) argument out of range");
+			if (!in_range(position)) throw std::logic_error("const _T& map<_T>::at(point position) argument out of range");
 			return m_tiles[m_range.X * position.Y + position.X];
 		}
 		_T& at(const point& position)

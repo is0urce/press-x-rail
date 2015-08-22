@@ -5,9 +5,7 @@
 
 #pragma once
 
-#include "appearance.h"
 #include "tile.h"
-#include "map.h"
 #include "world.h"
 
 #include <memory>
@@ -22,17 +20,18 @@ namespace px
 		class scene
 		{
 		public:
-			typedef tile<appearance<unsigned int>, 1> tile_t;
-			typedef map<tile_t> map_t;
-			typedef std::shared_ptr<unit> unit_ptr;
+			typedef world::tile_t tile_t;
+			typedef world::map_t map_t;
+			typedef std::unique_ptr<map_t> map_ptr;
+			typedef world::unit_ptr unit_ptr;
 			typedef std::map<point, unit_ptr, std::function<bool(const point&, const point&)>> unit_list;
 			typedef int timer_t;
 
 			// attributes
 		private:
 			world m_world;
+			map<map_ptr> m_maps;
 			tile_t m_default;
-			std::unique_ptr<map_t> m_map;
 			point m_focus;
 			unit_list m_units;
 
@@ -43,6 +42,10 @@ namespace px
 		private:
 			scene(const scene &none); // disable copy
 
+		private:
+			point cell(const point &absolute) const;
+			map_t* select_map(const point &cell) const;
+
 		public:
 			// tiles
 			tile_t& tile(const point &position);
@@ -51,8 +54,8 @@ namespace px
 			unit_ptr blocking(const point &position) const;
 			const unit_list& units() const;
 			void add(unit_ptr unit);
-			void add(unit_ptr unit, const point& position);
-			void move(unit_ptr unit, const point& position);
+			void add(unit_ptr unit, const point &position);
+			void move(unit_ptr unit, const point &position);
 			void remove(unit_ptr unit);
 			void clear();
 			unsigned int count() const;
@@ -63,8 +66,8 @@ namespace px
 			bool traversable(const point &position, unsigned int layer) const;
 
 			void tick(timer_t ticks);
-			void focus(point center);
-			void focus(point center, bool force);
+			void focus(point absolute);
+			void focus(point absolute, bool force);
 		};
 	}
 }

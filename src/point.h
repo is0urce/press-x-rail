@@ -24,9 +24,13 @@ namespace px
 		point& operator+=(const point &rhs) { move(rhs); return *this; }
 		point& operator-=(const point &rhs) { move(-rhs); return *this; }
 		point operator*(component c) const { return { X * c, Y * c }; };
+		point operator*(const point &c) const { return { X * c.X, Y * c.Y }; };
 		point operator/(component c) const { return { X / c, Y / c }; };
+		point operator/(const point &c) const { return { X / c.X, Y / c.Y }; };
 		point& operator*=(component c) { *this = *this * c; return *this; };
+		point& operator*=(const point &c) { *this = *this * c; return *this; };
 		point& operator/=(component c) { *this = *this / c; return *this; };
+		point& operator/=(const point &c) { *this = *this / c; return *this; };
 
 		point moved(const point& move) const { point result = *this; return result += move; }
 		point moved(component x, component y) const { return moved({ x, y }); }
