@@ -19,9 +19,10 @@ namespace
 	static const point cell_range(cell_width, cell_height);
 }
 
-scene::scene() :
-m_map(new map(cell_range)),
-m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
+scene::scene()
+	:
+	m_map(new map(cell_range)),
+	m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 {
 	cell_range.enumerate([&](const point &position)
 	{
@@ -129,6 +130,17 @@ void scene::tick(scene::timer_t ticks)
 const scene::unit_list& scene::units() const
 {
 	return m_units;
+}
+
+void scene::enumerate_units(std::function<void(scene::unit_ptr)> fn) const
+{
+	auto i = m_units.begin();
+	auto end = m_units.end();
+	while (i != end)
+	{
+		fn(i->second);
+		++i;
+	}
 }
 
 scene::unit_ptr scene::blocking(const point& place) const

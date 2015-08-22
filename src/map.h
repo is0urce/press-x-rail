@@ -92,7 +92,7 @@ namespace px
 			swap(map(range));
 		}
 		const _T& at(const point &position, const _T& outer) const { return in_range(position) ? m_tiles[m_range.X * position.Y + position.X] : outer; }
-		_T& at(const point &point, _T& outer) { return return in_range(position) ? m_tiles[m_range.X * position.Y + position.X] : outer; }
+		_T& at(const point &position, _T& outer) { return in_range(position) ? m_tiles[m_range.X * position.Y + position.X] : outer; }
 		const _T& at(const point& position) const
 		{
 			if (!in_range(position)) throw std::logic_error("_T& map<_T>::at(point position) argument out of range");

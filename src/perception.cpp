@@ -119,7 +119,8 @@ void perception::ground(const point &position, const perception::ground_t &groun
 void perception::add_unit(perception::appearance_t appearance, point position, point position_previous)
 {
 	m_units.emplace_back(appearance, position - m_start, position_previous - m_start_prev);
-	m_hide->at(position - m_start) = true;
+	bool sink;
+	m_hide->at(position - m_start, sink) = true;
 	++m_version;
 }
 

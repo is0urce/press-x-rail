@@ -25,7 +25,6 @@ namespace px
 			typedef map<tile_t> map;
 			typedef std::shared_ptr<unit> unit_ptr;
 			typedef std::map<point, unit_ptr, std::function<bool(const point&, const point&)>> unit_list;
-			typedef std::function<void(unit_ptr)> enum_fn;
 			typedef int timer_t;
 
 			// attributes
@@ -55,7 +54,7 @@ namespace px
 			void remove(unit_ptr unit);
 			void clear();
 			unsigned int count() const;
-			void enumerate_units(enum_fn fn) const;
+			void enumerate_units(std::function<void(unit_ptr)> fn) const;
 			// both
 			bool transparent(const point &position) const;
 			bool traversable(const point &position) const;

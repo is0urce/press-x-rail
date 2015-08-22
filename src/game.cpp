@@ -24,6 +24,10 @@ game::game() : m_perception(perc_reach)
 
 	m_scene.add(m_player, { 5, 5 });
 
+	std::shared_ptr<rl::unit> mob(new rl::unit());
+	mob->appearance('g');
+	m_scene.add(mob, { 6, 6 });
+
 	fill_perception();
 }
 
@@ -34,8 +38,16 @@ bool game::step_control(const point &move)
 	if (m_player)
 	{
 		point destination = m_player->position() + move;
-		m_scene.focus(destination);
-		m_scene.move(m_player, destination);
+		auto blocking = m_scene.blocking(destination);
+		if (blocking)
+		{
+			// attack
+		}
+		else
+		{
+			m_scene.focus(destination);
+			m_scene.move(m_player, destination);
+		}
 
 		fill_perception();
 	}
@@ -63,7 +75,10 @@ void game::fill_perception()
 	});
 
 	// units
-	m_perception.add_unit(m_player->appearance(), m_player->position(), m_player->previous_position());
+	m_scene.enumerate_units([&](rl::scene::unit_ptr unit)
+	{
+		m_perception.add_unit(unit->appearance(), unit->position(), unit->previous_position());
+	});
 }
 
 const perception& game::perception() const
@@ -76,19 +91,27 @@ bool game::click_control(point positon, game::button_t button)
 	hover_control(positon);
 	if (m_player && button == 1)
 	{
-		int dx = (positon.X == 0 || std::abs(positon.X) < std::abs(positon.Y) / 2) ? 0 : positon.X > 0 ? 1 : -1;
-		int dy = (positon.Y == 0 || std::abs(positon.Y) < std::abs(positon.X) / 2) ? 0 : positon.Y > 0 ? 1 : -1;
-		return step_control({ dx, dy });
+		auto target = m_target.lock();
+		if (target)
+		{
+			return true;
+		}
+		else
+		{
+			int dx = (positon.X == 0 || std::abs(positon.X) < std::abs(positon.Y) / 2) ? 0 : positon.X > 0 ? 1 : -1;
+			int dy = (positon.Y == 0 || std::abs(positon.Y) < std::abs(positon.X) / 2) ? 0 : positon.Y > 0 ? 1 : -1;
+			return step_control({ dx, dy });
+		}
 	}
 	return false;
 }
 
 bool game::hover_control(point position)
 {
+	m_hover = position;
 	if (m_player)
 	{
-		m_hover = m_player->position() + position;
-		m_target = m_scene.blocking(m_hover);
+		m_target = m_scene.blocking(m_player->position() + m_hover);
 	}
 	return true;
 }
