@@ -34,7 +34,7 @@ namespace px
 		// mutations
 
 		void move(const coordinate& move) { X += move.X; Y += move.Y; }
-		void move(component x, component y) { move(coordinate(x, y)); }
+		void move(component x, component y) { move({ x, y }); }
 		void multiply(const coordinate& c) { X *= c.X; Y *= c.Y; }
 		void multiply(component w, component h) { X *= w, Y *= h; }
 		void multiply(component c) { multiply(c, c); }
@@ -76,7 +76,6 @@ namespace px
 		bool in_range(const coordinate &start, const coordinate &range) const { return !(X < start.X) && !(Y < start.Y) && X < start.X + range.X && Y < start.Y + range.Y; }
 		bool in_range(const coordinate &range) const { return !(X < 0) && !(Y < 0) && X < range.X && Y < range.Y; }
 		auto size()-> decltype(X * Y) const { return X * Y; }
-
 	};
 
 	// copmare operators

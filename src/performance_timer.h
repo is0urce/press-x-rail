@@ -19,11 +19,11 @@ namespace px
 		__int64 m_start;
 
 	public:
-		timer() { start(); }
-		timer(bool start_timer) { if (start_timer) start(); }
+		timer() { restart(); }
+		timer(bool start_timer) { if (start_timer) restart(); else m_freq = 1; }
 		~timer() {}
 
-		void start()
+		void restart()
 		{
 			LARGE_INTEGER li;
 			if (!QueryPerformanceFrequency(&li))
@@ -42,7 +42,7 @@ namespace px
 		{
 			LARGE_INTEGER li;
 			QueryPerformanceCounter(&li);
-			return double(li.QuadPart - m_start) / m_freq;
+			return (li.QuadPart - m_start) / m_freq;
 		}
 	};
 }

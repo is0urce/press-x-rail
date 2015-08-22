@@ -61,8 +61,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings.reset(new key_bindings<WPARAM, key>());
 		g_game.reset(new game());
 
-		px::timer time;
+		px::timer time(false);
 		std::srand((unsigned int)time.counter());
+		time.restart();
 
 		g_bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
 		g_bindings->bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
@@ -82,7 +83,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			if (turn != current)
 			{
 				turn = current;
-				time.start();
+				time.restart();
 			}
 
 			// draw before windows destruction
@@ -111,7 +112,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	g_bindings.reset();
 	g_game.reset();
 
+#ifdef _DEBUG
 	_CrtDumpMemoryLeaks();
+#endif
 
 	return (int)msg.wParam;
 }
