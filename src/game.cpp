@@ -33,7 +33,10 @@ bool game::step_control(const point &move)
 {
 	if (m_player)
 	{
-		m_player->position(m_player->position() + move);
+		point destination = m_player->position() + move;
+		m_scene.focus(destination);
+		m_scene.move(m_player, destination);
+
 		fill_perception();
 	}
 	return true;

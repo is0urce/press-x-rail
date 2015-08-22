@@ -20,7 +20,7 @@ namespace
 }
 
 scene::scene() :
-m_map(new map<tile_t>(cell_range)),
+m_map(new map(cell_range)),
 m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 {
 	cell_range.enumerate([&](const point &position)
@@ -135,4 +135,9 @@ scene::unit_ptr scene::blocking(const point& place) const
 {
 	auto hint = m_units.find(place);
 	return hint == m_units.end() ? nullptr : hint->second;
+}
+
+void scene::focus(point center)
+{
+	m_focus = center;
 }
