@@ -28,15 +28,13 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 	world::map_ptr map(new map_t(cell_range));
 	point offset = cell * cell_range;
 
-	int w = cell_range.X;
-	int h = cell_range.Y;
+	// generate
 	automata<bool> walls(cell_range);
 	std::srand(cell.X + cell.Y * 911);
 	walls.fill_indexed([](const point& p) { return std::rand() % 100 < 42; });
 	walls.execute<unsigned int>([](unsigned int summ, bool element) { return summ + (element ? 1 : 0); }, 0, [](int summ) { return summ == 0 || summ >= 5; }, 4);
 
-		// sele
-
+	// fill
 	cell_range.enumerate([&](const point &position)
 	{
 		bool floor = (position.Y > 5 && position.Y < 15) || !walls.at(position) && position.Y != 0 && position.Y != cell_range.Y - 1;
@@ -48,8 +46,8 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 		t.transparent(floor);
 		t.traversable(floor);
 	});
-	//map->at(point(0, 0)).appearance().image = '+';
 
+	// units
 	bool sink = true;
 	bool &created = m_created.at(cell, sink);
 	if (!created)
