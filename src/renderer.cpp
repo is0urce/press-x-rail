@@ -40,6 +40,45 @@ namespace
 	static const unsigned int font_size_ui = 32;
 	static const unsigned int font_size_notify = 16;
 	static const unsigned int font_size_unit = 32;
+
+	inline void fill_vertex(const vector &position, const vector &range, GLfloat *offset)
+	{
+		(position + vector(-0.5, -0.5) * range).write(offset + 0 * vertice_depth);
+		(position + vector(-0.5, 0.5) * range).write(offset + 1 * vertice_depth);
+		(position + vector(0.5, 0.5) * range).write(offset + 2 * vertice_depth);
+		(position + vector(0.5, -0.5) * range).write(offset + 3 * vertice_depth);
+	}
+	inline void fill_vertex(const vector &position, GLfloat *dest)
+	{
+		fill_vertex(position, { 1, 1 }, dest);
+	}
+	inline void fill_texture(GLfloat left, GLfloat bottom, GLfloat right, GLfloat top, GLfloat *dest)
+	{
+		dest[0] = dest[2] = left;
+		dest[1] = dest[7] = bottom;
+		dest[4] = dest[6] = right;
+		dest[3] = dest[5] = top;
+	}
+	inline void fill_index(unsigned int num, GLuint *dest)
+	{
+		unsigned int index_offset = 0;
+		for (unsigned int i = 0; i < num; ++i)
+		{
+			dest[index_offset + 0] = dest[index_offset + 3] = i * points_quad + 0;
+			dest[index_offset + 1] = dest[index_offset + 5] = i * points_quad + 2;
+			dest[index_offset + 2] = i * points_quad + 1;
+			dest[index_offset + 4] = i * points_quad + 3;
+			index_offset += index_quad;
+		}
+	}
+	inline void fill_color(const color &c, GLfloat *dest)
+	{
+		c.write(dest, points_quad);
+	}
+	inline void fill_index(unsigned int num, std::vector<GLuint> &dest)
+	{
+		fill_index(num, &dest[0]);
+	}
 }
 
 renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera_default), m_scene_size(0)
@@ -65,8 +104,7 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	m_scene.program = glsl::program("shaders\\scene");
 
 	glGenFramebuffers(1, &m_scene_frame);
-	glGenFramebuffers(1, &m_lightmap);
-	glGenFramebuffers(1, &m_lightmap_min);
+	glGenFramebuffers(1, &m_light_frame);
 
 	glEnable(GL_TEXTURE_2D);
 
@@ -74,6 +112,7 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glGenTextures(1, &m_notify.texture);
 	glGenTextures(1, &m_glyph.texture);
 	glGenTextures(1, &m_scene_texture);
+	glGenTextures(1, &m_light_texture);
 
 	const font::font_texture &ui_texture = m_ui.font->texture();
 	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
@@ -88,44 +127,6 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 }
 
-void renderer::setup_scene()
-{
-	auto max = (std::max)(m_width, m_height);
-	unsigned int size = max > 0 ? max : 1;
-
-	if (m_scene_size < size)
-	{
-		if (m_scene_size == 0) m_scene_size = 1;
-		while (m_scene_size < size) m_scene_size <<= 1;
-
-		glBindTexture(GL_TEXTURE_2D, m_scene_texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_scene_size, m_scene_size, 0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_scene_texture, 0);
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("framebuffer not complete");
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		std::vector<GLfloat> vertices(points_quad * vertice_depth);
-		std::vector<GLfloat> texture(points_quad * texcoord_depth);
-		std::vector<GLuint> indices(index_quad);
-		point(-1, -1).write(&vertices[0]);
-		point(-1,  1).write(&vertices[1 * vertice_depth]);
-		point( 1,  1).write(&vertices[2 * vertice_depth]);
-		point( 1, -1).write(&vertices[3 * vertice_depth]);
-		texture[0] = texture[2] = 0;
-		texture[1] = texture[7] = 0;
-		texture[4] = texture[6] = 1;
-		texture[3] = texture[5] = 1;
-
-		indices[0] = indices[3] = 0;
-		indices[1] = indices[5] = 2;
-		indices[2] = 1;
-		indices[4] = 3;
-		m_scene.vao.fill(points_quad, { &vertices[0], &texture[0] }, indices);
-	}
-}
-
 renderer::~renderer()
 {
 	m_background.vao.clear();
@@ -137,13 +138,56 @@ renderer::~renderer()
 	glDeleteProgram(m_units.program);
 
 	glDeleteFramebuffers(1, &m_scene_frame);
-	glDeleteFramebuffers(1, &m_lightmap);
-	glDeleteFramebuffers(1, &m_lightmap_min);
+	glDeleteFramebuffers(1, &m_light_frame);
 
 	glDeleteTextures(1, &m_ui.texture);
 	glDeleteTextures(1, &m_notify.texture);
 	glDeleteTextures(1, &m_glyph.texture);
 	glDeleteTextures(1, &m_scene_texture);
+	glDeleteTextures(1, &m_light_texture);
+}
+
+void renderer::setup_scene()
+{
+	auto max = (std::max)(m_width, m_height);
+	unsigned int size = max > 0 ? max : 1;
+
+	if (m_scene_size < size)
+	{
+		if (m_scene_size == 0) m_scene_size = 1;
+		while (m_scene_size < size) m_scene_size <<= 1;
+
+		// textures
+		glBindTexture(GL_TEXTURE_2D, m_scene_texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_scene_size, m_scene_size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+		glBindTexture(GL_TEXTURE_2D, m_light_texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_scene_size, m_scene_size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+		// framebuffers
+		glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
+		glBindTexture(GL_TEXTURE_2D, m_scene_texture);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_scene_texture, 0);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("scene framebuffer not complete");
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_light_frame);
+		glBindTexture(GL_TEXTURE_2D, m_light_texture);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_scene_texture, 0);
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("light framebuffer not complete");
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// merge vao
+		std::vector<GLfloat> vertices(points_quad * vertice_depth);
+		std::vector<GLfloat> texture(points_quad * texcoord_depth);
+		std::vector<GLuint> indices(index_quad);
+
+		fill_vertex({ 0, 0 }, { 2, 2 }, &vertices[0]);
+		fill_texture(0, 0, 1, 1, &texture[0]);
+		fill_index(1, &indices[0]);
+
+		m_scene.vao.fill(points_quad, { &vertices[0], &texture[0] }, indices);
+	}
 }
 
 void renderer::fill_bg(const perception_t &perception)
@@ -157,27 +201,14 @@ void renderer::fill_bg(const perception_t &perception)
 	unsigned int color_offset = 0;
 	range.enumerate([&](const point &position)
 	{
-		(position + vector(-0.5, -0.5)).write(&vertices[vertex_offset + 0 * vertice_depth]);
-		(position + vector(-0.5,  0.5)).write(&vertices[vertex_offset + 1 * vertice_depth]);
-		(position + vector( 0.5,  0.5)).write(&vertices[vertex_offset + 2 * vertice_depth]);
-		(position + vector( 0.5, -0.5)).write(&vertices[vertex_offset + 3 * vertice_depth]);
-
+		fill_vertex(position, &vertices[vertex_offset]);
 		perception.ground(position).write(&colors[color_offset], points_quad);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
 	});
 
-	// indices
-	unsigned int indexoffset = 0;
-	for (unsigned int i = 0; i < range_size; ++i)
-	{
-		indices[indexoffset + 0] = indices[indexoffset + 3] = i * points_quad + 0;
-		indices[indexoffset + 1] = indices[indexoffset + 5] = i * points_quad + 2;
-		indices[indexoffset + 2] = i * points_quad + 1;
-		indices[indexoffset + 4] = i * points_quad + 3;
-		indexoffset += index_quad;
-	}
+	fill_index(range_size, indices);
 
 	// bind
 	m_background.vao.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
@@ -186,7 +217,7 @@ void renderer::fill_bg(const perception_t &perception)
 void renderer::fill_tiles(const perception_t &perception)
 {
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
-	std::vector<GLfloat> texture(range_size * points_quad * vertice_depth);
+	std::vector<GLfloat> textures(range_size * points_quad * vertice_depth);
 	std::vector<GLfloat> colors(range_size * points_quad * color_depth);
 	std::vector<GLuint> indices(range_size * index_quad);
 
@@ -199,19 +230,9 @@ void renderer::fill_tiles(const perception_t &perception)
 	{
 		auto g = font[perception.appearance(position)];
 
-		double width = g.width / 2.0;
-		double height = g.height / 2.0;
-		(position + vector(-width, -height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
-		(position + vector(-width,  height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
-		(position + vector( width,  height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
-		(position + vector( width, -height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
-
-		texture[texture_offset + 0] = texture[texture_offset + 2] = (GLfloat)g.left;
-		texture[texture_offset + 1] = texture[texture_offset + 7] = (GLfloat)g.bottom;
-		texture[texture_offset + 4] = texture[texture_offset + 6] = (GLfloat)g.right;
-		texture[texture_offset + 3] = texture[texture_offset + 5] = (GLfloat)g.top;
-
-		(perception.hide(position) ? color(0, 0, 0, 0.0) : color(1, 1, 1, 1.0)).write(&colors[color_offset], points_quad);
+		fill_vertex(position, { g.width, g.height }, &vertices[vertex_offset]);
+		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
+		fill_color(perception.hide(position) ? color(0, 0, 0, 0.0) : color(1, 1, 1, 1.0), &colors[color_offset]);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
@@ -219,18 +240,10 @@ void renderer::fill_tiles(const perception_t &perception)
 	});
 
 	// indices
-	unsigned int indexoffset = 0;
-	for (unsigned int i = 0; i < range_size; ++i)
-	{
-		indices[indexoffset + 0] = indices[indexoffset + 3] = i * points_quad + 0;
-		indices[indexoffset + 1] = indices[indexoffset + 5] = i * points_quad + 2;
-		indices[indexoffset + 2] = i * points_quad + 1;
-		indices[indexoffset + 4] = i * points_quad + 3;
-		indexoffset += index_quad;
-	}
+	fill_index(range_size, indices);
 
 	// bind
-	m_tiles.vao.fill(range_size * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
+	m_tiles.vao.fill(range_size * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
 }
 
 void renderer::fill_units(const perception_t &perception)
@@ -238,7 +251,7 @@ void renderer::fill_units(const perception_t &perception)
 	unsigned int unit_num = perception.unit_count();
 
 	std::vector<GLfloat> vertices(unit_num * points_quad * vertice_depth);
-	std::vector<GLfloat> texture(unit_num * points_quad * vertice_depth);
+	std::vector<GLfloat> textures(unit_num * points_quad * vertice_depth);
 	std::vector<GLfloat> colors(unit_num * points_quad * color_depth);
 	std::vector<GLuint> indices(unit_num * index_quad);
 
@@ -250,40 +263,20 @@ void renderer::fill_units(const perception_t &perception)
 	perception.enumerate_units([&](const perception::avatar_t &unit)
 	{
 		auto g = font[unit.appearance()];
-		point position = unit.position();
 
-		double width = g.width / 2;
-		double height = g.height / 2;
-		(position + vector(-width, -height)).write(&vertices[vertex_offset + 0 * vertice_depth]);
-		(position + vector(-width,  height)).write(&vertices[vertex_offset + 1 * vertice_depth]);
-		(position + vector( width,  height)).write(&vertices[vertex_offset + 2 * vertice_depth]);
-		(position + vector( width, -height)).write(&vertices[vertex_offset + 3 * vertice_depth]);
-
-		texture[texture_offset + 0] = texture[texture_offset + 2] = (GLfloat)g.left;
-		texture[texture_offset + 1] = texture[texture_offset + 7] = (GLfloat)g.bottom;
-		texture[texture_offset + 4] = texture[texture_offset + 6] = (GLfloat)g.right;
-		texture[texture_offset + 3] = texture[texture_offset + 5] = (GLfloat)g.top;
-
-		color(1.0, 1.0, 1.0, 1.0).write(&colors[color_offset], points_quad);
+		fill_vertex(unit.position(), { g.width, g.height }, &vertices[vertex_offset]);
+		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
+		fill_color(0xffffff, &colors[color_offset]);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
 		texture_offset += texcoord_depth * points_quad;
 	});
 
-	// indices
-	unsigned int indexoffset = 0;
-	for (unsigned int i = 0; i < unit_num; ++i)
-	{
-		indices[indexoffset + 0] = indices[indexoffset + 3] = i * points_quad + 0;
-		indices[indexoffset + 1] = indices[indexoffset + 5] = i * points_quad + 2;
-		indices[indexoffset + 2] = i * points_quad + 1;
-		indices[indexoffset + 4] = i * points_quad + 3;
-		indexoffset += index_quad;
-	}
+	fill_index(unit_num, indices);
 
 	// bind
-	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &texture[0], &colors[0] }, indices);
+	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
 }
 
 void renderer::draw(const perception_t &perception, double time)
@@ -320,23 +313,24 @@ void renderer::draw(const perception_t &perception, double time)
 	glUniform1f(glGetUniformLocation(m_background.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_background.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_background.program, "center"), x_center, y_center);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	m_background.vao.draw();
 
 	glUseProgram(m_tiles.program);
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	glUniform1f(glGetUniformLocation(m_tiles.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_tiles.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	m_tiles.vao.draw();
 
 	glUseProgram(m_units.program);
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_units.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	m_units.vao.draw();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -345,18 +339,25 @@ void renderer::draw(const perception_t &perception, double time)
 
 	glViewport(0, 0, m_scene_size, m_scene_size);
 	glUseProgram(m_scene.program);
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_scene_texture);
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, m_light_texture);
 	glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
+	glUniform1i(glGetUniformLocation(m_scene.program, "light"), 0);
 	glUniform3f(glGetUniformLocation(m_scene.program, "rng"), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100));
 	glBindTexture(GL_TEXTURE_2D, m_scene_texture);
 	m_scene.vao.draw();
 
 	m_opengl->swap();
 
+#if _DEBUG
 	GLenum err = GL_NO_ERROR;
 	while ((err = glGetError()) != GL_NO_ERROR)
 	{
 		throw std::runtime_error("OpenGL error");
 	}
+#endif
 }
 
 void renderer::scale(double pan)

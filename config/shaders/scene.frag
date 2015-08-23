@@ -4,7 +4,10 @@ smooth in vec2 theTexture;
 
 out vec4 outputColor;
 uniform sampler2D img;
+uniform sampler2D light;
 uniform vec3 rng;
+uniform vec3 color;
+uniform float intensity;
 
 // noise functions
 
@@ -40,8 +43,10 @@ vec3 noise3(vec3 seed)
 
 // main
 
-
 void main()
 {
-	outputColor = vec4(texture(img, theTexture.xy).rgb + noise3(rng) / 64, 1);
+	vec4 s = vec4(texture(img, theTexture.xy).rgb, 1);
+	vec4 l = vec4(texture(light, theTexture.xy).rgb, 1);
+	vec4 n = vec4(noise3(rng) / 32, 1);
+	outputColor = s * (l / 4 + 1) + n;
 }
