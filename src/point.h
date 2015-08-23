@@ -39,6 +39,8 @@ namespace px
 		point multiplied(component c) const { return multiplied({ c, c }); }
 		point clamped(const point &min, const point &max) const { return { (std::min)((std::max)(min.X, X), max.X), (std::min)((std::max)(min.Y, Y), max.Y) }; }
 
+		bool on_border(const point &p) const { return p.X == 0 || p.Y == 0 || p.X == X - 1 || p.Y == Y - 1; }
+
 		// enumerators
 
 		// enumerate rectangle from start to start + range

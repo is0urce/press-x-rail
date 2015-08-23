@@ -7,6 +7,7 @@
 
 #include "world.h"
 
+#include "automata.h"
 #include "unit.h"
 
 using namespace px;
@@ -26,15 +27,28 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 {
 	world::map_ptr map(new map_t(cell_range));
 	point offset = cell * cell_range;
+
+	int w = cell_range.X;
+	int h = cell_range.Y;
+	automata<bool> walls(cell_range);
+	std::srand(cell.X + cell.Y * 911);
+	walls.fill_indexed([](const point& p) { return std::rand() % 100 < 42; });
+	walls.execute<unsigned int>([](unsigned int summ, bool element) { return summ + (element ? 1 : 0); }, 0, [](int summ) { return summ == 0 || summ >= 5; }, 4);
+
+		// sele
+
 	cell_range.enumerate([&](const point &position)
 	{
+		bool floor = (position.Y > 5 && position.Y < 15) || !walls.at(position) && position.Y != 0 && position.Y != cell_range.Y - 1;
 		bool rail = position.Y == 9 || position.Y == 10;
 		auto &t = map->at(position);
-		t.appearance({ rail ? (unsigned int)'+' : '.', rail ? color(0.5, 0.6, 0.7) : color(0.2, 0.2, 0.2) });
-		t.transparent(rail);
-		t.traversable(rail);
+		unsigned int glyph = rail ? '+' : floor ? '.' : ' ';
+
+		t.appearance({ glyph, rail ? color(0.5, 0.6, 0.7) : floor ? color(0.2, 0.2, 0.2) : color(0.1, 0.1, 0.1) });
+		t.transparent(floor);
+		t.traversable(floor);
 	});
-	map->at(point(0, 0)).appearance().image = '0';
+	//map->at(point(0, 0)).appearance().image = '+';
 
 	bool sink = true;
 	bool &created = m_created.at(cell, sink);

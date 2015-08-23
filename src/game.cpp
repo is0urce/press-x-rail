@@ -44,8 +44,11 @@ bool game::step_control(const point &move)
 		}
 		else
 		{
-			m_scene.focus(destination);
-			m_scene.move(m_player, destination);
+			if (m_scene.traversable(destination))
+			{
+				m_scene.focus(destination);
+				m_scene.move(m_player, destination);
+			}
 		}
 
 		fill_perception();
