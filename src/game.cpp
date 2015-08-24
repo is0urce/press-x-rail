@@ -25,7 +25,8 @@ game::game() : m_perception(perc_reach)
 	m_player.reset(new rl::unit());
 	m_player->appearance('@');
 
-	m_scene.add(m_player, { 5, 5 });
+	m_scene.focus({ 8, 8 });
+	m_scene.add(m_player, { 8, 8 });
 
 	fill_perception();
 }

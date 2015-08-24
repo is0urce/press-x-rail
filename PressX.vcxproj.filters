@@ -160,5 +160,7 @@
     <None Include="config\shaders\tiles.vert" />
     <None Include="config\shaders\units.frag" />
     <None Include="config\shaders\units.vert" />
+    <None Include="config\shaders\light.frag" />
+    <None Include="config\shaders\light.vert" />
   </ItemGroup>
 </Project>

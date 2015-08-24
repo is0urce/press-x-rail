@@ -143,6 +143,8 @@
   <ItemGroup>
     <None Include="config\shaders\ground.frag" />
     <None Include="config\shaders\ground.vert" />
+    <None Include="config\shaders\light.frag" />
+    <None Include="config\shaders\light.vert" />
     <None Include="config\shaders\scene.frag" />
     <None Include="config\shaders\scene.vert" />
     <None Include="config\shaders\tiles.frag" />

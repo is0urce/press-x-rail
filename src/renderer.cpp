@@ -87,6 +87,10 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	m_opengl.swap(opengl);
 
+	glClampColorARB(GL_CLAMP_VERTEX_COLOR_ARB, GL_FALSE);
+	glClampColorARB(GL_CLAMP_READ_COLOR_ARB, GL_FALSE);
+	glClampColorARB(GL_CLAMP_FRAGMENT_COLOR_ARB, GL_FALSE);
+
 	m_ui.font.reset(new font(font_path_ui, font_size_ui));
 	m_notify.font.reset(new font(font_path_notify, font_size_unit));
 	m_glyph.font.reset(new font(font_path_unit, font_size_unit));
@@ -102,6 +106,9 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	m_scene.vao.init({ vertice_depth, texcoord_depth });
 	m_scene.program = glsl::program("shaders\\scene");
+
+	m_light.vao.init({ vertice_depth });
+	m_light.program = glsl::program("shaders\\light");
 
 	glGenFramebuffers(1, &m_scene_frame);
 	glGenFramebuffers(1, &m_light_frame);
@@ -132,6 +139,8 @@ renderer::~renderer()
 	m_background.vao.clear();
 	m_tiles.vao.clear();
 	m_units.vao.clear();
+	m_scene.vao.clear();
+	m_light.vao.clear();
 
 	glDeleteProgram(m_background.program);
 	glDeleteProgram(m_tiles.program);
@@ -172,7 +181,7 @@ void renderer::setup_scene()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_light_frame);
 		glBindTexture(GL_TEXTURE_2D, m_light_texture);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_scene_texture, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_light_texture, 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("light framebuffer not complete");
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -301,13 +310,18 @@ void renderer::draw(const perception_t &perception, double time)
 	GLfloat x_center = (GLfloat)center.X;
 	GLfloat y_center = (GLfloat)center.Y;
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH);
+	glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
 
+	glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
+
+	// geometry
 	glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
 	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glUseProgram(m_background.program);
 	glUniform1f(glGetUniformLocation(m_background.program, "aspect"), aspect);
@@ -333,20 +347,58 @@ void renderer::draw(const perception_t &perception, double time)
 	glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
 	m_units.vao.draw();
 
+	// lights
+	glBindFramebuffer(GL_FRAMEBUFFER, m_light_frame);
+	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE); // additive
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glUseProgram(m_light.program);
+	glUniform1f(glGetUniformLocation(m_light.program, "aspect"), aspect);
+	glUniform1f(glGetUniformLocation(m_light.program, "scale"), scale);
+	glUniform2f(glGetUniformLocation(m_light.program, "center"), x_center, y_center);
+
+	point p;
+	perception.enumerate_units([&](perception::avatar_t a)
+	{
+		p = a.position();
+		auto outer = 4.0;
+		auto inner = 1.4;
+
+		glUniform1d(glGetUniformLocation(m_light.program, "intensity"), outer);
+		glUniform1d(glGetUniformLocation(m_light.program, "inner"), inner);
+		glUniform2d(glGetUniformLocation(m_light.program, "pos"), p.X, p.Y);
+		glUniform4d(glGetUniformLocation(m_light.program, "col"), 1, 1, 0.5, 1);
+
+		std::vector<GLfloat> vertices(points_quad * vertice_depth);
+		std::vector<GLuint> indices(index_quad);
+		fill_vertex(p, { outer * 2, outer * 2 }, &vertices[0]);
+		fill_index(1, &indices[0]);
+		m_light.vao.fill(points_quad, { &vertices[0] }, indices);
+		m_light.vao.draw();
+
+	});
+
+	// mix
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, m_scene_size, m_scene_size);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glViewport(0, 0, m_scene_size, m_scene_size);
 	glUseProgram(m_scene.program);
 	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_2D, m_scene_texture);
 	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, m_light_texture);
 	glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
-	glUniform1i(glGetUniformLocation(m_scene.program, "light"), 0);
+	glUniform1i(glGetUniformLocation(m_scene.program, "light"), 1);
 	glUniform3f(glGetUniformLocation(m_scene.program, "rng"), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100));
-	glBindTexture(GL_TEXTURE_2D, m_scene_texture);
+
 	m_scene.vao.draw();
 
 	m_opengl->swap();

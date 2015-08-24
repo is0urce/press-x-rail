@@ -6,8 +6,6 @@ out vec4 outputColor;
 uniform sampler2D img;
 uniform sampler2D light;
 uniform vec3 rng;
-uniform vec3 color;
-uniform float intensity;
 
 // noise functions
 
@@ -41,12 +39,23 @@ vec3 noise3(vec3 seed)
 	);
 }
 
+float luminance(vec3 color)
+{
+	return (color.r + color.g + color.b) / 3;
+}
+vec3 tonemap(vec3 color)
+{
+	vec3 exp = color / vec3(5.0, 5.0, 5.0);
+	return exp / (exp + vec3(1, 1, 1)); //(luminance(color) + 1);
+}
+
 // main
 
 void main()
 {
-	vec4 s = vec4(texture(img, theTexture.xy).rgb, 1);
-	vec4 l = vec4(texture(light, theTexture.xy).rgb, 1);
-	vec4 n = vec4(noise3(rng) / 32, 1);
-	outputColor = s * (l / 4 + 1) + n;
+	vec3 s = texture(img, theTexture.xy).rgb;
+	vec3 l = texture(light, theTexture.xy).rgb;
+	vec3 n = noise3(rng) / 64;
+
+	outputColor = vec4(tonemap(l) + n, 1);
 }

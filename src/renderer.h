@@ -43,7 +43,7 @@ namespace px
 			{
 				vao vao;
 				GLuint program;
-			} m_background, m_tiles, m_units, m_scene;
+			} m_background, m_tiles, m_units, m_scene, m_light;
 
 			GLuint m_light_frame, m_scene_frame;
 			GLuint m_scene_texture, m_light_texture;
@@ -54,6 +54,7 @@ namespace px
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&);
 			void fill_units(const perception_t&);
+			void draw_lights(const perception_t &perception, double phase);
 
 		public:
 			renderer(opengl_handle opengl);
