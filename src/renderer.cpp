@@ -87,9 +87,9 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	m_opengl.swap(opengl);
 
-	glClampColorARB(GL_CLAMP_VERTEX_COLOR_ARB, GL_FALSE);
-	glClampColorARB(GL_CLAMP_READ_COLOR_ARB, GL_FALSE);
-	glClampColorARB(GL_CLAMP_FRAGMENT_COLOR_ARB, GL_FALSE);
+	glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
+	glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
+	glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 
 	m_ui.font.reset(new font(font_path_ui, font_size_ui));
 	m_notify.font.reset(new font(font_path_notify, font_size_unit));
@@ -365,13 +365,13 @@ void renderer::draw(const perception_t &perception, double time)
 	perception.enumerate_units([&](perception::avatar_t a)
 	{
 		p = a.position();
-		auto outer = 4.0;
-		auto inner = 1.4;
+		auto outer = 15.0;
+		auto inner = 0.0;
 
-		glUniform1d(glGetUniformLocation(m_light.program, "intensity"), outer);
+		glUniform1d(glGetUniformLocation(m_light.program, "intensity"), 1.0 / outer);
 		glUniform1d(glGetUniformLocation(m_light.program, "inner"), inner);
 		glUniform2d(glGetUniformLocation(m_light.program, "pos"), p.X, p.Y);
-		glUniform4d(glGetUniformLocation(m_light.program, "col"), 1, 1, 0.5, 1);
+		glUniform4d(glGetUniformLocation(m_light.program, "col"), 24.0, 19.5, 11.9, 1);
 
 		std::vector<GLfloat> vertices(points_quad * vertice_depth);
 		std::vector<GLuint> indices(index_quad);

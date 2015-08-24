@@ -45,7 +45,7 @@ float luminance(vec3 color)
 }
 vec3 tonemap(vec3 color)
 {
-	vec3 exp = color / vec3(5.0, 5.0, 5.0);
+	vec3 exp = color * 0.2;
 	return exp / (exp + vec3(1, 1, 1)); //(luminance(color) + 1);
 }
 
@@ -57,5 +57,5 @@ void main()
 	vec3 l = texture(light, theTexture.xy).rgb;
 	vec3 n = noise3(rng) / 64;
 
-	outputColor = vec4(tonemap(l) + n, 1);
+	outputColor = vec4(tonemap(s * l) + n, 1);
 }
