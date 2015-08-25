@@ -1,10 +1,10 @@
 #version 330
 
-smooth in vec2 thePosition;
+smooth in vec4 thePosition;
 
 uniform float inner;
 uniform float outerinv;
-uniform vec2 pos;
+uniform vec4 pos;
 uniform vec4 col;
 
 out vec4 outputColor;

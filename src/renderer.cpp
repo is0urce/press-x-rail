@@ -41,12 +41,16 @@ namespace
 	static const unsigned int font_size_notify = 16;
 	static const unsigned int font_size_unit = 32;
 
-	inline void fill_vertex(const vector &position, const vector &range, GLfloat *offset)
+	inline void fill_vertex(const vector &position, const vector &range, GLfloat *dest)
 	{
-		(position + vector(-0.5, -0.5) * range).write(offset + 0 * vertice_depth);
-		(position + vector(-0.5, 0.5) * range).write(offset + 1 * vertice_depth);
-		(position + vector(0.5, 0.5) * range).write(offset + 2 * vertice_depth);
-		(position + vector(0.5, -0.5) * range).write(offset + 3 * vertice_depth);
+		(position + vector(-0.5, -0.5) * range).write(dest + 0 * vertice_depth);
+		(position + vector(-0.5, 0.5) * range).write(dest + 1 * vertice_depth);
+		(position + vector(0.5, 0.5) * range).write(dest + 2 * vertice_depth);
+		(position + vector(0.5, -0.5) * range).write(dest + 3 * vertice_depth);
+	}
+	inline void fill_vertex(const vector &position, GLfloat range, GLfloat *dest)
+	{
+		fill_vertex(position, { range, range }, dest);
 	}
 	inline void fill_vertex(const vector &position, GLfloat *dest)
 	{
@@ -87,6 +91,9 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	m_opengl.swap(opengl);
 
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+
 	glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
 	glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
 	glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
@@ -112,8 +119,6 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	glGenFramebuffers(1, &m_scene_frame);
 	glGenFramebuffers(1, &m_light_frame);
-
-	glEnable(GL_TEXTURE_2D);
 
 	glGenTextures(1, &m_ui.texture);
 	glGenTextures(1, &m_notify.texture);
@@ -288,7 +293,7 @@ void renderer::fill_units(const perception_t &perception)
 	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
 }
 
-void renderer::draw(const perception_t &perception, double time)
+void renderer::draw(const perception_t &perception, timespan_t timespan)
 {
 	if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
 
@@ -303,17 +308,12 @@ void renderer::draw(const perception_t &perception, double time)
 	fill_tiles(perception);
 	fill_units(perception);
 
-	double movement_phase = std::min(time * 5.0, 1.0);
+	double movement_phase = std::min(timespan * 5.0, 1.0);
 	vector center = perception.range() / 2 - (vector)perception.movement() * (1.0 - movement_phase);
 	GLfloat aspect = (GLfloat)m_aspect;
 	GLfloat scale = (GLfloat)m_scale;
 	GLfloat x_center = (GLfloat)center.X;
 	GLfloat y_center = (GLfloat)center.Y;
-
-	glDisable(GL_DEPTH);
-	glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
-
-	glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 
 	// geometry
 	glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
@@ -354,7 +354,6 @@ void renderer::draw(const perception_t &perception, double time)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE); // additive
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glUseProgram(m_light.program);
 	glUniform1f(glGetUniformLocation(m_light.program, "aspect"), aspect);
@@ -365,12 +364,13 @@ void renderer::draw(const perception_t &perception, double time)
 	perception.enumerate_units([&](perception::avatar_t a)
 	{
 		p = a.position();
-		auto outer = 15.0;
+		auto outer = 8.0;
 		auto inner = 0.0;
+		auto elevation = 1.0;
 
-		glUniform1d(glGetUniformLocation(m_light.program, "intensity"), 1.0 / outer);
+		glUniform1d(glGetUniformLocation(m_light.program, "outerinv"), 1.0 / outer);
 		glUniform1d(glGetUniformLocation(m_light.program, "inner"), inner);
-		glUniform2d(glGetUniformLocation(m_light.program, "pos"), p.X, p.Y);
+		glUniform4d(glGetUniformLocation(m_light.program, "pos"), p.X, p.Y, elevation, 1.0);
 		glUniform4d(glGetUniformLocation(m_light.program, "col"), 24.0, 19.5, 11.9, 1);
 
 		std::vector<GLfloat> vertices(points_quad * vertice_depth);
@@ -379,7 +379,6 @@ void renderer::draw(const perception_t &perception, double time)
 		fill_index(1, &indices[0]);
 		m_light.vao.fill(points_quad, { &vertices[0] }, indices);
 		m_light.vao.draw();
-
 	});
 
 	// mix
@@ -388,7 +387,6 @@ void renderer::draw(const perception_t &perception, double time)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glUseProgram(m_scene.program);
 	glActiveTexture(GL_TEXTURE0 + 0);
@@ -402,6 +400,7 @@ void renderer::draw(const perception_t &perception, double time)
 	m_scene.vao.draw();
 
 	m_opengl->swap();
+	m_last = timespan;
 
 #if _DEBUG
 	GLenum err = GL_NO_ERROR;

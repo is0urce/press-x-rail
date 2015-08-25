@@ -26,12 +26,14 @@ namespace px
 		public:
 			typedef std::unique_ptr<opengl> opengl_handle;
 			typedef perception perception_t;
+			typedef double timespan_t;
 
 		private:
 			opengl_handle m_opengl;
 			int m_width, m_height;
 			double m_aspect;
 			double m_scale;
+			timespan_t m_last;
 
 			struct s_font
 			{
@@ -54,7 +56,7 @@ namespace px
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&);
 			void fill_units(const perception_t&);
-			void draw_lights(const perception_t &perception, double phase);
+			void draw_lights(const perception_t &perception, timespan_t phase);
 
 		public:
 			renderer(opengl_handle opengl);
