@@ -39,14 +39,10 @@ vec3 noise3(vec3 seed)
 	);
 }
 
-float luminance(vec3 color)
-{
-	return (color.r + color.g + color.b) / 3;
-}
 vec3 tonemap(vec3 color)
 {
-	vec3 exp = color * 0.2;
-	return exp / (exp + vec3(1, 1, 1)); //(luminance(color) + 1);
+	vec3 v = color * 0.2;
+	return v / (v + vec3(1, 1, 1));
 }
 
 // main

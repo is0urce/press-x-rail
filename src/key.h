@@ -12,6 +12,7 @@ namespace px
 		enum class key : int
 		{
 			not_valid,
+			action_use,
 			action0,
 			action1,
 			action2,

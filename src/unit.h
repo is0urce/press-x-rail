@@ -7,6 +7,8 @@
 
 #include "point.h"
 
+#include <memory>
+
 namespace px
 {
 	namespace rl
@@ -17,6 +19,7 @@ namespace px
 			typedef unsigned int appearance_t;
 			typedef std::string name_t;
 			typedef unsigned int faction_t;
+			typedef std::shared_ptr<unit> ptr;
 
 		private:	
 			name_t m_name;
@@ -39,10 +42,14 @@ namespace px
 		protected:
 			virtual bool traversable_unit() const;
 			virtual bool transparent_unit() const;
+			virtual bool useable_unit() const;
+			virtual void use_unit(ptr user);
 
 		public:
 			bool traversable() const;
 			bool transparent() const;
+			bool useable() const;
+			void use(ptr user);
 
 			// position
 			const point& position() const;

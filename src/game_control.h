@@ -23,7 +23,8 @@ namespace px
 
 		protected:
 			virtual bool step_control(const point& move) = 0;
-			virtual bool command_control(key command) = 0;
+			virtual bool action_control(unsigned int cmd) = 0;
+			virtual bool use_control() = 0;
 			virtual bool hover_control(point position) = 0;
 			virtual bool click_control(point position, button_t button) = 0;
 
@@ -36,9 +37,13 @@ namespace px
 			{
 				return step_control(point(0, 0));
 			}
-			bool command(key command_key)
+			bool action(unsigned int cmd)
 			{
-				return command_control(command_key);
+				return action_control(cmd);
+			}
+			bool use()
+			{
+				return use_control();
 			}
 			bool press(key command_key)
 			{
@@ -72,8 +77,29 @@ namespace px
 				case key::move_northeast:
 					result = step({ 1, 1 });
 					break;
+				case key::action_use:
+					result = use();
+					break;
+				case key::action0:
+					result = action(0);
+					break;
+				case key::action1:
+					result = action(1);
+					break;
+				case key::action2:
+					result = action(2);
+					break;
+				case key::action3:
+					result = action(3);
+					break;
+				case key::action4:
+					result = action(4);
+					break;
+				case key::action5:
+					result = action(5);
+					break;
 				default:
-					result = command(command_key);
+					result = false;
 					break;
 				}
 				return result;
@@ -86,6 +112,7 @@ namespace px
 			{
 				return click_control(position, button);
 			}
+
 			void shutdown(bool shutdown)
 			{
 				m_shutdown = shutdown;

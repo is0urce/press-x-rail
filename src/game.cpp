@@ -6,6 +6,7 @@
 #include "stdafx.h"
 
 #include "game.h"
+#include "unit.h"
 
 using namespace px;
 using namespace px::shell;
@@ -15,6 +16,7 @@ namespace
 	static const unsigned int perc_range = 10;
 	static const point perc_center = point(perc_range, perc_range);
 	static const point perc_reach = point(perc_range * 2 + 1, perc_range * 2 + 1);
+	static const unsigned int action_distance = 1;
 }
 
 const unsigned int game::perc_width = perc_range * 2 + 1;
@@ -32,34 +34,6 @@ game::game() : m_perception(perc_reach)
 }
 
 game::~game() {}
-
-bool game::step_control(const point &move)
-{
-	if (m_player)
-	{
-		point destination = m_player->position() + move;
-		auto blocking = m_scene.blocking(destination);
-		if (blocking)
-		{
-			// attack
-		}
-		else
-		{
-			if (m_scene.traversable(destination))
-			{
-				m_scene.focus(destination);
-				m_scene.move(m_player, destination);
-			}
-		}
-
-		fill_perception();
-	}
-	return true;
-}
-bool game::command_control(key command)
-{
-	return true;
-}
 
 void game::fill_perception()
 {
@@ -84,9 +58,55 @@ void game::fill_perception()
 	});
 }
 
-const perception& game::perception() const
+bool game::step_control(const point &move)
 {
-	return m_perception;
+	if (m_player)
+	{
+		point destination = m_player->position() + move;
+		auto blocking = m_scene.blocking(destination);
+		if (blocking)
+		{
+			if (blocking->useable())
+			{
+				blocking->use(m_player);
+			}
+			else
+			{
+				// attack
+			}
+		}
+		else
+		{
+			if (m_scene.traversable(destination))
+			{
+				m_scene.focus(destination);
+				m_scene.move(m_player, destination);
+			}
+		}
+
+		fill_perception();
+	}
+	return true;
+}
+
+bool game::action_control(unsigned int command)
+{
+	auto target = aquire_target().lock();
+	if (target)
+	{
+		// cast
+	}
+	return true;
+}
+
+bool game::use_control()
+{
+	auto target = aquire_target().lock();
+	if (target && target->useable() && m_player->position().king_distance(target->position()) <= action_distance)
+	{
+		target->use(m_player);
+	}
+	return true;
 }
 
 bool game::click_control(point positon, game::button_t button)
@@ -97,7 +117,7 @@ bool game::click_control(point positon, game::button_t button)
 		auto target = m_target.lock();
 		if (target)
 		{
-			return true;
+			return false;
 		}
 		else
 		{
@@ -112,9 +132,16 @@ bool game::click_control(point positon, game::button_t button)
 bool game::hover_control(point position)
 {
 	m_hover = position;
-	if (m_player)
-	{
-		m_target = m_scene.blocking(m_player->position() + m_hover);
-	}
+	aquire_target();
 	return true;
+}
+
+game::target_ptr game::aquire_target()
+{
+	return m_target = m_player ? m_scene.blocking(m_player->position() + m_hover) : nullptr;
+}
+
+const perception& game::perception() const
+{
+	return m_perception;
 }

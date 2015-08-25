@@ -36,7 +36,36 @@ bool unit::transparent_unit() const
 	return true;
 }
 
+bool unit::useable_unit() const
+{
+	return false;
+}
+
+void unit::use_unit(unit::ptr user)
+{
+}
+
 // methods
+
+bool unit::traversable() const
+{
+	return traversable_unit();
+}
+
+bool unit::transparent() const
+{
+	return transparent_unit();
+}
+
+bool unit::useable() const
+{
+	return useable_unit();
+}
+
+void unit::use(unit::ptr user)
+{
+	use_unit(user);
+}
 
 const point& unit::position() const
 {
@@ -51,16 +80,6 @@ const point& unit::previous_position() const
 void unit::position_remember()
 {
 	m_prev_position = m_position;
-}
-
-bool unit::traversable() const
-{
-	return traversable_unit();
-}
-
-bool unit::transparent() const
-{
-	return transparent_unit();
 }
 
 void unit::position(const point& position)
