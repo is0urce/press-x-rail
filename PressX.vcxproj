@@ -88,10 +88,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\actor.h" />
     <ClInclude Include="src\avatar.h" />
     <ClInclude Include="src\game_control.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\appearance.h" />
+    <ClInclude Include="src\inventory.h" />
+    <ClInclude Include="src\item.h" />
     <ClInclude Include="src\world.h" />
     <ClInclude Include="src\key.h" />
     <ClInclude Include="src\key_bindings.h" />

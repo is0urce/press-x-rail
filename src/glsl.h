@@ -3,6 +3,8 @@
 // desc: one header opengl shader compilation functions
 // auth: is0urce
 
+#pragma once
+
 #include <fstream>
 #include <string>
 

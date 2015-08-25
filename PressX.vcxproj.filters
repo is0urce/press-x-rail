@@ -102,6 +102,15 @@
     <ClInclude Include="src\world.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\inventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

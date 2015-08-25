@@ -9,21 +9,18 @@
 
 #include "perception.h"
 #include "scene.h"
+#include "actor.h"
 
 #include <memory>
 
 namespace px
 {
-	namespace rl
-	{
-		class unit;
-	}
 	namespace shell
 	{
 		class game : public game_control
 		{
 		public:
-			typedef std::shared_ptr<rl::unit> player_ptr;
+			typedef std::shared_ptr<rl::actor> player_ptr;
 			typedef std::weak_ptr<rl::unit> target_ptr;
 
 		public:

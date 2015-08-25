@@ -1,4 +1,7 @@
 // name: game_control.h
+// type: c++ header
+// desc: class
+// auth: is0uce
 
 #pragma once
 

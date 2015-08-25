@@ -41,7 +41,7 @@ bool unit::useable_unit() const
 	return false;
 }
 
-void unit::use_unit(unit::ptr user)
+void unit::use_unit(user_t user)
 {
 }
 
@@ -62,7 +62,7 @@ bool unit::useable() const
 	return useable_unit();
 }
 
-void unit::use(unit::ptr user)
+void unit::use(user_t user)
 {
 	use_unit(user);
 }
