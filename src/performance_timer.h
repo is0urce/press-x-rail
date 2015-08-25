@@ -16,11 +16,11 @@ namespace px
 	{
 	private:
 		double m_freq;
-		__int64 m_start;
+		decltype(LARGE_INTEGER::QuadPart) m_start;
 
 	public:
 		timer() { restart(); }
-		timer(bool start_timer) { if (start_timer) restart(); else m_freq = 1; }
+		timer(bool start_timer) { if (start_timer) restart(); }
 		~timer() {}
 
 		void restart()
@@ -37,12 +37,20 @@ namespace px
 			m_start = li.QuadPart;
 		}
 
-		// return time in seconds
-		double counter() const
+		// time in seconds
+		double measure() const
 		{
 			LARGE_INTEGER li;
 			QueryPerformanceCounter(&li);
 			return (li.QuadPart - m_start) / m_freq;
+		}
+
+		// current processor ticks
+		auto counter() -> decltype(LARGE_INTEGER::QuadPart) const
+		{
+			LARGE_INTEGER li;
+			QueryPerformanceCounter(&li);
+			return li.QuadPart;
 		}
 	};
 }

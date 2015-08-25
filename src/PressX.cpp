@@ -61,9 +61,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings.reset(new key_bindings<WPARAM, key>());
 		g_game.reset(new game());
 
-		px::timer time(false);
+		px::timer time;
 		std::srand((unsigned int)time.counter());
-		time.restart();
 
 		g_bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
 		g_bindings->bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
@@ -91,7 +90,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			}
 
 			// draw before windows destruction
-			g_graphics->draw(perception, time.counter());
+			g_graphics->draw(perception, time.measure());
 
 			// dispatch windows messages
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
