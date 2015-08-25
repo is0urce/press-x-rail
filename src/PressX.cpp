@@ -12,6 +12,7 @@
 #include "key.h"
 #include "game.h"
 
+using namespace px;
 using namespace px::shell;
 
 std::unique_ptr<key_bindings<WPARAM, key>> g_bindings;

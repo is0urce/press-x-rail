@@ -12,7 +12,7 @@ namespace px
 {
 	namespace shell
 	{
-		class  game_control
+		class game_control
 		{
 		public:
 			typedef unsigned int button_t;

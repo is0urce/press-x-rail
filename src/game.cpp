@@ -6,10 +6,9 @@
 #include "stdafx.h"
 
 #include "game.h"
-#include "unit.h"
+#include "actor.h"
 
 using namespace px;
-using namespace px::shell;
 
 namespace
 {
@@ -141,7 +140,7 @@ game::target_ptr game::aquire_target()
 	return m_target = m_player ? m_scene.blocking(m_player->position() + m_hover) : nullptr;
 }
 
-const perception& game::perception() const
+const shell::perception& game::perception() const
 {
 	return m_perception;
 }

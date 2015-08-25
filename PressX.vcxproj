@@ -95,6 +95,9 @@
     <ClInclude Include="src\appearance.h" />
     <ClInclude Include="src\inventory.h" />
     <ClInclude Include="src\item.h" />
+    <ClInclude Include="src\canvas.h" />
+    <ClInclude Include="src\string.h" />
+    <ClInclude Include="src\symbol.h" />
     <ClInclude Include="src\world.h" />
     <ClInclude Include="src\key.h" />
     <ClInclude Include="src\key_bindings.h" />
@@ -121,6 +124,7 @@
     <ClInclude Include="src\wingl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\canvas.cpp" />
     <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\opengl.cpp" />

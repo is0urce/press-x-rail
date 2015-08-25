@@ -13,13 +13,14 @@ namespace px
 {
 	namespace rl
 	{
+		class actor;
 		class unit
 		{
 		public:
 			typedef unsigned int appearance_t;
 			typedef std::string name_t;
 			typedef unsigned int faction_t;
-			typedef std::shared_ptr<unit> user_t;
+			typedef std::shared_ptr<actor> user_t;
 
 		private:	
 			name_t m_name;
