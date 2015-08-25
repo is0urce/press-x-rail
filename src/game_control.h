@@ -49,16 +49,28 @@ namespace px
 					result = stay();
 					break;
 				case key::move_north:
-					result = step(point(0, 1));
+					result = step({ 0, 1 });
 					break;
 				case key::move_south:
-					result = step(point(0, -1));
+					result = step({ 0, -1 });
 					break;
 				case key::move_east:
-					result = step(point(1, 0));
+					result = step({ 1, 0 });
 					break;
 				case key::move_west:
-					result = step(point(-1, 0));
+					result = step({ -1, 0 });
+					break;
+				case key::move_southwest:
+					result = step({ -1, -1 });
+					break;
+				case key::move_southeast:
+					result = step({ 1, -1 });
+					break;
+				case key::move_northwest:
+					result = step({ -1, 1 });
+					break;
+				case key::move_northeast:
+					result = step({ 1, 1 });
 					break;
 				default:
 					result = command(command_key);

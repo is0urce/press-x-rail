@@ -196,7 +196,7 @@ void renderer::setup_scene()
 		std::vector<GLfloat> texture(points_quad * texcoord_depth);
 		std::vector<GLuint> indices(index_quad);
 
-		fill_vertex({ 0, 0 }, { 2, 2 }, &vertices[0]);
+		fill_vertex({ 0, 0 }, 2, &vertices[0]);
 		fill_texture(0, 0, 1, 1, &texture[0]);
 		fill_index(1, &indices[0]);
 
@@ -301,6 +301,8 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	if (m_width <= 0 || m_height <= 0) return;
 	m_aspect = m_width;
 	m_aspect /= m_height;
+	timespan_t delta = (std::max)(timespan - m_last, 0.0);
+	m_last = timespan;
 
 	setup_scene(); // framebuffers & their textures
 
@@ -364,18 +366,18 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	perception.enumerate_units([&](perception::avatar_t a)
 	{
 		p = a.position();
-		auto outer = 8.0;
-		auto inner = 0.0;
-		auto elevation = 1.0;
+		GLfloat outer = 8.0;
+		GLfloat inner = 0.0;
+		GLfloat elevation = 1.0;
 
-		glUniform1d(glGetUniformLocation(m_light.program, "outerinv"), 1.0 / outer);
-		glUniform1d(glGetUniformLocation(m_light.program, "inner"), inner);
-		glUniform4d(glGetUniformLocation(m_light.program, "pos"), p.X, p.Y, elevation, 1.0);
-		glUniform4d(glGetUniformLocation(m_light.program, "col"), 24.0, 19.5, 11.9, 1);
+		glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
+		glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
+		glUniform4f(glGetUniformLocation(m_light.program, "pos"), (GLfloat)p.X, (GLfloat)p.Y, elevation, 1.0f);
+		glUniform4f(glGetUniformLocation(m_light.program, "col"), 24.0f, 19.5f, 11.9f, 1.0f);
 
 		std::vector<GLfloat> vertices(points_quad * vertice_depth);
 		std::vector<GLuint> indices(index_quad);
-		fill_vertex(p, { outer * 2, outer * 2 }, &vertices[0]);
+		fill_vertex(p, outer * 2, &vertices[0]);
 		fill_index(1, &indices[0]);
 		m_light.vao.fill(points_quad, { &vertices[0] }, indices);
 		m_light.vao.draw();
@@ -400,7 +402,6 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	m_scene.vao.draw();
 
 	m_opengl->swap();
-	m_last = timespan;
 
 #if _DEBUG
 	GLenum err = GL_NO_ERROR;

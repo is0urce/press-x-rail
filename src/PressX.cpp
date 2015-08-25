@@ -69,6 +69,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
 		g_bindings->bind('S', VK_DOWN, VK_NUMPAD2, key::move_south);
 		g_bindings->bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
+		g_bindings->bind(VK_END, VK_NUMPAD1, key::move_southwest);
+		g_bindings->bind(VK_NEXT, VK_NUMPAD3, key::move_southeast);
+		g_bindings->bind(VK_HOME, VK_NUMPAD7, key::move_northwest);
+		g_bindings->bind(VK_PRIOR, VK_NUMPAD9, key::move_northeast);
 		g_bindings->bind(VK_SPACE, VK_NUMPAD5, key::move_none);
 		g_bindings->bind(VK_RETURN, key::command_ok);
 		g_bindings->bind(VK_ESCAPE, key::command_cancel);
