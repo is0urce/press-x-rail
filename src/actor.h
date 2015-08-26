@@ -15,7 +15,7 @@ namespace px
 {
 	namespace rl
 	{
-		class actor : public unit, inventory<std::shared_ptr<item>>
+		class actor : public unit, public inventory<std::shared_ptr<item>>
 		{
 		private:
 

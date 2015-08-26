@@ -90,6 +90,8 @@
   <ItemGroup>
     <ClInclude Include="src\actor.h" />
     <ClInclude Include="src\avatar.h" />
+    <ClInclude Include="src\deposit.h" />
+    <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game_control.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\appearance.h" />
@@ -125,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\canvas.cpp" />
+    <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\opengl.cpp" />

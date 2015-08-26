@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "entity.h"
 #include "point.h"
 
 #include <memory>
@@ -14,19 +15,12 @@ namespace px
 	namespace rl
 	{
 		class actor;
-		class unit
+		class unit : public entity
 		{
 		public:
-			typedef unsigned int appearance_t;
-			typedef std::string name_t;
-			typedef unsigned int faction_t;
 			typedef std::shared_ptr<actor> user_t;
 
 		private:	
-			name_t m_name;
-			appearance_t m_appearance;
-			faction_t m_faction;
-
 			point m_position;
 			point m_prev_position;
 			bool m_remove;
@@ -57,17 +51,7 @@ namespace px
 			const point& previous_position() const;
 			void position(const point& position);
 			void position(const point& position, const point& previous);
-			void position_remember();
-
-			// appearance
-			void appearance(appearance_t img);
-			appearance_t appearance() const;
-			void name(name_t str);
-			name_t name() const;
-
-			void faction(faction_t id);
-			int reputation(faction_t id) const;
-			int reputation(const unit &unit) const;
+			void store_position();
 
 			void destroy();
 			bool destroying() const;

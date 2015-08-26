@@ -12,7 +12,7 @@ using namespace px;
 
 namespace
 {
-	static const unsigned int perc_range = 10;
+	static const unsigned int perc_range = 25;
 	static const point perc_center = point(perc_range, perc_range);
 	static const point perc_reach = point(perc_range * 2 + 1, perc_range * 2 + 1);
 	static const unsigned int action_distance = 1;
