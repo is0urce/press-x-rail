@@ -40,7 +40,7 @@ namespace px
 			{
 				std::unique_ptr<font> font;
 				GLuint texture;
-			} m_ui, m_notify, m_glyph;
+			} m_ui, m_popup, m_glyph;
 
 			struct
 			{
@@ -55,9 +55,9 @@ namespace px
 		private:
 			void setup_scene();
 			void fill_bg(const perception_t&);
-			void fill_tiles(const perception_t&);
-			void fill_units(const perception_t&);
-			void fill_notifications(const perception_t&);
+			void fill_tiles(const perception_t&, font &tiles_font);
+			void fill_units(const perception_t&, font &units_font);
+			void fill_notifications(const perception_t&, font &notify_font);
 
 		public:
 			renderer(opengl_handle opengl);

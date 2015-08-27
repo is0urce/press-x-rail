@@ -57,7 +57,7 @@ void game::fill_perception()
 	});
 
 	// notifications
-	m_perception.add_notification("heya!", 0xffffff, m_player->position());
+	m_perception.add_notification("* tap *", 0xffffff, m_player->position());
 }
 
 bool game::step_control(const point &move)

@@ -36,10 +36,10 @@ namespace
 	static const unsigned int index_quad = 6;
 
 	static const char *font_path_ui = "code2000.ttf";
-	static const char *font_path_notify = "code2000.ttf";
+	static const char *font_path_notify = "FiraMono-Bold.ttf";
 	static const char *font_path_unit = "code2000.ttf";
 	static const unsigned int font_size_ui = 64;
-	static const unsigned int font_size_notify = 16;
+	static const unsigned int font_size_notify = 32;
 	static const unsigned int font_size_unit = 64;
 
 	inline void fill_vertex(const vector &position, const vector &range, GLfloat *dest)
@@ -93,7 +93,7 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	m_opengl.swap(opengl);
 
 	m_ui.font.reset(new font(font_path_ui, font_size_ui));
-	m_notify.font.reset(new font(font_path_notify, font_size_unit));
+	m_popup.font.reset(new font(font_path_notify, font_size_notify));
 	m_glyph.font.reset(new font(font_path_unit, font_size_unit));
 
 	glDisable(GL_DEPTH_TEST);
@@ -125,7 +125,6 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glGenFramebuffers(1, &m_light_frame);
 
 	glGenSamplers(1, &m_sampler);
-	// mipmap
 	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glSamplerParameteri(m_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -133,7 +132,7 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	//glSamplerParameteri(m_sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, 64);
 
 	glGenTextures(1, &m_ui.texture);
-	glGenTextures(1, &m_notify.texture);
+	glGenTextures(1, &m_popup.texture);
 	glGenTextures(1, &m_glyph.texture);
 	glGenTextures(1, &m_scene_texture);
 	glGenTextures(1, &m_light_texture);
@@ -142,6 +141,20 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, ui_texture.width, ui_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, ui_texture.data);
+	glEnable(GL_TEXTURE_2D);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	const font::font_texture &popup_texture = m_popup.font->texture();
+	glBindTexture(GL_TEXTURE_2D, m_popup.texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, popup_texture.width, popup_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, popup_texture.data);
+	glEnable(GL_TEXTURE_2D);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	const font::font_texture &glyph_texture = m_glyph.font->texture();
+	glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, glyph_texture.width, glyph_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, glyph_texture.data);
 	glEnable(GL_TEXTURE_2D);
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
@@ -162,7 +175,7 @@ renderer::~renderer()
 	glDeleteFramebuffers(1, &m_light_frame);
 
 	glDeleteTextures(1, &m_ui.texture);
-	glDeleteTextures(1, &m_notify.texture);
+	glDeleteTextures(1, &m_popup.texture);
 	glDeleteTextures(1, &m_glyph.texture);
 	glDeleteTextures(1, &m_scene_texture);
 	glDeleteTextures(1, &m_light_texture);
@@ -225,7 +238,7 @@ void renderer::fill_bg(const perception_t &perception)
 	range.enumerate([&](const point &position)
 	{
 		fill_vertex(position, &vertices[vertex_offset]);
-		perception.ground(position).write(&colors[color_offset], points_quad);
+		fill_color(perception.ground(position), &colors[color_offset]);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
@@ -237,7 +250,7 @@ void renderer::fill_bg(const perception_t &perception)
 	m_background.vao.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
 }
 
-void renderer::fill_tiles(const perception_t &perception)
+void renderer::fill_tiles(const perception_t &perception, font &fnt)
 {
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
 	std::vector<GLfloat> textures(range_size * points_quad * vertice_depth);
@@ -245,13 +258,13 @@ void renderer::fill_tiles(const perception_t &perception)
 	std::vector<GLuint> indices(range_size * index_quad);
 
 	// vertex attributes
-	font &font = *m_ui.font;
+	//font &font = *m_ui.font;
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
 	unsigned int texture_offset = 0;
 	point(range_width, range_height).enumerate([&](const point &position)
 	{
-		auto g = font[perception.appearance(position)];
+		auto g = fnt[perception.appearance(position)];
 
 		fill_vertex(position, { g.width, g.height }, &vertices[vertex_offset]);
 		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
@@ -269,7 +282,7 @@ void renderer::fill_tiles(const perception_t &perception)
 	m_tiles.vao.fill(range_size * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
 }
 
-void renderer::fill_units(const perception_t &perception)
+void renderer::fill_units(const perception_t &perception, font &fnt)
 {
 	unsigned int unit_num = perception.unit_count();
 
@@ -279,13 +292,12 @@ void renderer::fill_units(const perception_t &perception)
 	std::vector<GLuint> indices(unit_num * index_quad);
 
 	// vertex attributes
-	font &font = *m_ui.font;
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
 	unsigned int texture_offset = 0;
 	perception.enumerate_units([&](const perception::avatar_t &unit)
 	{
-		auto g = font[unit.appearance()];
+		auto g = fnt[unit.appearance()];
 
 		fill_vertex(unit.position(), { g.width, g.height }, &vertices[vertex_offset]);
 		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
@@ -302,7 +314,7 @@ void renderer::fill_units(const perception_t &perception)
 	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
 }
 
-void renderer::fill_notifications(const perception_t &perception)
+void renderer::fill_notifications(const perception_t &perception, font &fnt)
 {
 	// calculate number of required letter-squares
 	unsigned int letters_num = 0;
@@ -317,7 +329,6 @@ void renderer::fill_notifications(const perception_t &perception)
 	std::vector<GLuint> indices(letters_num * index_quad);
 
 	// vertex attributes
-	font &font = *m_ui.font;
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
 	unsigned int texture_offset = 0;
@@ -331,8 +342,8 @@ void renderer::fill_notifications(const perception_t &perception)
 		double total_width = 0;
 		string::enum_utf8(n.text, [&](unsigned int code)
 		{
-			auto glyph = font[code];
-			total_width += font.kerning(prev_code, code);
+			auto glyph = fnt[code];
+			total_width += fnt.kerning(prev_code, code);
 			total_width += glyph.advance;
 			prev_code = code;
 		});
@@ -342,18 +353,13 @@ void renderer::fill_notifications(const perception_t &perception)
 		prev_code = 0;
 		string::enum_utf8(n.text, [&](unsigned int code)
 		{
-			auto g = font[code];
-			pen.move(font.kerning(prev_code, code) * n.size, 0);
+			auto g = fnt[code];
+			pen.move(fnt.kerning(prev_code, code) * n.size, 0);
 			prev_code = code;
 
 			double gw = g.width * n.size;
 			double gh = g.height * n.size;
 			double ghor = g.horisontal * n.size;
-
-			//(pen + precise + Vector(0, ghor - gh)).Write(&vertice[vertexoffset + 0 * vertexdepth]);
-			//(pen + precise + Vector(0, ghor)).Write(&vertice[vertexoffset + 1 * vertexdepth]);
-			//(pen + precise + Vector(gw, ghor)).Write(&vertice[vertexoffset + 2 * vertexdepth]);
-			//(pen + precise + Vector(gw, ghor - gh)).Write(&vertice[vertexoffset + 3 * vertexdepth]);
 
 			fill_vertex(pen.moved({ gw / 2, ghor - gh / 2 }), { gw, gh }, &vertices[vertex_offset]);
 			fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
@@ -387,9 +393,9 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	setup_scene(); // framebuffers & their textures
 
 	fill_bg(perception);
-	fill_tiles(perception);
-	fill_units(perception);
-	fill_notifications(perception);
+	fill_tiles(perception, *m_ui.font);
+	fill_units(perception, *m_ui.font);
+	fill_notifications(perception, *m_popup.font);
 
 	double movement_phase = std::min(timespan * 5.0, 1.0);
 	vector center = perception.range() / 2 - (vector)perception.movement() * (1.0 - movement_phase);
@@ -494,7 +500,7 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	glUniform2f(glGetUniformLocation(m_notification.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_notification.program, "img"), 0);
 	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	glBindTexture(GL_TEXTURE_2D, m_popup.texture);
 	glBindSampler(0, m_sampler);
 	m_notification.vao.draw();
 
