@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="include\readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PressX.h">
@@ -126,6 +127,9 @@
     <ClInclude Include="src\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\notification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -192,5 +196,7 @@
     <None Include="config\shaders\units.vert" />
     <None Include="config\shaders\light.frag" />
     <None Include="config\shaders\light.vert" />
+    <None Include="config\shaders\notify.vert" />
+    <None Include="config\shaders\notify.frag" />
   </ItemGroup>
 </Project>

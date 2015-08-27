@@ -160,6 +160,7 @@ point perception::movement() const
 void perception::swap(const point& start)
 {
 	m_units.clear();
+	m_notifications.clear();
 
 	std::swap(m_ground, m_ground_prev);
 	std::swap(m_color, m_color_prev);
@@ -177,4 +178,15 @@ void perception::swap(const point& start)
 unsigned int perception::version() const
 {
 	return m_version;
+}
+
+void perception::add_notification(notification::string_t text, color c, const point &position)
+{
+	m_notifications.emplace_back(text, c, position);
+	++m_version;
+}
+
+void perception::enumerate_notifications(std::function<void(const notification&)> fn) const
+{
+	std::for_each(m_notifications.begin(), m_notifications.end(), fn);
 }

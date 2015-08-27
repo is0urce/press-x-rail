@@ -35,6 +35,7 @@ namespace px
 			double m_scale;
 			timespan_t m_last;
 
+			GLuint m_sampler;
 			struct s_font
 			{
 				std::unique_ptr<font> font;
@@ -45,7 +46,7 @@ namespace px
 			{
 				vao vao;
 				GLuint program;
-			} m_background, m_tiles, m_units, m_scene, m_light;
+			} m_background, m_tiles, m_units, m_scene, m_light, m_notification;
 
 			GLuint m_light_frame, m_scene_frame;
 			GLuint m_scene_texture, m_light_texture;
@@ -56,7 +57,8 @@ namespace px
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&);
 			void fill_units(const perception_t&);
-			void draw_lights(const perception_t &perception, timespan_t phase);
+			//void draw_lights(const perception_t &perception, timespan_t phase);
+			void fill_notifications(const perception_t&);
 
 		public:
 			renderer(opengl_handle opengl);

@@ -85,6 +85,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="include\readme.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +99,7 @@
     <ClInclude Include="src\inventory.h" />
     <ClInclude Include="src\item.h" />
     <ClInclude Include="src\canvas.h" />
+    <ClInclude Include="src\notification.h" />
     <ClInclude Include="src\string.h" />
     <ClInclude Include="src\symbol.h" />
     <ClInclude Include="src\world.h" />
@@ -155,6 +157,8 @@
     <None Include="config\shaders\ground.vert" />
     <None Include="config\shaders\light.frag" />
     <None Include="config\shaders\light.vert" />
+    <None Include="config\shaders\notify.frag" />
+    <None Include="config\shaders\notify.vert" />
     <None Include="config\shaders\scene.frag" />
     <None Include="config\shaders\scene.vert" />
     <None Include="config\shaders\tiles.frag" />

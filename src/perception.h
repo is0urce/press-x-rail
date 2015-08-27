@@ -9,6 +9,7 @@
 #include "map.h"
 #include "color.h"
 #include "avatar.h"
+#include "notification.h"
 
 #include <list>
 #include <string>
@@ -27,6 +28,7 @@ namespace px
 			typedef unsigned int appearance_t;
 			typedef avatar<appearance_t> avatar_t;
 			typedef std::list<avatar_t> unit_list;
+			typedef std::list<notification> notify_list;
 			typedef std::function<void(const avatar_t&)> enum_fn;
 
 		private:
@@ -42,6 +44,7 @@ namespace px
 			point m_start_prev;
 			point m_move; // current-prev start
 			unit_list m_units;
+			notify_list m_notifications;
 
 		public:
 			perception(point range);
@@ -74,8 +77,8 @@ namespace px
 			unit_list::size_type unit_count() const;
 			void enumerate_units(enum_fn fn) const;
 
-			//void AddNotification(Point position, Color color, NotifyString text);
-			//const NotifyList& GetNotifications() const;
+			void add_notification(notification::string_t text, color c, const point &position);
+			void enumerate_notifications(std::function<void(const notification&)> fn) const;
 
 			void start(point point);
 			point start() const;

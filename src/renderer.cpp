@@ -13,6 +13,7 @@
 #include "color.h"
 #include "perception.h"
 #include "game.h"
+#include "string.h"
 
 #include <memory>
 #include <stdexcept>
@@ -37,9 +38,9 @@ namespace
 	static const char *font_path_ui = "code2000.ttf";
 	static const char *font_path_notify = "code2000.ttf";
 	static const char *font_path_unit = "code2000.ttf";
-	static const unsigned int font_size_ui = 32;
+	static const unsigned int font_size_ui = 64;
 	static const unsigned int font_size_notify = 16;
-	static const unsigned int font_size_unit = 32;
+	static const unsigned int font_size_unit = 64;
 
 	inline void fill_vertex(const vector &position, const vector &range, GLfloat *dest)
 	{
@@ -91,16 +92,16 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	m_opengl.swap(opengl);
 
+	m_ui.font.reset(new font(font_path_ui, font_size_ui));
+	m_notify.font.reset(new font(font_path_notify, font_size_unit));
+	m_glyph.font.reset(new font(font_path_unit, font_size_unit));
+
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
 	glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
 	glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
 	glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
-
-	m_ui.font.reset(new font(font_path_ui, font_size_ui));
-	m_notify.font.reset(new font(font_path_notify, font_size_unit));
-	m_glyph.font.reset(new font(font_path_unit, font_size_unit));
 
 	m_background.vao.init({ vertice_depth, color_depth });
 	m_background.program = glsl::program("shaders\\ground");
@@ -117,8 +118,19 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	m_light.vao.init({ vertice_depth });
 	m_light.program = glsl::program("shaders\\light");
 
+	m_notification.vao.init({ vertice_depth, texcoord_depth, color_depth });
+	m_notification.program = glsl::program("shaders\\notify");
+
 	glGenFramebuffers(1, &m_scene_frame);
 	glGenFramebuffers(1, &m_light_frame);
+
+	glGenSamplers(1, &m_sampler);
+	// mipmap
+	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glSamplerParameteri(m_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glSamplerParameteri(m_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glSamplerParameteri(m_sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, );
 
 	glGenTextures(1, &m_ui.texture);
 	glGenTextures(1, &m_notify.texture);
@@ -131,12 +143,13 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, ui_texture.width, ui_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, ui_texture.data);
 	glEnable(GL_TEXTURE_2D);
-	glGenerateMipmap(GL_TEXTURE_2D);  // generate mipmaps here.
+	glGenerateMipmap(GL_TEXTURE_2D);
+
 	// mipmap filters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 }
 
 renderer::~renderer()
@@ -159,6 +172,8 @@ renderer::~renderer()
 	glDeleteTextures(1, &m_glyph.texture);
 	glDeleteTextures(1, &m_scene_texture);
 	glDeleteTextures(1, &m_light_texture);
+
+	glDeleteSamplers(1, &m_sampler);
 }
 
 void renderer::setup_scene()
@@ -293,6 +308,47 @@ void renderer::fill_units(const perception_t &perception)
 	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
 }
 
+void renderer::fill_notifications(const perception_t &perception)
+{
+	// calculate number of required letter-squares
+	unsigned int letters_num = 0;
+	perception.enumerate_notifications([&](const notification &n)
+	{
+		letters_num += n.text.length();
+	});
+
+	std::vector<GLfloat> vertices(letters_num * points_quad * vertice_depth);
+	std::vector<GLfloat> textures(letters_num * points_quad * vertice_depth);
+	std::vector<GLfloat> colors(letters_num * points_quad * color_depth);
+	std::vector<GLuint> indices(letters_num * index_quad);
+
+	// vertex attributes
+	font &font = *m_ui.font;
+	unsigned int vertex_offset = 0;
+	unsigned int color_offset = 0;
+	unsigned int texture_offset = 0;
+	perception.enumerate_notifications([&](const notification &n)
+	{
+		string::enum_utf8(n.text, [&](unsigned int code)
+		{
+			auto g = font[code];
+
+			fill_vertex({ 0, 0 }, { g.width, g.height }, &vertices[vertex_offset]);
+			fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
+			fill_color(n.colour, &colors[color_offset]);
+
+			vertex_offset += vertice_depth * points_quad;
+			color_offset += color_depth * points_quad;
+			texture_offset += texcoord_depth * points_quad;
+		});
+	});
+
+	fill_index(letters_num, indices);
+
+	// bind
+	m_notification.vao.fill(letters_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
+}
+
 void renderer::draw(const perception_t &perception, timespan_t timespan)
 {
 	if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
@@ -332,21 +388,23 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	m_background.vao.draw();
 
 	glUseProgram(m_tiles.program);
-	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	glUniform1f(glGetUniformLocation(m_tiles.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_tiles.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	glBindSampler(0, m_sampler);
 	m_tiles.vao.draw();
 
 	glUseProgram(m_units.program);
-	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 	glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_units.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	glBindSampler(0, m_sampler);
 	m_units.vao.draw();
 
 	// lights
