@@ -55,6 +55,9 @@ void game::fill_perception()
 	{
 		m_perception.add_unit(unit->appearance(), unit->position(), unit->previous_position());
 	});
+
+	// notifications
+	m_perception.add_notification("heya!", 0xffffff, m_player->position());
 }
 
 bool game::step_control(const point &move)

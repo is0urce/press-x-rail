@@ -130,7 +130,7 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glSamplerParameteri(m_sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glSamplerParameteri(m_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glSamplerParameteri(m_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glSamplerParameteri(m_sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, );
+	//glSamplerParameteri(m_sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, 64);
 
 	glGenTextures(1, &m_ui.texture);
 	glGenTextures(1, &m_notify.texture);
@@ -144,12 +144,6 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, ui_texture.width, ui_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, ui_texture.data);
 	glEnable(GL_TEXTURE_2D);
 	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// mipmap filters
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 }
 
 renderer::~renderer()
@@ -329,13 +323,43 @@ void renderer::fill_notifications(const perception_t &perception)
 	unsigned int texture_offset = 0;
 	perception.enumerate_notifications([&](const notification &n)
 	{
+		vector pen = n.position;
+		auto &str = n.text;
+		auto len = str.length();
+
+		unsigned int prev_code = 0;
+		double total_width = 0;
+		string::enum_utf8(n.text, [&](unsigned int code)
+		{
+			auto glyph = font[code];
+			total_width += font.kerning(prev_code, code);
+			total_width += glyph.advance;
+			prev_code = code;
+		});
+
+		pen.move(total_width * -n.size / 2, 0);
+
+		prev_code = 0;
 		string::enum_utf8(n.text, [&](unsigned int code)
 		{
 			auto g = font[code];
+			pen.move(font.kerning(prev_code, code) * n.size, 0);
+			prev_code = code;
 
-			fill_vertex({ 0, 0 }, { g.width, g.height }, &vertices[vertex_offset]);
+			double gw = g.width * n.size;
+			double gh = g.height * n.size;
+			double ghor = g.horisontal * n.size;
+
+			//(pen + precise + Vector(0, ghor - gh)).Write(&vertice[vertexoffset + 0 * vertexdepth]);
+			//(pen + precise + Vector(0, ghor)).Write(&vertice[vertexoffset + 1 * vertexdepth]);
+			//(pen + precise + Vector(gw, ghor)).Write(&vertice[vertexoffset + 2 * vertexdepth]);
+			//(pen + precise + Vector(gw, ghor - gh)).Write(&vertice[vertexoffset + 3 * vertexdepth]);
+
+			fill_vertex(pen.moved({ gw / 2, ghor - gh / 2 }), { gw, gh }, &vertices[vertex_offset]);
 			fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
 			fill_color(n.colour, &colors[color_offset]);
+
+			pen.X += g.advance * n.size;
 
 			vertex_offset += vertice_depth * points_quad;
 			color_offset += color_depth * points_quad;
@@ -365,6 +389,7 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	fill_bg(perception);
 	fill_tiles(perception);
 	fill_units(perception);
+	fill_notifications(perception);
 
 	double movement_phase = std::min(timespan * 5.0, 1.0);
 	vector center = perception.range() / 2 - (vector)perception.movement() * (1.0 - movement_phase);
@@ -456,8 +481,22 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
 	glUniform1i(glGetUniformLocation(m_scene.program, "light"), 1);
 	glUniform3f(glGetUniformLocation(m_scene.program, "rng"), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100));
-
 	m_scene.vao.draw();
+
+	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// notifications
+	glUseProgram(m_notification.program);
+	glUniform1f(glGetUniformLocation(m_notification.program, "aspect"), aspect);
+	glUniform1f(glGetUniformLocation(m_notification.program, "scale"), scale);
+	glUniform2f(glGetUniformLocation(m_notification.program, "center"), x_center, y_center);
+	glUniform1i(glGetUniformLocation(m_notification.program, "img"), 0);
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	glBindSampler(0, m_sampler);
+	m_notification.vao.draw();
 
 	m_opengl->swap();
 

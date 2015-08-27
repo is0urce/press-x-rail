@@ -57,7 +57,6 @@ namespace px
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&);
 			void fill_units(const perception_t&);
-			//void draw_lights(const perception_t &perception, timespan_t phase);
 			void fill_notifications(const perception_t&);
 
 		public:

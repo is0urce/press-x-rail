@@ -66,6 +66,11 @@ bool perception::in_range(const point &point) const
 	return m_appearance.in_range(point);
 }
 
+unsigned int perception::version() const
+{
+	return m_version;
+}
+
 const perception::appearance_t& perception::appearance(const point &position) const
 {
 	return m_appearance.at(position);
@@ -175,14 +180,9 @@ void perception::swap(const point& start)
 	++m_version;
 }
 
-unsigned int perception::version() const
-{
-	return m_version;
-}
-
 void perception::add_notification(notification::string_t text, color c, const point &position)
 {
-	m_notifications.emplace_back(text, c, position);
+	m_notifications.emplace_back(text, c, position - m_start);
 	++m_version;
 }
 

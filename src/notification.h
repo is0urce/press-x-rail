@@ -28,11 +28,15 @@ namespace px
 			double phase;
 
 		private:
-			void init(double size_value) { phase = 0; size = size_value; }
+			void init(string_t str, color c, double size_value, vector pos) { text = str; colour = c; size = size_value; position = pos; }
+			void init(string_t str, color c, vector pos) { init(str, c, 1, pos); }
+			void init(string_t str, vector pos) { init(str, color(1, 1, 1), pos); }
+			void init(string_t str) { init(str, { 0, 0 }); }
+
 		public:
-			notification() : text(""), colour(1, 1, 1) { init(1); }
-			notification(string_t str, color c, vector pos) : text("") { init(1); }
-			notification(string_t str, color c, double size, vector pos) : text("") { init(size); }
+			notification() { init(""); }
+			notification(string_t str, color c, vector pos) { init(str, c, pos); }
+			notification(string_t str, color c, double size, vector pos) { init(str, c, size, pos); }
 		};
 	}
 }

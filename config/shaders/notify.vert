@@ -10,8 +10,6 @@ smooth out vec2 theTexture;
 uniform float scale;
 uniform float aspect;
 uniform vec2 center;
-uniform float phase;
-//uniform vec2 movement;
 
 void main()
 {
