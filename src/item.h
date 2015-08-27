@@ -16,8 +16,8 @@ namespace px
 		class item : public unit
 		{
 		public:
-			item();
-			virtual ~item();
+			item() {}
+			virtual ~item() {}
 		};
 	}
 }

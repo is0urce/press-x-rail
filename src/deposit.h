@@ -15,18 +15,20 @@ namespace px
 	{
 		class deposit : public unit
 		{
+		public:
+			typedef std::shared_ptr<item> resource_ptr;
 		private:
 			bool m_depleted;
-			std::shared_ptr<item> m_item;
+			resource_ptr m_item;
 
 			// ctor & dtor
 		public:
-			deposit() : m_depleted(false), m_item(nullptr) {}
+			deposit(resource_ptr resource) : m_depleted(false), m_item(resource) {}
 			virtual ~deposit() {}
 
 			// vitrual
 		protected:
-			virtual void use_unit(user_t user) override { user->add_item(m_item); }
+			virtual void use_unit(user_t user) override { user->add_item(m_item); m_depleted = true; m_item.reset(); }
 			virtual bool useable_unit(user_t user) const override { return !depleted(); }
 
 		public:

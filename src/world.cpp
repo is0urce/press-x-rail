@@ -11,6 +11,7 @@
 
 #include "actor.h"
 #include "deposit.h"
+#include "item.h"
 
 using namespace px;
 
@@ -61,8 +62,12 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 		mob->position(offset + point(6, 6));
 		fetch_fn(mob);
 
-		world::unit_ptr vein(new rl::deposit());
-		vein->appearance('o');
+		rl::deposit::resource_ptr ore(new rl::item());
+		ore->appearance('o');
+		ore->name("copper ore");
+
+		world::unit_ptr vein(new rl::deposit(ore));
+		vein->appearance('O');
 		vein->position(offset + point(12, 12));
 		fetch_fn(vein);
 	}
