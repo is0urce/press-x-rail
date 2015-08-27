@@ -27,6 +27,7 @@ namespace px
 			// vitrual
 		protected:
 			virtual void use_unit(user_t user) override {}
+			virtual bool useable_unit(user_t user) const override { return true; }
 		};
 	}
 }

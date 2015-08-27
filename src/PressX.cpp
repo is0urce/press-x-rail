@@ -76,7 +76,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind(VK_SPACE, VK_NUMPAD5, key::move_none);
 		g_bindings->bind(VK_RETURN, key::command_ok);
 		g_bindings->bind(VK_ESCAPE, key::command_cancel);
-		g_bindings->bind('E', key::command_cancel);
+		g_bindings->bind('1', key::action1);
+		g_bindings->bind('2', key::action2);
+		g_bindings->bind('3', key::action3);
+		g_bindings->bind('4', key::action4);
+		g_bindings->bind('5', key::action5);
+		g_bindings->bind('6', key::action6);
+		g_bindings->bind('7', key::action7);
+		g_bindings->bind('8', key::action8);
+		g_bindings->bind('9', key::action9);
+		g_bindings->bind('0', key::action0);
 
 		auto turn = g_game->perception().version();
 		bool run = true;

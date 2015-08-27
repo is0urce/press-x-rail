@@ -21,13 +21,13 @@ namespace px
 
 			// ctor & dtor
 		public:
-			deposit() {}
+			deposit() : m_depleted(false), m_item(nullptr) {}
 			virtual ~deposit() {}
 
 			// vitrual
 		protected:
 			virtual void use_unit(user_t user) override { user->add_item(m_item); }
-			virtual bool useable_unit() const override { return !depleted(); }
+			virtual bool useable_unit(user_t user) const override { return !depleted(); }
 
 		public:
 			bool depleted() const { return m_depleted; }

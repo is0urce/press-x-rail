@@ -8,7 +8,9 @@
 #include "world.h"
 
 #include "automata.h"
-#include "unit.h"
+
+#include "actor.h"
+#include "deposit.h"
 
 using namespace px;
 
@@ -58,6 +60,11 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 		mob->appearance('g');
 		mob->position(offset + point(6, 6));
 		fetch_fn(mob);
+
+		world::unit_ptr vein(new rl::deposit(nullptr));
+		vein->appearance('o');
+		vein->position(offset + point(12, 12));
+		fetch_fn(vein);
 	}
 
 	return map;

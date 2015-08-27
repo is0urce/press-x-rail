@@ -37,13 +37,13 @@ namespace px
 		protected:
 			virtual bool traversable_unit() const;
 			virtual bool transparent_unit() const;
-			virtual bool useable_unit() const;
+			virtual bool useable_unit(user_t user) const;
 			virtual void use_unit(user_t user);
 
 		public:
 			bool traversable() const;
 			bool transparent() const;
-			bool useable() const;
+			bool useable(user_t user) const;
 			void use(user_t user);
 
 			// position

@@ -36,7 +36,7 @@ bool unit::transparent_unit() const
 	return true;
 }
 
-bool unit::useable_unit() const
+bool unit::useable_unit(user_t user) const
 {
 	return false;
 }
@@ -57,9 +57,9 @@ bool unit::transparent() const
 	return transparent_unit();
 }
 
-bool unit::useable() const
+bool unit::useable(user_t user) const
 {
-	return useable_unit();
+	return useable_unit(user);
 }
 
 void unit::use(user_t user)
