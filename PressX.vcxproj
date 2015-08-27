@@ -126,10 +126,10 @@
     <ClInclude Include="src\wingl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\canvas.cpp" />
     <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\font.cpp" />
-    <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\opengl.cpp" />
     <ClCompile Include="src\perception.cpp" />
     <ClCompile Include="src\PressX.cpp" />

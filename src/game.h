@@ -22,7 +22,7 @@ namespace px
 	{
 	public:
 		typedef std::shared_ptr<rl::actor> player_ptr;
-		typedef std::weak_ptr<rl::unit> target_ptr;
+		typedef std::shared_ptr<rl::unit> target_ptr;
 
 	public:
 		static const unsigned int perc_width;
@@ -49,6 +49,7 @@ namespace px
 	private:
 		void fill_perception();
 		target_ptr aquire_target(); // select target from hovering position
+		bool useable(target_ptr target) const;
 
 	public:
 		const shell::perception& perception() const;

@@ -61,7 +61,7 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 		mob->position(offset + point(6, 6));
 		fetch_fn(mob);
 
-		world::unit_ptr vein(new rl::deposit(nullptr));
+		world::unit_ptr vein(new rl::deposit());
 		vein->appearance('o');
 		vein->position(offset + point(12, 12));
 		fetch_fn(vein);

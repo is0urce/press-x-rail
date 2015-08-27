@@ -86,6 +86,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind('8', key::action8);
 		g_bindings->bind('9', key::action9);
 		g_bindings->bind('0', key::action0);
+		g_bindings->bind('E', key::action_use);
 
 		auto turn = g_game->perception().version();
 		bool run = true;
