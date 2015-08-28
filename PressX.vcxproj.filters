@@ -130,6 +130,9 @@
     <ClInclude Include="src\notification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

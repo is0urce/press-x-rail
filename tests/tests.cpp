@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 
-//#define CATCH_CONFIG_RUNNER // providing own main
-//#include "catch.hpp"
+#define CATCH_CONFIG_RUNNER // providing own main
+#include "catch.hpp"
 
 int _tmain(int argc, char* const argv[])
 {
-	//Catch::Session().run(argc, argv);
+	Catch::Session().run(argc, argv);
 	return 0;
 }

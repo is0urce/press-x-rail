@@ -126,6 +126,7 @@
     <ClInclude Include="src\vao.h" />
     <ClInclude Include="src\vector.h" />
     <ClInclude Include="src\wingl.h" />
+    <ClInclude Include="src\writer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
