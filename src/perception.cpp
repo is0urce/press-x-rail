@@ -9,22 +9,28 @@
 
 #include "unit.h"
 
+#include <numeric>
+
 using namespace px;
 using namespace px::shell;
 
 namespace
 {
 	static const color black_color(0);
+	static const double notify_size = 0.25;
+	inline bool alpanum_less(const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); }
 }
 
 perception::perception(point range) :
-	m_appearance(range)
+	m_appearance(range),
+	m_notify(alpanum_less)
 {
 	init(range, {});
 }
 
 perception::perception(point range, point start) :
 	m_appearance(range),
+	m_notify(alpanum_less),
 	m_start(start)
 {
 	init(range, start);
@@ -33,6 +39,7 @@ perception::perception(point range, point start) :
 void perception::init(point range, point start)
 {
 	m_version = 0;
+
 	m_start = start;
 	m_ground.reset(new map<perception::ground_t>(range));
 	m_ground_prev.reset(new map<perception::ground_t>(range));
@@ -165,7 +172,7 @@ point perception::movement() const
 void perception::swap(const point& start)
 {
 	m_units.clear();
-	m_notifications.clear();
+	m_notify.clear();
 
 	std::swap(m_ground, m_ground_prev);
 	std::swap(m_color, m_color_prev);
@@ -180,13 +187,20 @@ void perception::swap(const point& start)
 	++m_version;
 }
 
+void perception::add_notification(notification::string_t text, color c, const point &position, double multiplier)
+{
+	point pos = position - m_start;
+	auto range = m_notify.equal_range(pos);
+	double elevation = std::accumulate(range.first, range.second, (double)pos.Y, [](double &a, const std::pair<point, notification> &e){ return (std::max)(a, e.second.position.Y + e.second.size); });
+	m_notify.emplace_hint(range.first, pos, notification(text, c, vector(pos.X, elevation), notify_size * multiplier));
+	++m_version;
+}
 void perception::add_notification(notification::string_t text, color c, const point &position)
 {
-	m_notifications.emplace_back(text, c, position - m_start);
-	++m_version;
+	add_notification(text, c, position, 1.0);
 }
 
 void perception::enumerate_notifications(std::function<void(const notification&)> fn) const
 {
-	std::for_each(m_notifications.begin(), m_notifications.end(), fn);
+	std::for_each(m_notify.begin(), m_notify.end(), [&](const std::pair<point, notification> &p){ fn(p.second); });
 }

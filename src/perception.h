@@ -15,6 +15,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include <map>
 
 namespace px
 {
@@ -28,7 +29,6 @@ namespace px
 			typedef unsigned int appearance_t;
 			typedef avatar<appearance_t> avatar_t;
 			typedef std::list<avatar_t> unit_list;
-			typedef std::list<notification> notify_list;
 			typedef std::function<void(const avatar_t&)> enum_fn;
 
 		private:
@@ -44,7 +44,7 @@ namespace px
 			point m_start_prev;
 			point m_move; // current-prev start
 			unit_list m_units;
-			notify_list m_notifications;
+			std::multimap<point, notification, std::function<bool(const point&, const point&)>> m_notify;
 
 		public:
 			perception(point range);
@@ -78,6 +78,7 @@ namespace px
 			void enumerate_units(enum_fn fn) const;
 
 			void add_notification(notification::string_t text, color c, const point &position);
+			void add_notification(notification::string_t text, color c, const point &position, double multiplier);
 			void enumerate_notifications(std::function<void(const notification&)> fn) const;
 
 			void start(point point);
