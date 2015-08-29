@@ -16,7 +16,11 @@ namespace px
 		static const unsigned int key_size = 8;
 
 	public:
-		typedef struct key_t { char letter[key_size]; } key_t;
+		typedef struct key_t
+		{
+			char letter[key_size];
+		}
+		key_t;
 		typedef uint64_t chunk_size;
 
 	public:
@@ -36,4 +40,6 @@ namespace px
 		io() {}
 		virtual ~io() {}
 	};
+	bool operator==(const io::key_t &a, const io::key_t &b) { return std::equal(a.letter, a.letter + sizeof(a.letter) / sizeof (*a.letter), b.letter); }
+	bool operator!=(const io::key_t &a, const io::key_t &b) { return !operator==(a,b); }
 }

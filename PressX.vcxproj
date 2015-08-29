@@ -101,6 +101,7 @@
     <ClInclude Include="src\item.h" />
     <ClInclude Include="src\canvas.h" />
     <ClInclude Include="src\notification.h" />
+    <ClInclude Include="src\reader.h" />
     <ClInclude Include="src\string.h" />
     <ClInclude Include="src\symbol.h" />
     <ClInclude Include="src\world.h" />

@@ -43,6 +43,9 @@ namespace px
 		public:
 			node(stream_t *stream_ptr) : m_acc(0), m_opened(true), m_stream_ptr(stream_ptr) {}
 			~node() {}
+		private:
+			node(const node &n) = delete;
+
 		public:
 			void close()
 			{
@@ -130,7 +133,9 @@ namespace px
 			init(path);
 		}
 		writer(stream_t stream) { init(); }
-		~writer() { flush(); }
+		virtual ~writer() { end(); }
+	private:
+		writer(const writer &w) = delete;
 
 	private:
 		void init(const std::string &path)
@@ -138,7 +143,7 @@ namespace px
 			m_stream.open(path.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
 			if (!m_stream.is_open())
 			{
-				throw std::runtime_error("can't write in file" + path);
+				throw std::runtime_error("can't write in file " + path);
 			}
 			init();
 		}
@@ -149,6 +154,7 @@ namespace px
 
 	public:
 		node_ptr top() { return m_top; }
-		void flush() { m_top->close(); m_stream.flush(); }
+		void end() { m_top->close(); m_stream.flush(); }
+		node_ptr operator->() { return m_top; }
 	};
 }
