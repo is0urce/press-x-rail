@@ -28,7 +28,7 @@ namespace px
 
 			// vitrual
 		protected:
-			virtual void use_unit(user_t user) override { user->add_item(m_item); m_depleted = true; m_item.reset(); }
+			virtual void use_unit(user_t user) override { user->add_item(m_item); m_depleted = true; m_item.reset(); m_appearance.color.shift_brightness(0.5); }
 			virtual bool useable_unit(user_t user) const override { return !depleted(); }
 
 		public:

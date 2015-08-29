@@ -71,6 +71,7 @@ namespace px
 		void set_rgb(int r, int g, int b) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = 1.0; }
 		void set_hex(unsigned int hex) { set_rgb(hex / 256 / 256 % 256, hex / 256 % 256, hex % 256); };
 		void shift_hue(double angle) { *this = transform_hue(*this, angle); };
+		void shift_brightness(double scale) { *this = transform_hsv(*this, 0, 1.0, scale); }
 		void shift_hsv(double hue, double saturation, double v) { *this = transform_hsv(*this, hue, saturation, v); };
 		color transform_hsv(double hue, double saturation, double v) const { return transform_hsv(*this, hue, saturation, v); };
 		color average(const color &other) const { return (*this + other) / 2; };

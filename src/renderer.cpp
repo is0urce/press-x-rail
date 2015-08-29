@@ -267,10 +267,15 @@ void renderer::fill_tiles(const perception_t &perception, font &fnt)
 	{
 		auto &tile = perception.appearance(position);
 		auto g = fnt[tile.image];
+		color tile_color = tile.color;
+		if (perception.hide(position))
+		{
+			tile_color.A = 0; // blend to zero-alpha with same tint
+		}
 
 		fill_vertex(position, { g.width * tile.size, g.height * tile.size }, &vertices[vertex_offset]);
 		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
-		fill_color(perception.hide(position) ? color(0, 0, 0, 0.0) : color(1, 1, 1, 1.0), &colors[color_offset]);
+		fill_color(tile_color, &colors[color_offset]);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;

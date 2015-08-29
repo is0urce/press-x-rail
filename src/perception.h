@@ -8,7 +8,6 @@
 #include "point.h"
 #include "map.h"
 #include "appearance.h"
-#include "color.h"
 #include "avatar.h"
 #include "notification.h"
 

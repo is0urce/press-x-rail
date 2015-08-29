@@ -107,6 +107,7 @@ bool game::use_control()
 	if (useable(target))
 	{
 		target->use(m_player);
+		fill_perception();
 	}
 	return true;
 }

@@ -20,7 +20,7 @@ namespace px
 			typedef std::string name_t;
 			typedef unsigned int faction_t;
 
-		private:
+		protected:
 			name_t m_name;
 			appearance_t m_appearance;
 			faction_t m_faction;
