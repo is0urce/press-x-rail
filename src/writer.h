@@ -12,8 +12,7 @@
 
 #pragma once
 
-#include "coordinate.h"
-#include "point.h"
+#include "io.h"
 
 #include <fstream>
 #include <string>
@@ -22,15 +21,13 @@
 
 namespace px
 {
-	class writer
+	class writer : public io
 	{
 	public:
 		class node;
 
 	public:
 		typedef std::ofstream stream_t;
-		typedef struct { char letter[8]; } key_t;
-		typedef uint64_t chunk_size;
 		typedef std::shared_ptr<node> node_ptr;
 
 	public:
@@ -64,7 +61,7 @@ namespace px
 			}
 			node_ptr open(key_t key)
 			{
-				if (!m_opened) throw std::logic_error("writer::node::write() node closed");
+				if (!m_opened) throw std::logic_error("writer::node::open() node closed");
 				close();
 
 				chunk_size reserved = 0;
@@ -88,10 +85,6 @@ namespace px
 
 				m_acc += sizeof(key) + sizeof(len) + len;
 			}
-			void write(key_t key, const char *cstr)
-			{
-				write(key, std::string(cstr));
-			}
 			template <typename _E>
 			void write(key_t key, _E element)
 			{
@@ -105,6 +98,28 @@ namespace px
 
 				m_acc += sizeof(key) + sizeof(element_size) + element_size;
 			}
+			node_ptr open(const std::string &key)
+			{
+				return open(to_key(key));
+			}
+			template <typename _E>
+			void write(const std::string &key, _E element)
+			{
+				write(to_key(key), element);
+			}
+			void write(const std::string &key, const char *cstr)
+			{
+				write(to_key(key), std::string(cstr));
+			}
+			void write(const std::string &key, const std::string &str)
+			{
+				write(to_key(key), str);
+			}
+			void write(key_t key, const char *cstr)
+			{
+				write(key, std::string(cstr));
+			}
+
 		};
 	private:
 		stream_t m_stream;

@@ -5,7 +5,7 @@
 
 #include "stdafx.h"
 
-#include "Font.h"
+#include "font.h"
 
 #include <algorithm>
 #include <string>
@@ -22,7 +22,7 @@ namespace
 {
 	const unsigned int multiplier = 16; // atlas width in em
 	const unsigned int base_fill = 128; // precashe size
-	std::mutex font_mutex; // no mutexes for now as crt debug memory leak report issue
+	std::mutex font_mutex; // init&free mutex
 }
 
 // IMPLEMENTATION
