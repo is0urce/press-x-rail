@@ -33,7 +33,7 @@ TEST_CASE("io", "[io]")
 	list2->write("mob4", 4);
 
 	auto l_n = w->open("n");
-	////l_n->write("before", 0);
+	l_n->write("before", 0);
 	auto l_e = l_n->open("e");
 	auto l_s = l_e->open("s");
 	auto l_t = l_s->open("t");

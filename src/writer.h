@@ -35,8 +35,8 @@ namespace px
 		{
 		private:
 			stream_t *m_stream_ptr;
-			node_ptr m_child;
-			bool m_opened;
+			node_ptr m_child; // current opened node
+			bool m_opened; // is this node opened
 			stream_t::streampos m_reserve;
 			chunk_size m_acc;
 
@@ -58,6 +58,8 @@ namespace px
 					m_stream_ptr->seekp(m_reserve);
 					m_stream_ptr->write((char*)&m_child->m_acc, sizeof(m_child->m_acc));
 					m_stream_ptr->seekp(current);
+
+					m_acc += sizeof(key_t) + sizeof(chunk_size) + m_child->m_acc;
 
 					m_child.reset();
 				}
