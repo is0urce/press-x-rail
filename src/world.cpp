@@ -9,7 +9,7 @@
 
 #include "automata.h"
 
-#include "actor.h"
+#include "person.h"
 #include "deposit.h"
 #include "item.h"
 
@@ -57,9 +57,11 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 	{
 		created = true;
 
-		world::unit_ptr mob(new rl::unit());
+		std::shared_ptr<rl::person> mob(new rl::person());
 		mob->appearance('g');
 		mob->position(offset + point(6, 6));
+		mob->health() = 100;
+		mob->energy() = { 0, 100 };
 		fetch_fn(mob);
 
 		rl::deposit::resource_ptr ore(new rl::item());

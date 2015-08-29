@@ -6,7 +6,7 @@
 #include "stdafx.h"
 
 #include "game.h"
-#include "actor.h"
+#include "person.h"
 
 using namespace px;
 
@@ -23,7 +23,7 @@ const unsigned int game::perc_height = perc_range * 2 + 1;
 
 game::game() : m_perception(perc_reach)
 {
-	m_player.reset(new rl::actor());
+	m_player.reset(new rl::person());
 	m_player->appearance('@');
 
 	m_scene.focus({ 8, 8 });

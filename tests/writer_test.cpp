@@ -24,7 +24,7 @@ TEST_CASE("io", "[io]")
 
 	// writing another value-size or opening another nested list at same level invalidates previous
 	REQUIRE_THROWS_AS(list->write("item3", 3), std::logic_error);
-	REQUIRE_THROWS_AS(list->write("thisstringistoolong", 3), std::logic_error);
+	REQUIRE_THROWS_AS(w->write("thisstringistoolong", 3), std::logic_error);
 
 	auto list2 = w->open("list2"); // anoter list
 	list2->write("mob1", 1);
@@ -61,6 +61,8 @@ TEST_CASE("io", "[io]")
 	std::string yoyo;
 	REQUIRE_NOTHROW(r["string0"] >> yoyo);
 	REQUIRE(yoyo == "yohohoyo"); // std::string
+
+	REQUIRE_THROWS(r["string0"] >> guess); // type mismatch
 
 	int x;
 

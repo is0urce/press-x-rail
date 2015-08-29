@@ -91,6 +91,7 @@
   <ItemGroup>
     <ClInclude Include="src\actor.h" />
     <ClInclude Include="src\avatar.h" />
+    <ClInclude Include="src\bar.h" />
     <ClInclude Include="src\deposit.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game.h" />
@@ -101,6 +102,7 @@
     <ClInclude Include="src\item.h" />
     <ClInclude Include="src\canvas.h" />
     <ClInclude Include="src\notification.h" />
+    <ClInclude Include="src\person.h" />
     <ClInclude Include="src\reader.h" />
     <ClInclude Include="src\string.h" />
     <ClInclude Include="src\symbol.h" />
