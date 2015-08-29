@@ -24,7 +24,7 @@ const unsigned int game::perc_height = perc_range * 2 + 1;
 game::game() : m_perception(perc_reach)
 {
 	m_player.reset(new rl::person());
-	m_player->appearance('@');
+	m_player->appearance({ '@', 0xffffff });
 
 	m_scene.focus({ 8, 8 });
 	m_scene.add(m_player, { 8, 8 });
@@ -57,7 +57,7 @@ void game::fill_perception()
 	});
 
 	// notifications
-	m_perception.add_notification("* tap *", 0xffffff, m_player->position());
+	//m_perception.add_notification("* tap *", 0xffffff, m_player->position());
 }
 
 bool game::step_control(const point &move)

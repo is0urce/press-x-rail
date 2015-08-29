@@ -7,6 +7,7 @@
 
 #include "point.h"
 #include "map.h"
+#include "appearance.h"
 #include "color.h"
 #include "avatar.h"
 #include "notification.h"
@@ -25,8 +26,8 @@ namespace px
 		{
 		public:
 			typedef color ground_t;
-			typedef unsigned int tile_t;
-			typedef unsigned int appearance_t;
+			typedef appearance<unsigned int> tile_t;
+			typedef appearance<unsigned int> appearance_t;
 			typedef avatar<appearance_t> avatar_t;
 			typedef std::list<avatar_t> unit_list;
 			typedef std::function<void(const avatar_t&)> enum_fn;

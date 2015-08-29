@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "appearance.h"
+
 #include <string>
 
 namespace px
@@ -14,7 +16,7 @@ namespace px
 		class entity
 		{
 		public:
-			typedef unsigned int appearance_t;
+			typedef appearance<unsigned int> appearance_t;
 			typedef std::string name_t;
 			typedef unsigned int faction_t;
 

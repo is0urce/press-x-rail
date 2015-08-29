@@ -57,19 +57,20 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 	{
 		created = true;
 
-		std::shared_ptr<rl::person> mob(new rl::person());
-		mob->appearance('g');
-		mob->position(offset + point(6, 6));
-		mob->health() = 100;
-		mob->energy() = { 0, 100 };
-		fetch_fn(mob);
+		//std::shared_ptr<rl::person> mob(new rl::person());
+		//mob->appearance('g');
+		//mob->position(offset + point(6, 6));
+		//mob->health() = 100;
+		//mob->energy() = { 0, 100 };
+		//fetch_fn(mob);
 
 		rl::deposit::resource_ptr ore(new rl::item());
 		ore->appearance('o');
 		ore->name("copper ore");
 
 		world::unit_ptr vein(new rl::deposit(ore));
-		vein->appearance('O');
+		vein->appearance('g');
+		vein->appearance({ 'g', 0xee1111 });
 		vein->position(offset + point(12, 12));
 		fetch_fn(vein);
 	}

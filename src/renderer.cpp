@@ -37,7 +37,8 @@ namespace
 
 	static const char *font_path_ui = "code2000.ttf";
 	static const char *font_path_notify = "FiraMono-Bold.ttf";
-	static const char *font_path_unit = "code2000.ttf";
+	//static const char *font_path_unit = "code2000.ttf";
+	static const char *font_path_unit = "FiraMono-Bold.ttf";
 	static const unsigned int font_size_ui = 64;
 	static const unsigned int font_size_notify = 32;
 	static const unsigned int font_size_unit = 64;
@@ -264,9 +265,10 @@ void renderer::fill_tiles(const perception_t &perception, font &fnt)
 	unsigned int texture_offset = 0;
 	point(range_width, range_height).enumerate([&](const point &position)
 	{
-		auto g = fnt[perception.appearance(position)];
+		auto &tile = perception.appearance(position);
+		auto g = fnt[tile.image];
 
-		fill_vertex(position, { g.width, g.height }, &vertices[vertex_offset]);
+		fill_vertex(position, { g.width * tile.size, g.height * tile.size }, &vertices[vertex_offset]);
 		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
 		fill_color(perception.hide(position) ? color(0, 0, 0, 0.0) : color(1, 1, 1, 1.0), &colors[color_offset]);
 
@@ -297,11 +299,12 @@ void renderer::fill_units(const perception_t &perception, font &fnt)
 	unsigned int texture_offset = 0;
 	perception.enumerate_units([&](const perception::avatar_t &unit)
 	{
-		auto g = fnt[unit.appearance()];
+		auto &appear = unit.appearance();
+		auto g = fnt[appear.image];
 
-		fill_vertex(unit.position(), { g.width, g.height }, &vertices[vertex_offset]);
+		fill_vertex(unit.position(), { g.width * appear.size, g.height * appear.size }, &vertices[vertex_offset]);
 		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
-		fill_color(0xffffff, &colors[color_offset]);
+		fill_color(unit.appearance().color, &colors[color_offset]);
 
 		vertex_offset += vertice_depth * points_quad;
 		color_offset += color_depth * points_quad;
@@ -454,15 +457,26 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	point p;
 	perception.enumerate_units([&](perception::avatar_t a)
 	{
+		
+
 		p = a.position();
 		GLfloat outer = 8.0;
 		GLfloat inner = 0.0;
 		GLfloat elevation = 1.0;
+		color light(24.0f, 19.5f, 11.9f, 1.0f);
+
+		if (a.appearance().image != '@')
+		{
+			outer = 8.0;
+			inner = 0.0;
+			elevation = 0.5;
+			light /= 5.0;
+		}
 
 		glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
 		glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
 		glUniform4f(glGetUniformLocation(m_light.program, "pos"), (GLfloat)p.X, (GLfloat)p.Y, elevation, 1.0f);
-		glUniform4f(glGetUniformLocation(m_light.program, "col"), 24.0f, 19.5f, 11.9f, 1.0f);
+		glUniform4d(glGetUniformLocation(m_light.program, "col"), light.R, light.G, light.B, light.A);
 
 		std::vector<GLfloat> vertices(points_quad * vertice_depth);
 		std::vector<GLuint> indices(index_quad);

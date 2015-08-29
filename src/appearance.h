@@ -14,8 +14,8 @@ namespace px
 	{
 	public:
 		appearance(_I img, color colour) : size(1), image(img), color(colour) {}
-		appearance(_I img) : size(1), image(img) {}
-		appearance() : size(1) {}
+		appearance(_I img) : size(1), image(img), color(1, 1, 1) {}
+		appearance() : size(1), image{}, color(1, 1, 1) {}
 
 	public:
 		_I image;
