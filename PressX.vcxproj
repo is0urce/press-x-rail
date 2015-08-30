@@ -92,6 +92,7 @@
     <ClInclude Include="src\actor.h" />
     <ClInclude Include="src\avatar.h" />
     <ClInclude Include="src\bar.h" />
+    <ClInclude Include="src\control.h" />
     <ClInclude Include="src\deposit.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game.h" />
@@ -102,6 +103,7 @@
     <ClInclude Include="src\item.h" />
     <ClInclude Include="src\canvas.h" />
     <ClInclude Include="src\notification.h" />
+    <ClInclude Include="src\panel.h" />
     <ClInclude Include="src\person.h" />
     <ClInclude Include="src\reader.h" />
     <ClInclude Include="src\string.h" />
@@ -138,6 +140,7 @@
     <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\opengl.cpp" />
+    <ClCompile Include="src\panel.cpp" />
     <ClCompile Include="src\perception.cpp" />
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\renderer.cpp" />
