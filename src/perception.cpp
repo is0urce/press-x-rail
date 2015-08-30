@@ -16,8 +16,8 @@ using namespace px::shell;
 
 namespace
 {
-	static const color black_color(0);
-	static const double notify_size = 0.25;
+	const color black_color(0);
+	const double notify_size = 0.39; // "a bit" smaller than tiles (1-phi)
 	inline bool alpanum_less(const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); }
 }
 

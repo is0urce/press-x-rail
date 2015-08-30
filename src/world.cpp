@@ -17,7 +17,7 @@ using namespace px;
 
 namespace
 {
-	static const unsigned int cell_length = 25;
+	static const unsigned int cell_length = 50;
 	static const point world_range(23, 1);
 }
 
@@ -58,7 +58,7 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 		created = true;
 
 		std::shared_ptr<rl::person> mob(new rl::person());
-		mob->appearance({ 'r', 0xff0000, 0.5f });
+		mob->appearance({ 'r', 0x330000, 0.95f });
 		mob->position(offset + point(6, 6));
 		mob->health() = 100;
 		mob->energy() = { 0, 100 };
@@ -69,7 +69,7 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 		ore->name("copper ore");
 
 		world::unit_ptr vein(new rl::deposit(ore));
-		vein->appearance({ 'Q', 0xffff00 });
+		vein->appearance({ 'O', 0x996633 });
 		vein->position(offset + point(12, 12));
 		fetch_fn(vein);
 	}

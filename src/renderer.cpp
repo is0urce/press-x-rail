@@ -356,7 +356,7 @@ void renderer::fill_notifications(const perception_t &perception, font &fnt)
 			prev_code = code;
 		});
 
-		pen.move(total_width * -n.size / 2, 0);
+		pen.move(total_width * -n.size / 2, 0.5); // halfway left and one tile up
 
 		prev_code = 0;
 		string::enum_utf8(n.text, [&](unsigned int code)
@@ -411,6 +411,7 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	GLfloat scale = (GLfloat)m_scale;
 	GLfloat x_center = (GLfloat)center.X;
 	GLfloat y_center = (GLfloat)center.Y;
+	GLfloat span = (GLfloat)timespan;
 
 	// geometry
 	glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
@@ -465,18 +466,19 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 		
 
 		p = a.position();
-		GLfloat outer = 8.0;
+		GLfloat outer = 10.0;
 		GLfloat inner = 0.0;
 		GLfloat elevation = 1.0;
 		color light(24.0f, 19.5f, 11.9f, 1.0f);
 
-		if (a.appearance().image != '@')
-		{
-			outer = 8.0;
-			inner = 0.0;
-			elevation = 0.5;
-			light /= 5.0;
-		}
+		//if (a.appearance().image == 'r')
+		//{
+		//	outer = 8.0;
+		//	inner = 0.0;
+		//	elevation = 1.0;
+		//	light /= 5.0;
+		//	light.A = 1;
+		//}
 
 		glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
 		glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
@@ -517,6 +519,7 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	glUniform1f(glGetUniformLocation(m_notification.program, "aspect"), aspect);
 	glUniform1f(glGetUniformLocation(m_notification.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_notification.program, "center"), x_center, y_center);
+	glUniform1f(glGetUniformLocation(m_notification.program, "phase"), span);
 	glUniform1i(glGetUniformLocation(m_notification.program, "img"), 0);
 	glActiveTexture(GL_TEXTURE0 + 0);
 	glBindTexture(GL_TEXTURE_2D, m_popup.texture);
