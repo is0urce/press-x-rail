@@ -36,9 +36,9 @@ namespace
 	static const unsigned int index_quad = 6;
 
 	static const char *font_path_ui = "code2000.ttf";
-	static const char *font_path_notify = "FiraMono-Bold.ttf";
-	//static const char *font_path_unit = "code2000.ttf";
-	static const char *font_path_unit = "FiraMono-Bold.ttf";
+	static const char *font_path_notify = "code2000.ttf";
+	static const char *font_path_unit = "code2000.ttf";
+	//static const char *font_path_unit = "FiraMono-Bold.ttf";
 	static const unsigned int font_size_ui = 64;
 	static const unsigned int font_size_notify = 32;
 	static const unsigned int font_size_unit = 64;
@@ -93,10 +93,6 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	m_opengl.swap(opengl);
 
-	m_ui.font.reset(new font(font_path_ui, font_size_ui));
-	m_popup.font.reset(new font(font_path_notify, font_size_notify));
-	m_glyph.font.reset(new font(font_path_unit, font_size_unit));
-
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
@@ -138,26 +134,11 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	glGenTextures(1, &m_scene_texture);
 	glGenTextures(1, &m_light_texture);
 
-	const font::font_texture &ui_texture = m_ui.font->texture();
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, ui_texture.width, ui_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, ui_texture.data);
-	glEnable(GL_TEXTURE_2D);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	m_ui.font.reset(new font(font_path_ui, font_size_ui));
+	m_popup.font.reset(new font(font_path_notify, font_size_notify));
+	m_glyph.font.reset(new font(font_path_unit, font_size_unit));
 
-	const font::font_texture &popup_texture = m_popup.font->texture();
-	glBindTexture(GL_TEXTURE_2D, m_popup.texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, popup_texture.width, popup_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, popup_texture.data);
-	glEnable(GL_TEXTURE_2D);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	const font::font_texture &glyph_texture = m_glyph.font->texture();
-	glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, glyph_texture.width, glyph_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, glyph_texture.data);
-	glEnable(GL_TEXTURE_2D);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	update_textures();
 }
 
 renderer::~renderer()
@@ -182,6 +163,42 @@ renderer::~renderer()
 	glDeleteTextures(1, &m_light_texture);
 
 	glDeleteSamplers(1, &m_sampler);
+}
+
+void renderer::update_textures()
+{
+	if (m_ui.font->updated())
+	{
+		const font::font_texture &ui_texture = m_ui.font->texture();
+		glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, ui_texture.width, ui_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, ui_texture.data);
+		glEnable(GL_TEXTURE_2D);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		m_ui.font->updated(false);
+	}
+
+	if (m_popup.font->updated())
+	{
+		const font::font_texture &popup_texture = m_popup.font->texture();
+		glBindTexture(GL_TEXTURE_2D, m_popup.texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, popup_texture.width, popup_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, popup_texture.data);
+		glEnable(GL_TEXTURE_2D);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		m_popup.font->updated(false);
+	}
+
+	if (m_glyph.font->updated())
+	{
+		const font::font_texture &glyph_texture = m_glyph.font->texture();
+		glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 8);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, glyph_texture.width, glyph_texture.height, 0, GL_RED, GL_UNSIGNED_BYTE, glyph_texture.data);
+		glEnable(GL_TEXTURE_2D);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		m_glyph.font->updated(false);
+	}
 }
 
 void renderer::setup_scene()
@@ -404,6 +421,8 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	fill_tiles(perception, *m_ui.font);
 	fill_units(perception, *m_ui.font);
 	fill_notifications(perception, *m_popup.font);
+
+	update_textures();
 
 	double movement_phase = std::min(timespan * 5.0, 1.0);
 	vector center = perception.range() / 2 - (vector)perception.movement() * (1.0 - movement_phase);

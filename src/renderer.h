@@ -53,6 +53,7 @@ namespace px
 			unsigned int m_scene_size;
 
 		private:
+			void update_textures();
 			void setup_scene();
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&, font &tiles_font);

@@ -1,4 +1,4 @@
-// name: game.cpp
+﻿// name: game.cpp
 // type: c++
 // desc: class implementation
 // auth: is0urce
@@ -57,7 +57,7 @@ void game::fill_perception()
 	});
 
 	// notifications
-	m_perception.add_notification("* tap *", 0xffffff, m_player->position());
+	m_perception.add_notification({ (char)0xd1, (char)0x82 }, 0xffffff, m_player->position());
 }
 
 bool game::step_control(const point &move)
