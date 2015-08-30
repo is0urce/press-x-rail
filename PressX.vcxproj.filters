@@ -151,6 +151,9 @@
     <ClInclude Include="src\control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\shadowcasting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

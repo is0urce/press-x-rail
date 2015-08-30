@@ -10,6 +10,8 @@ namespace px
 	enum class key : int
 	{
 		not_valid,
+		quicksave,
+		quickload,
 		action_use,
 		action0,
 		action1,
