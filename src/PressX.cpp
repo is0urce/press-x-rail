@@ -104,13 +104,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 			auto &gui = g_game->canvas();
 
 			// update interface
-			int guiw, guih;
-			g_graphics->size(guiw, guih);
-			guiw /= renderer::ui_cell_width;
-			guih /= renderer::ui_cell_height;
-			g_game->draw_ui(guiw, guih);
+			int width, height;
+			g_graphics->size(width, height);
+			g_game->draw_ui(width / renderer::ui_cell_width, height / renderer::ui_cell_height);
 
-			// draw before windows destruction
+			// drawcalls before windows destruction
 			g_graphics->draw(perception, g_game->canvas(), time.measure());
 
 			// dispatch windows messages

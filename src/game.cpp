@@ -62,7 +62,12 @@ void game::fill_perception()
 	});
 
 	// notifications
-	m_perception.add_notification({ (char)0xd1, (char)0x82 }, 0xffffff, m_player->position());
+	for (auto &broadcast : m_broadcasts)
+	{
+		m_perception.add_notification(broadcast.text, broadcast.colour, broadcast.position, broadcast.size);
+	}
+	m_broadcasts.clear();
+	//m_perception.add_notification({ (char)0xd1, (char)0x82 }, 0xffffff, m_player->position());
 }
 
 bool game::step_control(const point &move)
@@ -175,4 +180,9 @@ void game::draw_ui(int width, int height)
 		m_canvas.resize(width, height);
 		m_status->draw();
 	}
+}
+
+void game::broadcast(broadcast_t message)
+{
+	m_broadcasts.emplace_back(message);
 }

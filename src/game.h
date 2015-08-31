@@ -11,8 +11,10 @@
 #include "scene.h"
 #include "canvas.h"
 #include "panel.h"
+#include "broadcast.h"
 
 #include <memory>
+#include <list>
 
 namespace px
 {
@@ -25,6 +27,7 @@ namespace px
 	public:
 		typedef std::shared_ptr<rl::person> player_ptr;
 		typedef std::shared_ptr<rl::unit> target_ptr;
+		typedef broadcast broadcast_t;
 
 	public:
 		static const unsigned int perc_width;
@@ -36,6 +39,7 @@ namespace px
 		player_ptr m_player;
 		target_ptr m_target;
 		point m_hover;
+		std::list<broadcast> m_broadcasts;
 		ui::canvas m_canvas;
 		std::unique_ptr<ui::panel> m_status;
 
@@ -61,5 +65,6 @@ namespace px
 		void draw_ui(int w, int h);
 		player_ptr player();
 		target_ptr target();
+		void broadcast(broadcast_t message);
 	};
 }

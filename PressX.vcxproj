@@ -92,6 +92,7 @@
     <ClInclude Include="src\actor.h" />
     <ClInclude Include="src\avatar.h" />
     <ClInclude Include="src\bar.h" />
+    <ClInclude Include="src\broadcast.h" />
     <ClInclude Include="src\control.h" />
     <ClInclude Include="src\deposit.h" />
     <ClInclude Include="src\entity.h" />

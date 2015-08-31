@@ -8,11 +8,12 @@
 #include "renderer.h"
 
 #include "font.h"
-#include "glsl.h"
 #include "vector.h"
 #include "color.h"
 #include "perception.h"
+#include "canvas.h"
 #include "game.h"
+#include "glsl.h"
 #include "string.h"
 
 #include <memory>
@@ -25,16 +26,16 @@ using namespace px::shell;
 
 namespace
 {
-	static const double camera_default = 0.1;
-	static const unsigned int range_width = game::perc_width;
-	static const unsigned int range_height = game::perc_height;
-	static const point range(range_width, range_height);
-	static const unsigned int range_size = range_width * range_height;
-	static const unsigned int vertice_depth = 2;
-	static const unsigned int color_depth = 4;
-	static const unsigned int texcoord_depth = 2;
-	static const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
-	static const unsigned int index_quad = 6;
+	const double camera_default = 0.1;
+	const unsigned int range_width = game::perc_width;
+	const unsigned int range_height = game::perc_height;
+	const point range(range_width, range_height);
+	const unsigned int range_size = range_width * range_height;
+	const unsigned int vertice_depth = 2;
+	const unsigned int color_depth = 4;
+	const unsigned int texcoord_depth = 2;
+	const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
+	const unsigned int index_quad = 6;
 
 	// glyphs & ui
 	const char *font_path_ui = "PragmataPro.ttf";
@@ -472,14 +473,15 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 {
 	if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
 
+	timespan_t delta = (std::max)(timespan - m_last, 0.0);
+	m_last = timespan;
+
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;
 	m_aspect = m_width;
 	m_aspect /= m_height;
-	timespan_t delta = (std::max)(timespan - m_last, 0.0);
-	m_last = timespan;
 
-	setup_scene(); // framebuffers & their textures
+	setup_scene(); // create / update framebuffers & their textures
 
 	fill_bg(perception);
 	fill_tiles(perception, *m_glyph.font);

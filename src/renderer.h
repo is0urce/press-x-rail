@@ -75,7 +75,7 @@ namespace px
 
 			void draw(const perception_t &perception, const canvas_t &gui, double phase);
 			void scale(double pan);
-			void size(int &w, int &h);
+			void size(int &width, int &height);
 			point world(const point &screen) const;
 		};
 	}
