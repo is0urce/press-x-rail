@@ -120,3 +120,8 @@ void canvas::write_integer(point position, int num, const color &front)
 		write(position, '-', front);
 	}
 }
+
+void canvas::write_integer(point position, int num)
+{
+	write_integer(position, num, m_front);
+}

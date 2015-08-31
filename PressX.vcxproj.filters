@@ -154,6 +154,9 @@
     <ClInclude Include="src\shadowcasting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\status_panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -198,6 +201,9 @@
     <ClCompile Include="src\panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\status_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -225,5 +231,9 @@
     <None Include="config\shaders\light.vert" />
     <None Include="config\shaders\notify.vert" />
     <None Include="config\shaders\notify.frag" />
+    <None Include="config\shaders\uiback.frag" />
+    <None Include="config\shaders\uiback.vert" />
+    <None Include="config\shaders\uitext.frag" />
+    <None Include="config\shaders\uitext.vert" />
   </ItemGroup>
 </Project>

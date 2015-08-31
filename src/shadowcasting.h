@@ -35,6 +35,7 @@ namespace px
 		shadowcasting(unsigned int radius_size)
 		{
 			radius(radius_size);
+			clear();
 		}
 		shadowcasting(std::function<bool(const point &position)> map_fn, const point &start, unsigned int radius_size)
 		{
@@ -47,8 +48,7 @@ namespace px
 
 		void radius(unsigned int radius_size)
 		{
-			if (radius == 0) throw std::logic_error("px::shadowcasting::radius(...) radius_size == 0");
-
+			if (radius_size == 0) throw std::logic_error("px::shadowcasting::radius(...) radius_size == 0");
 			m_radius = radius_size;
 			m_width = m_radius * 2 + 1;
 			m_len = m_width * m_width;
@@ -73,7 +73,7 @@ namespace px
 
 			m_fov[pos] = true;
 		}
-		bool in_fov(point position)
+		bool in_fov(point position) const
 		{
 			position += point(m_radius, m_radius) - m_offset;
 
@@ -97,14 +97,14 @@ namespace px
 			clear();
 			m_offset = start;
 			light(start);
-			for (int i = 0; i < 8; ++i)
+			for (unsigned int i = 0; i < 8; ++i) // calculate every octant
 			{
 				recursive(map_fn, start.X, start.Y, radius_size, 1, 1.0, 0.0, multipliers[0][i], multipliers[1][i], multipliers[2][i], multipliers[3][i]);
 			}
 		}
 
 	private:
-		void recursive(std::function<bool(const point &position)> map_fn, int x, int y, int radius_size, int row, float start, float end, int xx, int xy, int yx, int yy)
+		void recursive(std::function<bool(const point &position)> map_fn, int x, int y, unsigned int radius_size, unsigned int row, float start, float end, int xx, int xy, int yx, int yy)
 		{
 			if (start < end) return;
 			unsigned int radius2 = radius_size * radius_size;

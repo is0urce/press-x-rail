@@ -75,7 +75,7 @@ namespace px
 		void write(component *memory) const { memory[0] = X; memory[1] = Y; }
 		bool in_range(const coordinate &start, const coordinate &range) const { return !(X < start.X) && !(Y < start.Y) && X < start.X + range.X && Y < start.Y + range.Y; }
 		bool in_range(const coordinate &range) const { return !(X < 0) && !(Y < 0) && X < range.X && Y < range.Y; }
-		auto size()-> decltype(X * Y) const { return X * Y; }
+		component size() const { return X * Y; }
 	};
 
 	// copmare operators

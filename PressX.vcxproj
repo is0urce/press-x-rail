@@ -107,6 +107,7 @@
     <ClInclude Include="src\person.h" />
     <ClInclude Include="src\reader.h" />
     <ClInclude Include="src\shadowcasting.h" />
+    <ClInclude Include="src\status_panel.h" />
     <ClInclude Include="src\string.h" />
     <ClInclude Include="src\symbol.h" />
     <ClInclude Include="src\world.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\scene.cpp" />
+    <ClCompile Include="src\status_panel.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -172,6 +174,10 @@
     <None Include="config\shaders\scene.vert" />
     <None Include="config\shaders\tiles.frag" />
     <None Include="config\shaders\tiles.vert" />
+    <None Include="config\shaders\uiback.frag" />
+    <None Include="config\shaders\uiback.vert" />
+    <None Include="config\shaders\uitext.frag" />
+    <None Include="config\shaders\uitext.vert" />
     <None Include="config\shaders\units.frag" />
     <None Include="config\shaders\units.vert" />
   </ItemGroup>

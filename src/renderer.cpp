@@ -18,6 +18,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include <cmath>
 
 using namespace px;
 using namespace px::shell;
@@ -35,13 +36,13 @@ namespace
 	static const unsigned int points_quad = 4; // rasterise tiles in 4-points (2-trices)
 	static const unsigned int index_quad = 6;
 
-	static const char *font_path_ui = "code2000.ttf";
-	static const char *font_path_notify = "code2000.ttf";
-	static const char *font_path_unit = "code2000.ttf";
-	//static const char *font_path_unit = "FiraMono-Bold.ttf";
-	static const unsigned int font_size_ui = 64;
-	static const unsigned int font_size_notify = 32;
-	static const unsigned int font_size_unit = 64;
+	// glyphs & ui
+	const char *font_path_ui = "PragmataPro.ttf";
+	const char *font_path_notify = "FiraSans-Heavy.otf";
+	const char *font_path_unit = "CODE2000.TTF";
+	const unsigned int font_size_ui = 18;
+	const unsigned int font_size_notify = 32;
+	const unsigned int font_size_unit = 64;
 
 	inline void fill_vertex(const vector &position, const vector &range, GLfloat *dest)
 	{
@@ -87,6 +88,9 @@ namespace
 	}
 }
 
+const unsigned int renderer::ui_cell_width = 12;
+const unsigned int renderer::ui_cell_height = 18;
+
 renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera_default), m_scene_size(0)
 {
 	if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
@@ -117,6 +121,11 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 
 	m_notification.vao.init({ vertice_depth, texcoord_depth, color_depth });
 	m_notification.program = glsl::program("shaders\\notify");
+
+	m_uiback.vao.init({ vertice_depth, color_depth });
+	m_uiback.program = glsl::program("shaders\\uiback");
+	m_uitext.vao.init({ vertice_depth, texcoord_depth, color_depth });
+	m_uitext.program = glsl::program("shaders\\uitext");
 
 	glGenFramebuffers(1, &m_scene_frame);
 	glGenFramebuffers(1, &m_light_frame);
@@ -271,7 +280,7 @@ void renderer::fill_bg(const perception_t &perception)
 void renderer::fill_tiles(const perception_t &perception, font &fnt)
 {
 	std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
-	std::vector<GLfloat> textures(range_size * points_quad * vertice_depth);
+	std::vector<GLfloat> textures(range_size * points_quad * texcoord_depth);
 	std::vector<GLfloat> colors(range_size * points_quad * color_depth);
 	std::vector<GLuint> indices(range_size * index_quad);
 
@@ -311,7 +320,7 @@ void renderer::fill_units(const perception_t &perception, font &fnt)
 	unsigned int unit_num = perception.unit_count();
 
 	std::vector<GLfloat> vertices(unit_num * points_quad * vertice_depth);
-	std::vector<GLfloat> textures(unit_num * points_quad * vertice_depth);
+	std::vector<GLfloat> textures(unit_num * points_quad * texcoord_depth);
 	std::vector<GLfloat> colors(unit_num * points_quad * color_depth);
 	std::vector<GLuint> indices(unit_num * index_quad);
 
@@ -349,7 +358,7 @@ void renderer::fill_notifications(const perception_t &perception, font &fnt)
 	});
 
 	std::vector<GLfloat> vertices(letters_num * points_quad * vertice_depth);
-	std::vector<GLfloat> textures(letters_num * points_quad * vertice_depth);
+	std::vector<GLfloat> textures(letters_num * points_quad * texcoord_depth);
 	std::vector<GLfloat> colors(letters_num * points_quad * color_depth);
 	std::vector<GLuint> indices(letters_num * index_quad);
 
@@ -404,7 +413,62 @@ void renderer::fill_notifications(const perception_t &perception, font &fnt)
 	m_notification.vao.fill(letters_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
 }
 
-void renderer::draw(const perception_t &perception, timespan_t timespan)
+void renderer::fill_ui(const canvas_t &gui, font &fnt)
+{
+	point range = gui.range();
+	unsigned int size = range.size();
+
+	std::vector<GLfloat> vertex_front(size * points_quad * vertice_depth); // vertex
+	std::vector<GLfloat> vertex_back(size * points_quad * vertice_depth); // vertex
+	std::vector<GLfloat> texture(size * points_quad * texcoord_depth);
+	std::vector<GLfloat> color_front(size * points_quad * color_depth); // color
+	std::vector<GLfloat> color_back(size * points_quad * color_depth); // color
+	std::vector<GLuint> indices(size * index_quad);
+
+	// vertex attributes
+	unsigned int vertexoffset = 0;
+	unsigned int textureoffset = 0;
+	unsigned int coloroffset = 0;
+
+	range.enumerate([&](const point &position)
+	{
+		auto &s = gui.at(position);
+		auto &g = fnt[s.code];
+
+		point p(position.X, range.Y - position.Y - 1);
+
+		p.moved(0, 0).multiplied(ui_cell_width, ui_cell_height).write(&vertex_back[vertexoffset + 0 * vertice_depth]);
+		p.moved(0, 1).multiplied(ui_cell_width, ui_cell_height).write(&vertex_back[vertexoffset + 1 * vertice_depth]);
+		p.moved(1, 1).multiplied(ui_cell_width, ui_cell_height).write(&vertex_back[vertexoffset + 2 * vertice_depth]);
+		p.moved(1, 0).multiplied(ui_cell_width, ui_cell_height).write(&vertex_back[vertexoffset + 3 * vertice_depth]);
+
+		int vx = ui_cell_width / 2 - g.pixwidth / 2;
+		int vxd = vx + g.pixwidth;
+		int vyd = g.pixhorisontal + 1;
+		int vy = vyd - g.pixheight;
+
+		p.multiplied(ui_cell_width, ui_cell_height).moved(vx, vy).write(&vertex_front[vertexoffset + 0 * vertice_depth]);
+		p.multiplied(ui_cell_width, ui_cell_height).moved(vx, vyd).write(&vertex_front[vertexoffset + 1 * vertice_depth]);
+		p.multiplied(ui_cell_width, ui_cell_height).moved(vxd, vyd).write(&vertex_front[vertexoffset + 2 * vertice_depth]);
+		p.multiplied(ui_cell_width, ui_cell_height).moved(vxd, vy).write(&vertex_front[vertexoffset + 3 * vertice_depth]);
+
+		fill_color(s.front, &color_front[coloroffset]);
+		fill_color(s.back, &color_back[coloroffset]);
+		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &texture[textureoffset]);
+
+		vertexoffset += vertice_depth * points_quad;
+		coloroffset += color_depth * points_quad;
+		textureoffset += texcoord_depth * points_quad;
+	});
+
+	fill_index(size, indices);
+
+	// bind
+	m_uiback.vao.fill(size * points_quad, { &vertex_back[0], &color_back[0] }, indices);
+	m_uitext.vao.fill(size * points_quad, { &vertex_front[0], &texture[0], &color_front[0] }, indices);
+}
+
+void renderer::draw(const perception_t &perception, const canvas_t &gui, timespan_t timespan)
 {
 	if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
 
@@ -418,9 +482,10 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	setup_scene(); // framebuffers & their textures
 
 	fill_bg(perception);
-	fill_tiles(perception, *m_ui.font);
-	fill_units(perception, *m_ui.font);
+	fill_tiles(perception, *m_glyph.font);
+	fill_units(perception, *m_glyph.font);
 	fill_notifications(perception, *m_popup.font);
+	fill_ui(gui, *m_ui.font);
 
 	update_textures();
 
@@ -432,7 +497,7 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	GLfloat y_center = (GLfloat)center.Y;
 	GLfloat span = (GLfloat)timespan;
 
-	// geometry
+	// g-eometry
 	glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
 	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -452,7 +517,7 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	glUniform2f(glGetUniformLocation(m_tiles.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
 	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
 	glBindSampler(0, m_sampler);
 	m_tiles.vao.draw();
 
@@ -462,7 +527,7 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	glUniform2f(glGetUniformLocation(m_units.program, "center"), x_center, y_center);
 	glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
 	glActiveTexture(GL_TEXTURE0 + 0);
-	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
 	glBindSampler(0, m_sampler);
 	m_units.vao.draw();
 
@@ -545,6 +610,18 @@ void renderer::draw(const perception_t &perception, timespan_t timespan)
 	glBindSampler(0, m_sampler);
 	m_notification.vao.draw();
 
+	// ui
+	glUseProgram(m_uiback.program);
+	glUniform2f(glGetUniformLocation(m_uiback.program, "scale"), (GLfloat)m_width, (GLfloat)m_height);
+	glUniform2f(glGetUniformLocation(m_uiback.program, "offsets"), (GLfloat)(m_width % ui_cell_width / 2), (GLfloat)(m_height % ui_cell_height / 2));
+	m_uiback.vao.draw();
+	glUseProgram(m_uitext.program);
+	glUniform2f(glGetUniformLocation(m_uitext.program, "scale"), (GLfloat)m_width, (GLfloat)m_height);
+	glUniform2f(glGetUniformLocation(m_uitext.program, "offsets"), (GLfloat)(m_width % ui_cell_width / 2), (GLfloat)(m_height % ui_cell_height / 2));
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_ui.texture);
+	m_uitext.vao.draw();
+
 	m_opengl->swap();
 
 #if _DEBUG
@@ -570,4 +647,9 @@ point renderer::world(const point &screen) const
 	fx = std::round(fx / m_scale);
 	fy = std::round(fy / m_scale / m_aspect);
 	return { (int)fx, (int)fy };
+}
+
+void renderer::size(int &width, int &height)
+{
+	m_opengl->update(width, height);
 }

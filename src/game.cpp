@@ -6,7 +6,9 @@
 #include "stdafx.h"
 
 #include "game.h"
+
 #include "person.h"
+#include "status_panel.h"
 
 using namespace px;
 
@@ -21,13 +23,16 @@ namespace
 const unsigned int game::perc_width = perc_range * 2 + 1;
 const unsigned int game::perc_height = perc_range * 2 + 1;
 
-game::game() : m_perception(perc_reach)
+// initial canvas size not really important, it should be resized next drawing pass
+game::game() : m_perception(perc_reach), m_canvas({ 1, 1 })
 {
 	m_player.reset(new rl::person());
 	m_player->appearance({ '@', 0xffffff });
 
 	m_scene.focus({ 8, 8 });
 	m_scene.add(m_player, { 8, 8 });
+
+	m_status.reset(new ui::status_panel(m_player, &m_canvas));
 
 	fill_perception();
 }
@@ -151,4 +156,23 @@ bool game::useable(game::target_ptr target) const
 const shell::perception& game::perception() const
 {
 	return m_perception;
+}
+
+game::player_ptr game::player()
+{
+	return m_player;
+}
+
+const ui::canvas& game::canvas() const
+{
+	return m_canvas;
+}
+
+void game::draw_ui(int width, int height)
+{
+	if (width > 0 && height > 0)
+	{
+		m_canvas.resize(width, height);
+		m_status->draw();
+	}
 }

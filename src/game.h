@@ -9,6 +9,8 @@
 
 #include "perception.h"
 #include "scene.h"
+#include "canvas.h"
+#include "panel.h"
 
 #include <memory>
 
@@ -16,12 +18,12 @@ namespace px
 {
 	namespace rl
 	{
-		class actor;
+		class person;
 	}
 	class game : public shell::game_control
 	{
 	public:
-		typedef std::shared_ptr<rl::actor> player_ptr;
+		typedef std::shared_ptr<rl::person> player_ptr;
 		typedef std::shared_ptr<rl::unit> target_ptr;
 
 	public:
@@ -34,6 +36,8 @@ namespace px
 		player_ptr m_player;
 		target_ptr m_target;
 		point m_hover;
+		ui::canvas m_canvas;
+		std::unique_ptr<ui::panel> m_status;
 
 	public:
 		game();
@@ -53,6 +57,9 @@ namespace px
 
 	public:
 		const shell::perception& perception() const;
+		const ui::canvas& canvas() const;
+		void draw_ui(int w, int h);
+		player_ptr player();
 		target_ptr target();
 	};
 }

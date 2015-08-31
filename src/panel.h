@@ -17,7 +17,7 @@ namespace px
 		class canvas;
 		class panel : public control
 		{
-		private:
+		protected:
 			bool m_visible;
 			canvas *m_canvas;
 

@@ -7,15 +7,18 @@
 
 #pragma once
 
-#include <memory>
-
 #include "opengl.h"
 #include "vao.h"
+#include "point.h"
 
-#include "game.h"
+#include <memory>
 
 namespace px
 {
+	namespace ui
+	{
+		class canvas;
+	}
 	namespace shell
 	{
 		class font;
@@ -26,7 +29,12 @@ namespace px
 		public:
 			typedef std::unique_ptr<opengl> opengl_handle;
 			typedef perception perception_t;
+			typedef ui::canvas canvas_t;
 			typedef double timespan_t;
+
+		public:
+			static const unsigned int ui_cell_width;
+			static const unsigned int ui_cell_height;
 
 		private:
 			opengl_handle m_opengl;
@@ -46,7 +54,7 @@ namespace px
 			{
 				vao vao;
 				GLuint program;
-			} m_background, m_tiles, m_units, m_scene, m_light, m_notification;
+			} m_background, m_tiles, m_units, m_scene, m_light, m_notification, m_uiback, m_uitext;
 
 			GLuint m_light_frame, m_scene_frame;
 			GLuint m_scene_texture, m_light_texture;
@@ -59,13 +67,15 @@ namespace px
 			void fill_tiles(const perception_t&, font &tiles_font);
 			void fill_units(const perception_t&, font &units_font);
 			void fill_notifications(const perception_t&, font &notify_font);
+			void fill_ui(const canvas_t &gui, font &ui_font);
 
 		public:
 			renderer(opengl_handle opengl);
 			virtual ~renderer();
 
-			void draw(const perception_t &perception, double phase);
+			void draw(const perception_t &perception, const canvas_t &gui, double phase);
 			void scale(double pan);
+			void size(int &w, int &h);
 			point world(const point &screen) const;
 		};
 	}
