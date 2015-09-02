@@ -40,6 +40,16 @@ entity::name_t entity::name() const
 	return m_name;
 }
 
+void entity::tag(tag_t tag)
+{
+	m_tag = tag;
+}
+
+entity::tag_t entity::tag() const
+{
+	return m_tag;
+}
+
 void entity::faction(entity::faction_t faction_id)
 {
 	m_faction = faction_id;

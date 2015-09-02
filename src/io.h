@@ -40,6 +40,6 @@ namespace px
 		io() {}
 		virtual ~io() {}
 	};
-	bool operator==(const io::key_t &a, const io::key_t &b) { return std::equal(a.letter, a.letter + sizeof(a.letter) / sizeof (*a.letter), b.letter); }
-	bool operator!=(const io::key_t &a, const io::key_t &b) { return !operator==(a,b); }
+	inline bool operator==(const io::key_t &a, const io::key_t &b) { return std::equal(a.letter, a.letter + sizeof(a.letter) / sizeof (*a.letter), b.letter); }
+	inline bool operator!=(const io::key_t &a, const io::key_t &b) { return !operator==(a,b); }
 }

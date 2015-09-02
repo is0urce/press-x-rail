@@ -8,8 +8,12 @@
 #include "appearance.h"
 #include "tile.h"
 #include "map.h"
+#include "writer.h"
+#include "reader.h"
+#include "library.h"
 
 #include <memory>
+#include <list>
 
 namespace px
 {
@@ -26,24 +30,25 @@ namespace px
 		typedef map<tile_t> map_t;
 		typedef std::shared_ptr<rl::unit> unit_ptr;
 		typedef std::unique_ptr<map_t> map_ptr;
-		typedef unsigned int save_slot;
 
 	public:
 		static const point cell_range;
 
 	private:
 		map<bool> m_created;
+		std::list<unit_ptr> m_outher;
+		library m_library;
 
 	public:
 		world();
-		world(save_slot load);
+		world(reader::node &node);
 		~world();
 
 	public:
 		map_ptr generate(const point &cell, std::function<void(unit_ptr)> fetch_fn);
 		void store(unit_ptr unit);
 
-		void save(save_slot repository);
-		void load(save_slot repository);
+		void save(writer::node_ptr node) const;
+		void load(reader::node &node);
 	};
 }

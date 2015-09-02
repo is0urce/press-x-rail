@@ -1,31 +1,31 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by PressX.rc
-//
+// name: resource.h
+// type: c++ header
+// desc: class declaration
+// auth: is0urce
 
-#define IDS_APP_TITLE			103
+#pragma once
 
-#define IDR_MAINFRAME			128
-#define IDD_PRESSX_DIALOG	102
-#define IDD_ABOUTBOX			103
-#define IDM_ABOUT				104
-#define IDM_EXIT				105
-#define IDI_PRESSX			107
-#define IDI_SMALL				108
-#define IDC_PRESSX			109
-#define IDC_MYICON				2
-#ifndef IDC_STATIC
-#define IDC_STATIC				-1
-#endif
-// Next default values for new objects
-//
-#ifdef APSTUDIO_INVOKED
-#ifndef APSTUDIO_READONLY_SYMBOLS
+#include <map>
+#include <string>
+#include <type_traits>
 
-#define _APS_NO_MFC					130
-#define _APS_NEXT_RESOURCE_VALUE	129
-#define _APS_NEXT_COMMAND_VALUE		32771
-#define _APS_NEXT_CONTROL_VALUE		1000
-#define _APS_NEXT_SYMED_VALUE		110
-#endif
-#endif
+namespace px
+{
+	template <typename _R>
+	class resource
+	{
+	private:
+		std::map<std::string, _R> m_resources;
+		typedef const _R _C;
+
+	public:
+		void push(std::string tag, _R resource)
+		{
+			m_resources.emplace(tag, resource);
+		}
+		_R prototype(std::string &tag)
+		{
+			return m_resources.at(tag);
+		}
+	};
+}

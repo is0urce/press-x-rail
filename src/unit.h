@@ -32,8 +32,6 @@ namespace px
 			unit();
 			unit(const point& position);
 			virtual ~unit();
-		private:
-			unit(const unit&);
 
 			// vitrual
 		protected:

@@ -40,7 +40,7 @@ namespace px
 			scene();
 			virtual ~scene();
 		private:
-			scene(const scene &none); // disable copy
+			scene(const scene&) = delete; // disable copy
 
 		private:
 			point cell(const point &absolute) const;

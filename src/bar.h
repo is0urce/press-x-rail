@@ -53,7 +53,7 @@ namespace px
 		{
 			return m_current;
 		}
-		_T max() const
+		_T maximum() const
 		{
 			return m_max;
 		}
@@ -71,7 +71,7 @@ namespace px
 		{
 			m_current = std::min<_T>(current, _max);
 		}
-		void max(_T max)
+		void maximum(_T max)
 		{
 			_max = max;
 			_current = std::min<_T>(_current, _max);

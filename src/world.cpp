@@ -23,7 +23,21 @@ namespace
 
 const point world::cell_range(cell_length, cell_length);
 
-world::world() : m_created(world_range, false) {}
+world::world() : m_created(world_range, false)
+{
+	rl::npc rat;
+	rat.appearance({ 'r', 0x330000, 0.95f });
+	rat.health() = 100;
+	rat.tag("mob_r");
+
+	m_library.push("mob_r", rat);
+
+	rl::item ore;;
+	ore.appearance('o');
+	ore.name("copper ore");
+	ore.tag("ore_copper");
+	m_library.push("ore_copper", ore);
+}
 world::~world() {}
 
 world::map_ptr world::generate(const point &cell, std::function<void(world::unit_ptr)> fetch_fn)
@@ -57,16 +71,11 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 	{
 		created = true;
 
-		std::shared_ptr<rl::person> mob(new rl::person());
-		mob->appearance({ 'r', 0x330000, 0.95f });
+		auto mob = std::make_shared<rl::npc>(m_library.prototype<rl::npc>("mob_r"));
 		mob->position(offset + point(6, 6));
-		mob->health() = 100;
-		mob->energy() = { 0, 100 };
 		fetch_fn(mob);
 
-		rl::deposit::resource_ptr ore(new rl::item());
-		ore->appearance('o');
-		ore->name("copper ore");
+		auto ore = std::make_shared<rl::item>(m_library.prototype<rl::item>("ore_copper"));
 
 		world::unit_ptr vein(new rl::deposit(ore));
 		vein->appearance({ 'O', 0x996633 });
@@ -79,5 +88,18 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 
 void world::store(world::unit_ptr unit)
 {
+	m_outher.emplace_back(unit);
+}
 
+void world::save(writer::node_ptr node) const
+{
+	auto outher = node->open("outher");
+	for (auto unit : m_outher)
+	{
+		auto u = node->open("unit");
+		u->write("tag", unit->tag());
+		u->write("img", unit->appearance().image);
+		u->write("color", unit->appearance().color);
+		u->write("size", unit->appearance().size);
+	}
 }

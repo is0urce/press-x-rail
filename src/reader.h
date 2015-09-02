@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 #include <stdexcept>
+#include <vector>
 
 namespace px
 {

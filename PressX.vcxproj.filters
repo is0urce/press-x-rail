@@ -22,13 +22,7 @@
     <ClInclude Include="src\PressX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\map.h">
@@ -184,6 +178,18 @@
     <ClInclude Include="src\status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\library.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -244,7 +250,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="src\PressX.rc">
+    <ResourceCompile Include="PressX.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

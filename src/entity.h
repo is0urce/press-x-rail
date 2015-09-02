@@ -18,10 +18,12 @@ namespace px
 		public:
 			typedef appearance<unsigned int> appearance_t;
 			typedef std::string name_t;
+			typedef std::string tag_t;
 			typedef unsigned int faction_t;
 
 		protected:
 			name_t m_name;
+			tag_t m_tag;
 			appearance_t m_appearance;
 			faction_t m_faction;
 
@@ -30,7 +32,7 @@ namespace px
 			entity();
 			virtual ~entity();
 		private:
-			entity(const entity&);
+			//entity(const entity&);
 
 		public:
 			// attribute accessors
@@ -38,6 +40,8 @@ namespace px
 			appearance_t appearance() const;
 			void name(name_t str);
 			name_t name() const;
+			void tag(tag_t str);
+			tag_t tag() const;
 
 			// faction
 			void faction(faction_t handle);
