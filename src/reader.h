@@ -146,6 +146,8 @@ namespace px
 			}
 			void enumerate(std::function<void(node)> fn)
 			{
+				if (m_size == 0) return; // no nodes
+
 				auto pos = m_pos;
 				auto pos_out = m_pos;
 				pos += header_size;
@@ -180,14 +182,18 @@ namespace px
 	public:
 		reader(const std::string &path) : m_top(&m_stream)
 		{
-			m_stream.open(path.c_str(), std::ios::in | std::ios::binary);
+			m_stream.open(path.c_str(), stream_t::in | stream_t::binary);
 			if (!m_stream.is_open())
 			{
-				throw std::runtime_error("can't read from file " + path);
+				throw std::runtime_error("px::reader::reader(..) - can't read from file, path=" + path);
 			}
 			auto start = m_stream.tellg();
 			m_stream.seekg(0, m_stream.end);
 			auto end = m_stream.tellg();
+			if (start == end)
+			{
+				throw std::runtime_error("px::reader::reader(..) -file is empty, path=" + path);
+			}
 			m_stream.seekg(start);
 			m_top.init(start, end);
 		}

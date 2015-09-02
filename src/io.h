@@ -23,7 +23,7 @@ namespace px
 		key_t;
 		typedef uint64_t chunk_size;
 
-	public:
+	protected:
 		static key_t to_key(const std::string &str)
 		{
 			auto len = str.length();

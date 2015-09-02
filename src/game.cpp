@@ -28,6 +28,7 @@ game::game() : m_perception(perc_reach), m_canvas({ 1, 1 })
 {
 	m_player.reset(new rl::person());
 	m_player->appearance({ '@', 0xffffff });
+	m_player->health() = 100;
 
 	m_scene.focus({ 8, 8 });
 	m_scene.add(m_player, { 8, 8 });

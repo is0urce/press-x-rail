@@ -40,6 +40,8 @@ TEST_CASE("io", "[io]")
 	l_t->write("egg", 64);
 	l_e->write("after", 0);
 
+	w->open("empty");
+
 	w->write("ending", 64);
 
 	w.end();
@@ -83,5 +85,11 @@ TEST_CASE("io", "[io]")
 	{
 		s += list_node.read<int>();
 	});
-	REQUIRE(s == 10); // last overall
+	REQUIRE(s == 10); // summ of nodes values
+
+	// empty list enumerate
+	r["empty"].enumerate([&](reader::node list_node)
+	{
+		throw std::runtime_error("no nodes");
+	});
 }
