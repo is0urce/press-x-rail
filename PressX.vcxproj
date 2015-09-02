@@ -96,6 +96,7 @@
     <ClInclude Include="src\character.h" />
     <ClInclude Include="src\control.h" />
     <ClInclude Include="src\deposit.h" />
+    <ClInclude Include="src\effect.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\game_control.h" />

@@ -1,4 +1,4 @@
-// name: Unit.cpp
+// name: unit.cpp
 // type: c++
 // desc: class implementation
 // auth: is0urce
@@ -12,11 +12,11 @@ using namespace px::rl;
 
 // ctor & dtor
 
-unit::unit() : m_remove(false)
+unit::unit() : m_remove(false), m_invincible(false)
 {
 }
 
-unit::unit(const point &position) : m_position(position), m_prev_position(position), m_remove(false)
+unit::unit(const point &position) : m_position(position), m_prev_position(position), m_remove(false), m_invincible(false)
 {
 }
 
@@ -42,6 +42,10 @@ bool unit::useable_unit(user_t user) const
 }
 
 void unit::use_unit(user_t user)
+{
+}
+
+void unit::apply_effect(effect &e)
 {
 }
 
@@ -101,4 +105,19 @@ void unit::destroy()
 bool unit::destroying() const
 {
 	return m_remove;
+}
+
+bool unit::invincible() const
+{
+	return m_invincible;
+}
+
+void unit::invincible(bool is_invincible)
+{
+	m_invincible = is_invincible;
+}
+
+void unit::apply(effect &e)
+{
+	apply_effect(e);
 }

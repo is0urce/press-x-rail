@@ -3,6 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
+// "wiew" of game board
+
 #pragma once
 
 #include "point.h"

@@ -68,7 +68,6 @@ void game::fill_perception()
 		m_perception.add_notification(broadcast.text, broadcast.colour, broadcast.position, broadcast.size);
 	}
 	m_broadcasts.clear();
-	//m_perception.add_notification({ (char)0xd1, (char)0x82 }, 0xffffff, m_player->position());
 }
 
 bool game::step_control(const point &move)
@@ -83,7 +82,7 @@ bool game::step_control(const point &move)
 			{
 				blocking->use(m_player);
 			}
-			else
+			else if (!blocking->invincible())
 			{
 				// attack
 			}
@@ -105,7 +104,7 @@ bool game::step_control(const point &move)
 bool game::action_control(unsigned int command)
 {
 	auto target = aquire_target();
-	if (target)
+	if (target && !target->invincible())
 	{
 		// cast
 	}
@@ -130,6 +129,7 @@ bool game::click_control(point positon, game::button_t button)
 	{
 		if (useable(m_target))
 		{
+			// use lmb
 			return false;
 		}
 		else
