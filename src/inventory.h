@@ -16,8 +16,15 @@ namespace px
 		template <typename _I>
 		class inventory
 		{
+		public:
+			typedef _I item_t;
+
 		private:
 			std::list<_I> m_items;
+
+		public:
+			inventory() {}
+			virtual ~inventory() {}
 
 		protected:
 			virtual void acquire(_I item) {}

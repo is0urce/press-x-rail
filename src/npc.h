@@ -1,23 +1,22 @@
-// name: person.h
+// name: npc.h
 // type: c++ header
 // desc: class declaration
 // auth: is0urce
 
 #pragma once
 
-#include "actor.h"
-#include "character.h"
+#include "person.h"
 
 namespace px
 {
 	namespace rl
 	{
-		class person : public actor, public character
+		class npc : public person
 		{
 			// ctor & dtor
 		public:
-			person() {}
-			virtual ~person() {}
+			npc() {}
+			virtual ~npc() {}
 		};
 	}
 }

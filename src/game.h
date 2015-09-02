@@ -20,12 +20,12 @@ namespace px
 {
 	namespace rl
 	{
-		class person;
+		class player;
 	}
 	class game : public shell::game_control
 	{
 	public:
-		typedef std::shared_ptr<rl::person> player_ptr;
+		typedef std::shared_ptr<rl::player> player_ptr;
 		typedef std::shared_ptr<rl::unit> target_ptr;
 		typedef broadcast broadcast_t;
 

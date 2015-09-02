@@ -7,7 +7,7 @@
 
 #include "game.h"
 
-#include "person.h"
+#include "player.h"
 #include "status_panel.h"
 
 using namespace px;
@@ -26,7 +26,7 @@ const unsigned int game::perc_height = perc_range * 2 + 1;
 // initial canvas size not really important, it should be resized next drawing pass
 game::game() : m_perception(perc_reach), m_canvas({ 1, 1 })
 {
-	m_player.reset(new rl::person());
+	m_player.reset(new rl::player(*this));
 	m_player->appearance({ '@', 0xffffff });
 	m_player->health() = 100;
 
