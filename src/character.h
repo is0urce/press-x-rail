@@ -6,6 +6,8 @@
 #pragma once
 
 #include "bar.h"
+#include "statistics.h"
+#include "attribute.h"
 
 namespace px
 {
@@ -13,16 +15,24 @@ namespace px
 	{
 		class character
 		{
+		private:
+			static const unsigned int max_attribute = (unsigned int)attribute::max_attribute;
+
 		public:
-			typedef bar<int> resource_t;
+			typedef int stat_value;
+			typedef bar<stat_value> resource_t;
+			typedef enhancement<attribute, stat_value> enhancement_t;
+			typedef statistics<stat_value> stats_t;
 
 		private:
 			resource_t m_hp;
 			resource_t m_mp;
+			stats_t m_base;
+			stats_t m_computed; // + items, enhancements
 
 			// ctor & dtor
 		public:
-			character() {}
+			character() : m_base(max_attribute), m_computed(max_attribute) {}
 			virtual ~character() {}
 
 		public:
@@ -32,6 +42,8 @@ namespace px
 			const resource_t& energy() const { return m_mp; }
 
 			bool dead() const { return m_hp.empty(); }
+
+			stat_value statistic(attribute a) { return m_base[a]; }
 		};
 	}
 }

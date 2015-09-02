@@ -8,6 +8,8 @@
 #include "actor.h"
 #include "character.h"
 
+#include "effect.h"
+
 namespace px
 {
 	namespace rl
@@ -18,6 +20,9 @@ namespace px
 		public:
 			person() {}
 			virtual ~person() {}
+
+		protected:
+			virtual void apply_effect(effect &e) override { e.apply(*this); }
 		};
 	}
 }

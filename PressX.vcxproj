@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\actor.h" />
+    <ClInclude Include="src\attribute.h" />
     <ClInclude Include="src\avatar.h" />
     <ClInclude Include="src\bar.h" />
     <ClInclude Include="src\broadcast.h" />
@@ -97,6 +98,7 @@
     <ClInclude Include="src\control.h" />
     <ClInclude Include="src\deposit.h" />
     <ClInclude Include="src\effect.h" />
+    <ClInclude Include="src\enhancement.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\game_control.h" />
@@ -112,6 +114,7 @@
     <ClInclude Include="src\player.h" />
     <ClInclude Include="src\reader.h" />
     <ClInclude Include="src\shadowcasting.h" />
+    <ClInclude Include="src\statistics.h" />
     <ClInclude Include="src\status_panel.h" />
     <ClInclude Include="src\string.h" />
     <ClInclude Include="src\symbol.h" />

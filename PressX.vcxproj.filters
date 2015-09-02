@@ -172,6 +172,15 @@
     <ClInclude Include="src\effect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\statistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\attribute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\enhancement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
