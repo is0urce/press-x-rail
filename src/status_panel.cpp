@@ -21,5 +21,5 @@ status_panel::~status_panel() {}
 void status_panel::draw_panel()
 {
 	m_canvas->write({ 3, 3 }, "health:");
-	m_canvas->write_integer({ 15, 3 }, m_target->statistic(attribute::strength));
+	m_canvas->write_integer({ 15, 3 }, 0);
 }

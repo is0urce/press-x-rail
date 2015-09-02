@@ -181,6 +181,9 @@
     <ClInclude Include="src\enhancement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

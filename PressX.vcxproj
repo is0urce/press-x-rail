@@ -115,6 +115,7 @@
     <ClInclude Include="src\reader.h" />
     <ClInclude Include="src\shadowcasting.h" />
     <ClInclude Include="src\statistics.h" />
+    <ClInclude Include="src\status.h" />
     <ClInclude Include="src\status_panel.h" />
     <ClInclude Include="src\string.h" />
     <ClInclude Include="src\symbol.h" />

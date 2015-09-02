@@ -8,6 +8,7 @@
 #include "bar.h"
 #include "statistics.h"
 #include "attribute.h"
+#include "status.h"
 
 namespace px
 {
@@ -21,14 +22,17 @@ namespace px
 		public:
 			typedef int stat_value;
 			typedef bar<stat_value> resource_t;
-			typedef enhancement<attribute, stat_value> enhancement_t;
+			//typedef enhancement<attribute, stat_value> enhancement_t;
 			typedef statistics<stat_value> stats_t;
+			typedef int ability_t;
 
 		private:
 			resource_t m_hp;
 			resource_t m_mp;
 			stats_t m_base;
-			stats_t m_computed; // + items, enhancements
+			stats_t m_computed; // + modifiers
+			std::vector<ability_t> m_skills;
+			std::list<status<character>> m_affect;
 
 			// ctor & dtor
 		public:
@@ -44,6 +48,7 @@ namespace px
 			bool dead() const { return m_hp.empty(); }
 
 			stat_value statistic(attribute a) { return m_base[a]; }
+			ability_t& skill(unsigned int slot) { return m_skills.at(slot); }
 		};
 	}
 }
