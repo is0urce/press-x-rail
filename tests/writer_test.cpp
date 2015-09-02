@@ -76,4 +76,12 @@ TEST_CASE("io", "[io]")
 
 	r["ending"] >> x;
 	REQUIRE(x == 64); // last overall
+
+	// list enumerate
+	int s = 0;
+	r["list2"].enumerate([&](reader::node list_node)
+	{
+		s += list_node.read<int>();
+	});
+	REQUIRE(s == 10); // last overall
 }

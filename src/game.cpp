@@ -178,6 +178,7 @@ void game::draw_ui(int width, int height)
 	if (width > 0 && height > 0)
 	{
 		m_canvas.resize(width, height);
+		m_canvas.cls();
 		m_status->draw();
 	}
 }

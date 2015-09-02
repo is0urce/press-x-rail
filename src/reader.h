@@ -8,6 +8,7 @@
 #include "io.h"
 
 #include <fstream>
+#include <functional>
 #include <string>
 #include <memory>
 #include <stdexcept>
@@ -78,20 +79,22 @@ namespace px
 			{
 				return m_size;
 			}
-			void read(std::string &str)
+			std::string& read(std::string &str)
 			{
 				read_header();
 				unsigned int size = (unsigned int)m_size;
 				std::vector<char> buf(size);
 				m_stream_ptr->read(&buf[0], size);
 				str.assign(&buf[0], size);
+				return str;
 			}
 			template <typename _E>
-			void read(_E &element)
+			_E& read(_E &element)
 			{
 				read_header();
 				if (sizeof(element) != m_size) throw std::runtime_error("px::reader::node::read<_E>() - type size mismatch");
 				m_stream_ptr->read((char*)&element, sizeof(element));
+				return element;
 			}
 			template <typename _E>
 			node& operator>>(_E &element)
@@ -103,6 +106,19 @@ namespace px
 			{
 				read(str);
 				return *this;
+			}
+			std::string read()
+			{
+				std::string str;
+				read(str);
+				return str;
+			}
+			template <typename _E>
+			_E read()
+			{
+				_E element;
+				read(element);
+				return element;
 			}
 			node operator[](const key_t &key)
 			{
@@ -127,6 +143,22 @@ namespace px
 				}
 
 				throw std::logic_error("px::reader::node operator[](..) key not exists");
+			}
+			void enumerate(std::function<void(node)> fn)
+			{
+				auto pos = m_pos;
+				auto pos_out = m_pos;
+				pos += header_size;
+				pos_out += header_size + m_size;
+
+				node caret(m_stream_ptr, pos, pos_out);
+
+				fn(caret);
+				while (!caret.last())
+				{
+					caret = caret.next();
+					fn(caret);
+				}
 			}
 			node operator[](const std::string &key_name)
 			{

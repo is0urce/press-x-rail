@@ -6,7 +6,7 @@
 #pragma once
 
 #include "color.h"
-#include "vector.h"
+#include "point.h"
 
 #include <string>
 

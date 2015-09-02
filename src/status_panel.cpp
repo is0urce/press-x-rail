@@ -18,10 +18,6 @@ status_panel::~status_panel() {}
 
 void status_panel::draw_panel()
 {
-	m_canvas->write({ 0, 0 }, "one:");
-	m_canvas->write({ 0, 1 }, "Two_of_Two:");
-	m_canvas->write({ 0, 2 }, "loremIpsumDoloreCOnsecAmet!11234567890!@#$%^&*()_+:");
-	m_canvas->rectangle({ 3, 3 }, { 1, 1 }, 0xff00ff);
 	m_canvas->write({ 3, 3 }, "health:");
-	m_canvas->write_integer({ 15, 3 }, 100);
+	m_canvas->write_integer({ 15, 3 }, m_target->health());
 }
