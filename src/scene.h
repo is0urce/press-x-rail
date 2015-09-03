@@ -24,7 +24,7 @@ namespace px
 			typedef world::map_t map_t;
 			typedef std::unique_ptr<map_t> map_ptr;
 			typedef world::unit_ptr unit_ptr;
-			typedef std::map<point, unit_ptr, std::function<bool(const point&, const point&)>> unit_list;
+			typedef std::multimap<point, unit_ptr, std::function<bool(const point&, const point&)>> unit_list;
 			typedef int timer_t;
 
 			// attributes

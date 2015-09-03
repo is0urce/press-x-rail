@@ -103,12 +103,26 @@ void scene::move(unit_ptr unit, const point &position)
 
 void scene::remove(unit_ptr unit)
 {
-	if (!unit) throw new std::logic_error("scene::remove - unit is null");
+	if (!unit) throw new std::logic_error("px::scene::remove(unit) - unit is null");
 
-	auto find = m_units.find(unit->position());
-	if (find == m_units.end()) throw std::logic_error("scene::remove assert #1: scene::remove unit not found or position invalid");
-	if (find->second != unit) throw std::logic_error("scene::remove assert #2: scene::remove unit position invalid or scene corrupted");
-	m_units.erase(find);
+	auto range = m_units.equal_range(unit->position());
+	auto i = range.first, last = range.second;
+	while (i != last)
+	{
+		if (i->second == unit)
+		{
+			m_units.erase(i);
+			break;
+		}
+		else
+		{
+			++i;
+		}
+	};
+	if (i == last) // not found
+	{
+		throw std::logic_error("px::scene::remove(..) assert #1: scene::remove unit not found or position invalid");
+	}
 }
 
 void scene::clear()
@@ -141,8 +155,16 @@ void scene::enumerate_units(std::function<void(scene::unit_ptr)> fn) const
 
 scene::unit_ptr scene::blocking(const point& place) const
 {
-	auto hint = m_units.find(place);
-	return hint == m_units.end() ? nullptr : hint->second;
+	auto range = m_units.equal_range(place);
+	for (auto it = range.first, last = range.second; it != last; ++it)
+	{
+		if (!it->second->traversable())
+		{
+			return it->second;
+		}
+	};
+
+	return nullptr;
 }
 
 void scene::focus(point absolute, bool force)

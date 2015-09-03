@@ -7,7 +7,6 @@
 
 #include <map>
 #include <string>
-#include <type_traits>
 
 namespace px
 {
@@ -16,7 +15,6 @@ namespace px
 	{
 	private:
 		std::map<std::string, _R> m_resources;
-		typedef const _R _C;
 
 	public:
 		void push(std::string tag, _R resource)
