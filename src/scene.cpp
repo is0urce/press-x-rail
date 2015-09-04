@@ -146,10 +146,9 @@ const scene::unit_list& scene::units() const
 
 void scene::enumerate_units(std::function<void(scene::unit_ptr)> fn) const
 {
-	for (auto i = m_units.begin(), end = m_units.end(); i != end;)
+	for (auto i = m_units.begin(), end = m_units.end(); i != end; ++i)
 	{
 		fn(i->second);
-		++i;
 	}
 }
 

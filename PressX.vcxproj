@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="src\ability.h" />
     <ClInclude Include="src\actor.h" />
     <ClInclude Include="src\attribute.h" />
     <ClInclude Include="src\avatar.h" />

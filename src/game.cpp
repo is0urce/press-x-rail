@@ -106,7 +106,7 @@ bool game::action_control(unsigned int command)
 	auto target = aquire_target();
 	if (target && !target->invincible())
 	{
-		// cast
+		auto skill = m_player->skill(command);
 	}
 	return true;
 }
