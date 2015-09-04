@@ -193,6 +193,12 @@
     <ClInclude Include="src\ability.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\delegate_ability.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\skill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

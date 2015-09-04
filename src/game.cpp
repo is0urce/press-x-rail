@@ -103,12 +103,33 @@ bool game::step_control(const point &move)
 
 bool game::action_control(unsigned int command)
 {
-	auto target = aquire_target();
-	if (target && !target->invincible())
+	if (m_player)
 	{
 		auto skill = m_player->skill(command);
+		if (skill)
+		{
+			if (skill->targeted())
+			{
+				auto target = aquire_target();
+				if (target && !target->invincible() && skill->useable(target))
+				{
+					skill->use(target);
+					fill_perception();
+				}
+			}
+			else
+			{
+				auto position = m_player->position() + m_hover;
+				if (skill->useable(position))
+				{
+					skill->use(position);
+					fill_perception();
+				}
+			}
+		}
+		return true;
 	}
-	return true;
+	return false;
 }
 
 bool game::use_control()

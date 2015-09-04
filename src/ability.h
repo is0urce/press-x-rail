@@ -13,11 +13,14 @@ namespace px
 	class ability
 	{
 	public:
+		typename _T target_t;
+
+	public:
 		virtual ~ability() = 0 {}
 
 	protected:
-		virtual void use_abitity(_T target) = 0;
-		virtual void use_abitity(const point &target) = 0;
+		virtual void use_ability(_T target) = 0;
+		virtual void use_ability(const point &target) = 0;
 		virtual bool useable_ability(_T target) const = 0;
 		virtual bool useable_ability(const point &target) const = 0;
 		virtual bool targeted_ability() const = 0;
@@ -27,6 +30,6 @@ namespace px
 		bool useable(_T target) { return useable_ability(target); } const
 		bool useable(const point &target) { return useable_ability(target); } const
 		void use(_T target) { use_ability(target); }
-		void use(const Point& target) { use_ability(target); }
+		void use(const point &target) { use_ability(target); }
 	};
 }
