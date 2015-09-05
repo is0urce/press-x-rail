@@ -10,14 +10,16 @@
 #include "item.h"
 
 #include <memory>
+#include <vector>
 
 namespace px
 {
 	namespace rl
 	{
-		class actor : public unit, public inventory<std::shared_ptr<item>>
+		class actor : 
+			public unit,
+			public inventory<std::shared_ptr<item>>
 		{
-		private:
 
 			// ctor & dtor
 		public:

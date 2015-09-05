@@ -193,10 +193,13 @@
     <ClInclude Include="src\ability.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\delegate_ability.h">
+    <ClInclude Include="src\skill.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\skill.h">
+    <ClInclude Include="src\user_ability.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\delegate_action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -247,6 +250,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

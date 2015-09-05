@@ -11,7 +11,7 @@ namespace px
 {
 	namespace rl
 	{
-		class skill : public entity
+		class skill
 		{
 		public:
 			typedef int resource_t;
