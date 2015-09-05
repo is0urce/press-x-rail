@@ -22,16 +22,15 @@ namespace px
 	{
 	public:
 		typedef delegate_action<_U, _T> delegate_t;
-		typedef std::shared_ptr<delegate_t> delegate_ptr;
 
 	private:
-		delegate_ptr m_delegate;
+		delegate_t *m_delegate;
 		_U m_user;
 
 	public:
-		user_ability(_U user, delegate_ptr delegate_ability_ptr) : m_user(user), m_delegate(delegate_ability_ptr)
+		user_ability(_U user, delegate_t *da) : m_user(user), m_delegate(da)
 		{
-			if (!delegate_ability_ptr) throw std::logic_error("px::user_ability::ctor() - delegate_ptr is null");
+			if (!da) throw std::logic_error("px::user_ability::ctor() - delegate is null");
 		}
 		virtual ~user_ability() {}
 

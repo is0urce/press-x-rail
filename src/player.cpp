@@ -13,25 +13,27 @@
 using namespace px;
 using namespace px::rl;
 
-player::player(receiver_t &receiver) : m_receiver(receiver)
+player::player(receiver_t *receiver) : m_receiver(receiver)
 {
-	m_skills.reserve(12);
-	action_t::target_fn tf([&](character* user, std::shared_ptr<unit> unit)
+	action_t::target_fn tf([&](user_t *user, target_t unit)
 	{
-		if (unit)
+		if (unit && receiver)
 		{
-			m_receiver.broadcast({ "psssch", 0xffffff, unit->position() });
+			m_receiver->broadcast({ "psssch", 0xffffff, unit->position() });
 		}
 	});
-	action_t::target_check_fn tfc([&](character* user, std::shared_ptr<unit> unit)
+	action_t::target_check_fn tfc([&](user_t *user, target_t unit)
 	{
 		return true;
 	});
-	m_skills.emplace_back(new action_t(tf, tfc));
+	m_skills.emplace_back(action_t(tf, tfc));
 }
 player::~player() {}
 
-void player::acquire(player::item_t item)
+void player::acquire(item_t item)
 {
-	m_receiver.broadcast(broadcast(std::string("+ ") + item->name(), 0xffffff, position()));
+	if (m_receiver)
+	{
+		m_receiver->broadcast(broadcast(std::string("+ ") + item->name(), 0xffffff, position()));
+	}
 }

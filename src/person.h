@@ -30,7 +30,7 @@ namespace px
 			typedef std::unique_ptr<ability_t> ability_ptr;
 
 		protected:
-			std::vector<std::shared_ptr<action_t>> m_skills;
+			std::vector<action_t> m_skills;
 
 			// ctor & dtor
 		public:
@@ -43,8 +43,7 @@ namespace px
 		public:
 			ability_ptr skill(unsigned int slot)
 			{
-				ability_ptr s(new user_ability<user_t*, target_t>(this, m_skills.at(slot)));
-				return std::move(s);
+				return (slot < m_skills.size()) ? ability_ptr(new user_ability<user_t*, target_t>(this, &m_skills[slot])) : nullptr;
 			}
 		};
 	}

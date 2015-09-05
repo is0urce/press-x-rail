@@ -18,11 +18,11 @@ namespace px
 			typedef game receiver_t;
 
 		private:
-			receiver_t &m_receiver;
+			receiver_t *m_receiver;
 
 			// ctor & dtor
 		public:
-			player(receiver_t &receiver);
+			player(receiver_t *receiver);
 			virtual ~player();
 
 		protected:
