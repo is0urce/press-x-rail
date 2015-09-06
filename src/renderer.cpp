@@ -398,7 +398,7 @@ void renderer::fill_notifications(const perception_t &perception, font &fnt)
 
 			fill_vertex(pen.moved({ gw / 2, ghor - gh / 2 }), { gw, gh }, &vertices[vertex_offset]);
 			fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
-			fill_color(n.colour, &colors[color_offset]);
+			fill_color(n.color, &colors[color_offset]);
 
 			pen.X += g.advance * n.size;
 
@@ -549,14 +549,13 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 	point p;
 	perception.enumerate_units([&](perception::avatar_t a)
 	{
-		
-
 		p = a.position();
 		GLfloat outer = 10.0;
 		GLfloat inner = 0.0;
 		GLfloat elevation = 1.0;
 		color light(24.0f, 19.5f, 11.9f, 1.0f);
 
+		if (a.appearance().image != '@') return;
 		//if (a.appearance().image == 'r')
 		//{
 		//	outer = 8.0;

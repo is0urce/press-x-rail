@@ -32,7 +32,7 @@ world::world() : m_created(world_range, false)
 
 	m_library.push("mob_r", rat);
 
-	rl::item ore;;
+	rl::item ore;
 	ore.appearance('o');
 	ore.name("copper ore");
 	ore.tag("ore_copper");
@@ -71,14 +71,15 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 	{
 		created = true;
 
-		auto mob = std::make_shared<rl::npc>(m_library.prototype<rl::npc>("mob_r"));
-		mob->position(offset + point(6, 6));
-		fetch_fn(mob);
+		//auto mob = std::make_shared<rl::npc>(m_library.prototype<rl::npc>("mob_r"));
+		//mob->position(offset + point(6, 6));
+		//fetch_fn(mob);
 
 		auto ore = std::make_shared<rl::item>(m_library.prototype<rl::item>("ore_copper"));
 
 		world::unit_ptr vein(new rl::deposit(ore));
-		vein->appearance({ 'O', 0x996633 });
+		//vein->appearance({ 'O', 0x996633 });
+		vein->appearance({ 'O', 0xffffff });
 		vein->position(offset + point(12, 12));
 		fetch_fn(vein);
 	}

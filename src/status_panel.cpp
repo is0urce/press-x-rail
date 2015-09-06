@@ -20,6 +20,6 @@ status_panel::~status_panel() {}
 
 void status_panel::draw_panel()
 {
-	m_canvas->write({ 3, 3 }, "health:");
-	m_canvas->write_integer({ 15, 3 }, 0);
+	m_canvas->write({ 0, 0 }, "health:");
+	m_canvas->write_integer({ 12, 0 }, 100);
 }

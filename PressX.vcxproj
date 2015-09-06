@@ -98,6 +98,7 @@
     <ClInclude Include="src\broadcast.h" />
     <ClInclude Include="src\character.h" />
     <ClInclude Include="src\control.h" />
+    <ClInclude Include="src\core.h" />
     <ClInclude Include="src\deposit.h" />
     <ClInclude Include="src\effect.h" />
     <ClInclude Include="src\enhancement.h" />

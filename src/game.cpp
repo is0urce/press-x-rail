@@ -24,7 +24,11 @@ const unsigned int game::perc_width = perc_range * 2 + 1;
 const unsigned int game::perc_height = perc_range * 2 + 1;
 
 // initial canvas size not really important, it should be resized next drawing pass
-game::game() : m_perception(perc_reach), m_canvas({ 1, 1 })
+game::game()
+	:
+	m_shutdown(false),
+	m_perception(perc_reach),
+	m_canvas({ 1, 1 })
 {
 	m_player.reset(new rl::player(this));
 	m_player->appearance({ '@', 0xffffff });
@@ -65,12 +69,12 @@ void game::fill_perception()
 	// notifications
 	for (auto &broadcast : m_broadcasts)
 	{
-		m_perception.add_notification(broadcast.text, broadcast.colour, broadcast.position, broadcast.size);
+		m_perception.add_notification(broadcast.text, broadcast.color, broadcast.position, broadcast.size);
 	}
 	m_broadcasts.clear();
 }
 
-bool game::step_control(const point &move)
+bool game::step(const point &move)
 {
 	if (m_player)
 	{
@@ -101,7 +105,7 @@ bool game::step_control(const point &move)
 	return true;
 }
 
-bool game::action_control(unsigned int command)
+bool game::action(unsigned int command)
 {
 	if (m_player)
 	{
@@ -132,7 +136,7 @@ bool game::action_control(unsigned int command)
 	return false;
 }
 
-bool game::use_control()
+bool game::use()
 {
 	auto target = aquire_target();
 	if (useable(target))
@@ -143,9 +147,9 @@ bool game::use_control()
 	return true;
 }
 
-bool game::click_control(point positon, game::button_t button)
+bool game::click(point positon, unsigned int button)
 {
-	hover_control(positon);
+	hover(positon);
 	if (m_player && button == 1)
 	{
 		if (useable(m_target))
@@ -157,13 +161,13 @@ bool game::click_control(point positon, game::button_t button)
 		{
 			int dx = (positon.X == 0 || std::abs(positon.X) < std::abs(positon.Y) / 2) ? 0 : positon.X > 0 ? 1 : -1;
 			int dy = (positon.Y == 0 || std::abs(positon.Y) < std::abs(positon.X) / 2) ? 0 : positon.Y > 0 ? 1 : -1;
-			return step_control({ dx, dy });
+			return step({ dx, dy });
 		}
 	}
 	return false;
 }
 
-bool game::hover_control(point position)
+bool game::hover(point position)
 {
 	m_hover = position;
 	aquire_target();
@@ -208,4 +212,27 @@ void game::draw_ui(int width, int height)
 void game::broadcast(broadcast_t message)
 {
 	m_broadcasts.emplace_back(message);
+}
+
+void game::shutdown(bool shutdown)
+{
+	m_shutdown = shutdown;
+}
+void game::shutdown()
+{
+	shutdown(true);
+}
+bool game::finished() const
+{
+	return m_shutdown;
+}
+
+void game::save(file_path path)
+{
+
+}
+
+void game::load(file_path path)
+{
+	fill_perception();
 }

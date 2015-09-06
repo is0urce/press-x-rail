@@ -10,8 +10,20 @@ namespace px
 	enum class key : int
 	{
 		not_valid,
-		quicksave,
-		quickload,
+
+		quick_save,
+		quick_load,
+
+		move_none,
+		move_north,
+		move_south,
+		move_west,
+		move_east,
+		move_northwest,
+		move_northeast,
+		move_southwest,
+		move_southeast,
+
 		action_use,
 		action0,
 		action1,
@@ -23,18 +35,10 @@ namespace px
 		action7,
 		action8,
 		action9,
+
 		command_ok,
 		command_cancel,
-		move_none,
-		move_north,
-		move_south,
-		move_west,
-		move_east,
-		move_northwest,
-		move_northeast,
-		move_southwest,
-		move_southeast,
 
-		max_value = move_southeast
+		max_value = command_cancel
 	};
 }

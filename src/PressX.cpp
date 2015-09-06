@@ -11,6 +11,7 @@
 #include "key_bindings.h"
 #include "key.h"
 #include "game.h"
+#include "game_control.h"
 
 using namespace px;
 using namespace px::shell;
@@ -18,6 +19,7 @@ using namespace px::shell;
 std::unique_ptr<key_bindings<WPARAM, key>> g_bindings;
 std::unique_ptr<renderer> g_graphics;
 std::unique_ptr<game> g_game;
+std::unique_ptr<game_control> g_control;
 
 #define MAX_LOADSTRING 100
 
@@ -61,6 +63,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_graphics.reset(new renderer(renderer::opengl_handle(new wingl(hWnd))));
 		g_bindings.reset(new key_bindings<WPARAM, key>());
 		g_game.reset(new game());
+		g_control.reset(new game_control(g_game.get()));
 
 		px::timer time;
 		std::srand((unsigned int)time.counter());
@@ -74,8 +77,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind(VK_HOME, VK_NUMPAD7, key::move_northwest);
 		g_bindings->bind(VK_PRIOR, VK_NUMPAD9, key::move_northeast);
 		g_bindings->bind(VK_SPACE, VK_NUMPAD5, key::move_none);
-		g_bindings->bind(VK_RETURN, key::command_ok);
-		g_bindings->bind(VK_ESCAPE, key::command_cancel);
+
 		g_bindings->bind('1', key::action1);
 		g_bindings->bind('2', key::action2);
 		g_bindings->bind('3', key::action3);
@@ -87,6 +89,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind('9', key::action9);
 		g_bindings->bind('0', key::action0);
 		g_bindings->bind('E', key::action_use);
+
+		g_bindings->bind(VK_F5, key::quick_save);
+		g_bindings->bind(VK_F9, key::quick_load);
+
+		g_bindings->bind(VK_RETURN, key::command_ok);
+		g_bindings->bind(VK_ESCAPE, key::command_cancel);
 
 		auto turn = g_game->perception().version();
 		bool run = true;
@@ -219,21 +227,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			if (vkey == key::command_cancel) g_game->shutdown();
 
-			g_game->press(vkey);
+			g_control->press(vkey);
 		}
 	}
 	break;
 	case WM_MOUSEMOVE:
 		if (!g_game || !g_graphics) break;
-		g_game->hover(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }));
+		g_control->hover(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }));
 		break;
 	case WM_LBUTTONDOWN:
 		if (!g_game || !g_graphics) break;
-		g_game->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 1);
+		g_control->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 1);
 		break;
 	case WM_RBUTTONDOWN:
 		if (!g_game || !g_graphics) break;
-		g_game->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 2);
+		g_control->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 2);
 		break;
 	case WM_MOUSEWHEEL:
 		if (!g_graphics) break;
