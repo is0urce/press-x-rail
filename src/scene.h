@@ -8,6 +8,9 @@
 #include "tile.h"
 #include "world.h"
 
+#include "reader.h"
+#include "writer.h"
+
 #include <memory>
 #include <map>
 
@@ -68,6 +71,9 @@ namespace px
 			void tick(timer_t ticks);
 			void focus(point absolute);
 			void focus(point absolute, bool force);
+
+			void save(writer::node_ptr node);
+			void load(const reader::node &node);
 		};
 	}
 }

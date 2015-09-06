@@ -213,3 +213,17 @@ scene::map_t* scene::select_map(const point &cell) const
 	//if (m_maps.in_range(p)) return m_maps.at(p).get(); else return nullptr;
 	return m_maps.at(cell - m_focus + sight_center, nullptr).get();
 }
+
+void scene::save(writer::node_ptr node)
+{
+	enumerate_units([&](unit_ptr unit)
+	{
+		auto u = node->open("unit");
+		u->write("x", unit->position().X);
+		u->write("y", unit->position().Y);
+	});
+}
+void scene::load(const reader::node &node)
+{
+
+}

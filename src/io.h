@@ -19,9 +19,8 @@ namespace px
 		typedef struct key_t
 		{
 			char letter[key_size];
-		}
-		key_t;
-		typedef uint64_t chunk_size;
+		} key_t;
+		typedef unsigned long long chunk_size;
 
 	protected:
 		static key_t to_key(const std::string &str)

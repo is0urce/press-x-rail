@@ -10,6 +10,8 @@
 #include "point.h"
 #include "key.h"
 
+#include <string>
+
 namespace px
 {
 	namespace shell
@@ -84,11 +86,11 @@ namespace px
 					result = m_game->action(5);
 					break;
 				case key::quick_save:
-					m_game->save("autosave");
+					m_game->save("save\\autosave.sav");
 					result = true;
 					break;
 				case key::quick_load:
-					m_game->load("autosave");
+					m_game->load("save\\autosave.sav");
 					result = true;
 					break;
 				default:

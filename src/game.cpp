@@ -10,6 +10,9 @@
 #include "player.h"
 #include "status_panel.h"
 
+#include "writer.h"
+#include "reader.h"
+
 using namespace px;
 
 namespace
@@ -229,10 +232,18 @@ bool game::finished() const
 
 void game::save(file_path path)
 {
-
+	if (m_player)
+	{
+		writer save(path);
+		m_scene.save(save->open("scene"));
+		broadcast(broadcast_t("autosaving...", 0xffffff, m_player->position()));
+	}
 }
 
 void game::load(file_path path)
 {
+	reader save(path);
+	m_scene.load(save["scene"]);
+
 	fill_perception();
 }

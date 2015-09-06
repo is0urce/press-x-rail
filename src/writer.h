@@ -131,28 +131,22 @@ namespace px
 		node_ptr m_top;
 
 	public:
-		writer(const std::string &path) {
-			init(path);
-		}
-		writer(stream_t stream) { init(); }
-		virtual ~writer() { end(); }
-	private:
-		writer(const writer &w) = delete;
-
-	private:
-		void init(const std::string &path)
+		writer(const std::string &path)
 		{
 			m_stream.open(path.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
 			if (!m_stream.is_open())
 			{
-				throw std::runtime_error("can't write in file " + path);
+				throw std::runtime_error("can't open file " + path);
 			}
-			init();
-		}
-		void init()
-		{
+			if (!m_stream)
+			{
+				throw std::runtime_error("stream error in file " + path);
+			}
 			m_top.reset(new node(&m_stream));
 		}
+		virtual ~writer() { end(); }
+	private:
+		writer(const writer &w) = delete;
 
 	public:
 		node_ptr top() { return m_top; }
