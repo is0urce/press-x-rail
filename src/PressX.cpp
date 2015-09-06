@@ -12,14 +12,13 @@
 #include "key.h"
 #include "game.h"
 #include "game_control.h"
+#include "core.h"
 
 using namespace px;
 using namespace px::shell;
 
 std::unique_ptr<key_bindings<WPARAM, key>> g_bindings;
-std::unique_ptr<renderer> g_graphics;
-std::unique_ptr<game> g_game;
-std::unique_ptr<game_control> g_control;
+std::unique_ptr<core> g_core;
 
 #define MAX_LOADSTRING 100
 
@@ -60,13 +59,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	try
 	{
-		g_graphics.reset(new renderer(renderer::opengl_handle(new wingl(hWnd))));
+		g_core.reset(new core(renderer::opengl_handle(new wingl(hWnd))));
 		g_bindings.reset(new key_bindings<WPARAM, key>());
-		g_game.reset(new game());
-		g_control.reset(new game_control(g_game.get()));
-
-		px::timer time;
-		std::srand((unsigned int)time.counter());
 
 		g_bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
 		g_bindings->bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
@@ -96,28 +90,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind(VK_RETURN, key::command_ok);
 		g_bindings->bind(VK_ESCAPE, key::command_cancel);
 
-		auto turn = g_game->perception().version();
-		bool run = true;
-		while (run && !g_game->finished())
+		for (bool run = true; run; run &= g_core->run())
 		{
-			// restart timer on new perception frame
-			auto &perception = g_game->perception();
-			auto current = perception.version();
-			if (turn != current)
-			{
-				turn = current;
-				time.restart();
-			}
-
-			auto &gui = g_game->canvas();
-
-			// update interface
-			int width, height;
-			g_graphics->size(width, height);
-			g_game->draw_ui(width / renderer::ui_cell_width, height / renderer::ui_cell_height);
-
-			// drawcalls before windows destruction
-			g_graphics->draw(perception, g_game->canvas(), time.measure());
+			g_core->frame();
 
 			// dispatch windows messages
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
@@ -138,9 +113,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		MessageBox(NULL, message, NULL, NULL);
 	}
 
-	g_graphics.reset();
+	g_core.reset();
 	g_bindings.reset();
-	g_game.reset();
 
 #ifdef _DEBUG
 	_CrtDumpMemoryLeaks();
@@ -220,32 +194,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:
 	{
-		if (!g_bindings || !g_game) break;
+		if (!g_bindings || !g_core) break;
 
 		key vkey;
 		if (g_bindings->find(wParam, vkey))
 		{
-			if (vkey == key::command_cancel) g_game->shutdown();
-
-			g_control->press(vkey);
+			g_core->press(vkey);
 		}
 	}
 	break;
 	case WM_MOUSEMOVE:
-		if (!g_game || !g_graphics) break;
-		g_control->hover(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }));
+		if (!g_core) break;
+		g_core->hover(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		break;
 	case WM_LBUTTONDOWN:
-		if (!g_game || !g_graphics) break;
-		g_control->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 1);
+		if (!g_core) break;
+		g_core->click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 1);
 		break;
 	case WM_RBUTTONDOWN:
-		if (!g_game || !g_graphics) break;
-		g_control->click(g_graphics->world({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }), 2);
+		if (!g_core) break;
+		g_core->click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 2);
 		break;
 	case WM_MOUSEWHEEL:
-		if (!g_graphics) break;
-		g_graphics->scale(GET_WHEEL_DELTA_WPARAM(wParam));
+		if (!g_core) break;
+		g_core->scroll(GET_WHEEL_DELTA_WPARAM(wParam));
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

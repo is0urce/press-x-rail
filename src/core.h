@@ -32,7 +32,7 @@ namespace px
 				std::srand((unsigned int)m_time.counter());
 				auto turn = m_game.perception().version();
 			}
-			virtual ~core();
+			virtual ~core() {}
 
 			void frame()
 			{
@@ -76,6 +76,11 @@ namespace px
 			void scroll(int delta)
 			{
 				m_graphics->scale(delta);
+			}
+
+			bool run()
+			{
+				return !m_game.finished();
 			}
 		};
 	}
