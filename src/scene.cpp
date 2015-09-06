@@ -216,11 +216,11 @@ scene::map_t* scene::select_map(const point &cell) const
 
 void scene::save(writer::node_ptr node)
 {
+	if (!node) throw std::logic_error("px:scene::save(..) - node is null");
 	enumerate_units([&](unit_ptr unit)
 	{
 		auto u = node->open("unit");
-		u->write("x", unit->position().X);
-		u->write("y", unit->position().Y);
+		unit->save(u);
 	});
 }
 void scene::load(const reader::node &node)

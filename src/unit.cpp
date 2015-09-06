@@ -49,7 +49,36 @@ void unit::apply_effect(effect &e)
 {
 }
 
+void unit::serialize(writer::node_ptr node) const
+{
+	point m_position;
+	point m_prev_position;
+	bool m_remove;
+	bool m_invincible;
+	node->write("pos_x", m_position.X);
+	node->write("pos_y", m_position.Y);
+	node->write("remove", m_remove);
+	node->write("static", m_invincible);
+}
+
+void unit::deserialize(const reader::node &node)
+{
+	node["pos_x"] >> m_position.X;
+	node["pos_y"] >> m_position.Y;
+	node["remove"] >> m_remove;
+	node["static"] >> m_invincible;
+}
+
 // methods
+
+void unit::save(writer::node_ptr node) const
+{
+	serialize(node);
+}
+void unit::load(const reader::node &node)
+{
+	deserialize(node);
+}
 
 bool unit::traversable() const
 {

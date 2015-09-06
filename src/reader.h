@@ -19,6 +19,8 @@ namespace px
 	class reader : public io
 	{
 	public:
+		class node;
+	public:
 		static const unsigned int header_size = sizeof(key_t) + sizeof(chunk_size);
 
 	public:
@@ -121,7 +123,7 @@ namespace px
 				read(element);
 				return element;
 			}
-			node operator[](const key_t &key)
+			node operator[](const key_t &key) const
 			{
 				auto pos = m_pos;
 				auto pos_out = m_pos;
@@ -163,7 +165,7 @@ namespace px
 					fn(caret);
 				}
 			}
-			node operator[](const std::string &key_name)
+			node operator[](const std::string &key_name) const
 			{
 				try
 				{
@@ -201,7 +203,7 @@ namespace px
 		virtual ~reader() {}
 
 	public:
-		node operator[](const std::string &key)
+		node operator[](const std::string &key) const
 		{
 			key_t name = to_key(key);
 			node caret = m_top;

@@ -8,6 +8,9 @@
 #include "entity.h"
 #include "point.h"
 
+#include "reader.h"
+#include "writer.h"
+
 #include <memory>
 
 namespace px
@@ -40,8 +43,13 @@ namespace px
 			virtual bool useable_unit(user_t user) const;
 			virtual void use_unit(user_t user);
 			virtual void apply_effect(effect &e);
+			virtual void serialize(writer::node_ptr node) const;
+			virtual void deserialize(const reader::node &node);
 
 		public:
+			void save(writer::node_ptr node) const;
+			void load(const reader::node &node);
+
 			bool traversable() const;
 			bool transparent() const;
 			bool useable(user_t user) const;

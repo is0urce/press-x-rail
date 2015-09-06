@@ -31,8 +31,6 @@ namespace px
 		public:
 			entity();
 			virtual ~entity();
-		private:
-			//entity(const entity&);
 
 		public:
 			// attribute accessors

@@ -20,13 +20,13 @@ namespace px
 		{
 			char letter[key_size];
 		} key_t;
-		typedef unsigned long long chunk_size;
+		typedef unsigned int chunk_size;
 
 	protected:
 		static key_t to_key(const std::string &str)
 		{
 			auto len = str.length();
-			if (str.length() > key_size) throw std::logic_error("px::io - to_key(&str) - length > key size");
+			if (str.length() > key_size) throw std::logic_error("px::iozz::to_key(str) - length > key size, str=" + str);
 			key_t result = {};
 			for (unsigned int i = 0; i < len; ++i)
 			{
