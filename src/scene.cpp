@@ -107,11 +107,13 @@ void scene::remove(unit_ptr unit)
 
 	auto range = m_units.equal_range(unit->position());
 	auto i = range.first, last = range.second;
+	bool erased = false;
 	while (i != last)
 	{
 		if (i->second == unit)
 		{
 			m_units.erase(i);
+			erased = true;
 			break;
 		}
 		else
@@ -119,7 +121,7 @@ void scene::remove(unit_ptr unit)
 			++i;
 		}
 	};
-	if (i == last) // not found
+	if (!erased)
 	{
 		throw std::logic_error("px::scene::remove(..) assert #1: scene::remove unit not found or position invalid");
 	}

@@ -122,25 +122,51 @@ namespace px
 					}
 				}
 			}
-			inline void fill(unsigned int points, unsigned int length, const std::vector<GLfloat*> &attribute_values, const GLuint* index_values)
-			{
-				if (attribute_values.size() != m_num) throw std::runtime_error("vao::fill - attribute num missmatch");
+			//inline void fill(unsigned int points, unsigned int length, const std::vector<GLfloat*> &attribute_values, const GLuint* index_values)
+			//{
+			//	if (attribute_values.size() != m_num) throw std::runtime_error("vao::fill - attribute num missmatch");
 
-				fill(points, length, &attribute_values[0], index_values);
-			}
-			inline void fill(unsigned int points, const std::vector<const GLfloat*> &attribute_values, const std::vector<GLuint> &index_values)
-			{
-				if (attribute_values.size() != m_num)  throw std::runtime_error("vao::fill - attribute num missmatch");
+			//	fill(points, length, &attribute_values[0], index_values);
+			//}
+			//inline void fill(unsigned int points, const std::vector<const GLfloat*> &attribute_values, const std::vector<GLuint> &index_values)
+			//{
+			//	if (attribute_values.size() != m_num)  throw std::runtime_error("vao::fill - attribute num missmatch");
 
-				fill(points, index_values.size(), &attribute_values[0], index_values.size() == 0 ? nullptr : &index_values[0]);
+			//	fill(points, index_values.size(), &attribute_values[0], index_values.size() == 0 ? nullptr : &index_values[0]);
+			//}
+			inline void fill(unsigned int points, const std::vector<std::vector<GLfloat>*> &attribute_values, const std::vector<GLuint> &index_values)
+			{
+				if (points == 0)
+				{
+					m_length = 0;
+				}
+				else
+				{
+					int av_size = attribute_values.size();
+					if (av_size == 0) throw std::runtime_error("vao::fill - attribute values size = 0");
+					if (av_size != m_num)  throw std::runtime_error("vao::fill - attribute num missmatch");
+
+					std::vector<GLfloat*> av(av_size);
+					unsigned int c = 0;
+					for (auto it = attribute_values.begin(), last = attribute_values.end(); it != last; ++it)
+					{
+						std::vector<GLfloat>* v = *it;
+						av[c] = (v == nullptr ? nullptr : v->size() == 0 ? nullptr : &(*v)[0]);
+						++c;
+					}
+					fill(points, index_values.size(), &av[0], index_values.size() == 0 ? nullptr : &index_values[0]);
+				}
 			}
 
 			inline void draw(GLuint element_type) const
 			{
 				if (!m_init) throw std::runtime_error("vao::draw - not initialized");
 
-				glBindVertexArray(m_vao);
-				glDrawElements(element_type, m_length, GL_UNSIGNED_INT, 0);
+				if (m_length > 0)
+				{
+					glBindVertexArray(m_vao);
+					glDrawElements(element_type, m_length, GL_UNSIGNED_INT, 0);
+				}
 			}
 			inline void draw() const
 			{

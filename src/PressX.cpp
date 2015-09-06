@@ -5,13 +5,10 @@
 
 #include "PressX.h"
 
-#include "performance_timer.h"
 #include "renderer.h"
 #include "wingl.h"
 #include "key_bindings.h"
 #include "key.h"
-#include "game.h"
-#include "game_control.h"
 #include "core.h"
 
 using namespace px;

@@ -85,6 +85,8 @@ namespace
 	}
 	inline void fill_index(unsigned int num, std::vector<GLuint> &dest)
 	{
+		if (num == 0) return;
+		if (dest.size() == 0) throw std::logic_error("px::renderer::fill_index(int, vector) - vector size = 0, while num != 0");
 		fill_index(num, &dest[0]);
 	}
 }
@@ -250,7 +252,7 @@ void renderer::setup_scene()
 		fill_texture(0, 0, 1, 1, &texture[0]);
 		fill_index(1, &indices[0]);
 
-		m_scene.vao.fill(points_quad, { &vertices[0], &texture[0] }, indices);
+		m_scene.vao.fill(points_quad, { &vertices, &texture }, indices);
 	}
 }
 
@@ -275,7 +277,7 @@ void renderer::fill_bg(const perception_t &perception)
 	fill_index(range_size, indices);
 
 	// bind
-	m_background.vao.fill(range_size * points_quad, { &vertices[0], &colors[0] }, indices);
+	m_background.vao.fill(range_size * points_quad, { &vertices, &colors }, indices);
 }
 
 void renderer::fill_tiles(const perception_t &perception, font &fnt)
@@ -313,7 +315,7 @@ void renderer::fill_tiles(const perception_t &perception, font &fnt)
 	fill_index(range_size, indices);
 
 	// bind
-	m_tiles.vao.fill(range_size * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
+	m_tiles.vao.fill(range_size * points_quad, { &vertices, &textures, &colors }, indices);
 }
 
 void renderer::fill_units(const perception_t &perception, font &fnt)
@@ -346,7 +348,7 @@ void renderer::fill_units(const perception_t &perception, font &fnt)
 	fill_index(unit_num, indices);
 
 	// bind
-	m_units.vao.fill(unit_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
+	m_units.vao.fill(unit_num * points_quad, { &vertices, &textures, &colors }, indices);
 }
 
 void renderer::fill_notifications(const perception_t &perception, font &fnt)
@@ -411,7 +413,7 @@ void renderer::fill_notifications(const perception_t &perception, font &fnt)
 	fill_index(letters_num, indices);
 
 	// bind
-	m_notification.vao.fill(letters_num * points_quad, { &vertices[0], &textures[0], &colors[0] }, indices);
+	m_notification.vao.fill(letters_num * points_quad, { &vertices, &textures, &colors }, indices);
 }
 
 void renderer::fill_ui(const canvas_t &gui, font &fnt)
@@ -465,8 +467,8 @@ void renderer::fill_ui(const canvas_t &gui, font &fnt)
 	fill_index(size, indices);
 
 	// bind
-	m_uiback.vao.fill(size * points_quad, { &vertex_back[0], &color_back[0] }, indices);
-	m_uitext.vao.fill(size * points_quad, { &vertex_front[0], &texture[0], &color_front[0] }, indices);
+	m_uiback.vao.fill(size * points_quad, { &vertex_back, &color_back }, indices);
+	m_uitext.vao.fill(size * points_quad, { &vertex_front, &texture, &color_front }, indices);
 }
 
 void renderer::draw(const perception_t &perception, const canvas_t &gui, timespan_t timespan)
@@ -574,7 +576,7 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 		std::vector<GLuint> indices(index_quad);
 		fill_vertex(p, outer * 2, &vertices[0]);
 		fill_index(1, &indices[0]);
-		m_light.vao.fill(points_quad, { &vertices[0] }, indices);
+		m_light.vao.fill(points_quad, { &vertices }, indices);
 		m_light.vao.draw();
 	});
 

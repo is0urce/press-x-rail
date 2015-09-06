@@ -43,7 +43,7 @@ namespace px
 		public:
 			ability_ptr skill(unsigned int slot)
 			{
-				return (slot < m_skills.size()) ? ability_ptr(new user_ability<user_t*, target_t>(this, &m_skills[slot])) : nullptr;
+				return (slot < m_skills.size()) ? ability_ptr(new user_ability<user_t*, target_t>(this, &m_skills.at(slot))) : nullptr;
 			}
 		};
 	}
