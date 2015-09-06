@@ -7,6 +7,9 @@
 
 #include "appearance.h"
 
+#include "reader.h"
+#include "writer.h"
+
 #include <string>
 
 namespace px
@@ -33,6 +36,9 @@ namespace px
 			virtual ~entity();
 
 		public:
+			void save(writer::node_ptr node) const;
+			void load(const reader::node &node);
+
 			// attribute accessors
 			void appearance(appearance_t img);
 			appearance_t appearance() const;

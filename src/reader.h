@@ -86,9 +86,16 @@ namespace px
 			{
 				read_header();
 				unsigned int size = (unsigned int)m_size;
-				std::vector<char> buf(size);
-				m_stream_ptr->read(&buf[0], size);
-				str.assign(&buf[0], size);
+				if (size > 0)
+				{
+					std::vector<char> buf(size);
+					m_stream_ptr->read(&buf[0], size);
+					str.assign(&buf[0], size);
+				}
+				else
+				{
+					str = "";
+				}
 				return str;
 			}
 			template <typename _E>

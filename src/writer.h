@@ -86,7 +86,10 @@ namespace px
 				chunk_size len = str.length();
 				m_stream_ptr->write((char*)&key, sizeof(key));
 				m_stream_ptr->write((char*)&len, sizeof(len));
-				m_stream_ptr->write(str.c_str(), len);
+				if (len > 0)
+				{
+					m_stream_ptr->write(str.c_str(), len);
+				}
 
 				m_acc += sizeof(key) + sizeof(len) + len;
 			}

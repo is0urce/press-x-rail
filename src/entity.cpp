@@ -12,7 +12,7 @@ using namespace px::rl;
 
 // ctor & dtor
 
-entity::entity()
+entity::entity() : m_faction(0)
 {
 }
 
@@ -63,4 +63,20 @@ int entity::reputation(entity::faction_t faction_id) const
 int entity::reputation(const entity &member) const
 {
 	return reputation(member.m_faction);
+}
+
+void entity::save(writer::node_ptr node) const
+{
+	node->write("name", m_name);
+	node->write("tag", m_tag);
+	node->write("appear", m_appearance);
+	node->write("faction", m_faction);
+}
+
+void entity::load(const reader::node &node)
+{
+	node["name"] >> m_name;
+	node["tag"] >> m_tag;
+	node["appear"] >> m_appearance;
+	node["faction"] >> m_faction;
 }
