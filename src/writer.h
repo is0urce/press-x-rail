@@ -70,9 +70,10 @@ namespace px
 				close();
 
 				chunk_size reserved = 0;
-				m_stream_ptr->write((char*)&key, sizeof(key));
 				m_reserve = m_stream_ptr->tellp();
 				if (m_reserve == stream_t::streampos(-1)) throw std::runtime_error("stream buffer does not support tellp(), or it fails");
+
+				m_stream_ptr->write((char*)&key, sizeof(key));
 				m_stream_ptr->write((char*)&reserved, sizeof(reserved));
 
 				m_child.reset(new node(m_stream_ptr));

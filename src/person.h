@@ -39,6 +39,16 @@ namespace px
 
 		protected:
 			virtual void apply_effect(effect &e) override { e.apply(*this); }
+			virtual void serialize(writer::node_ptr node) const override
+			{
+				unit::serialize(node);
+				character::save(node);
+			}
+			virtual void deserialize(const reader::node &node) override
+			{
+				unit::deserialize(node);
+				character::load(node);
+			}
 
 		public:
 			ability_ptr skill(unsigned int slot)

@@ -35,10 +35,11 @@ namespace px
 			entity();
 			virtual ~entity();
 
-		public:
+		protected:
 			void save(writer::node_ptr node) const;
 			void load(const reader::node &node);
 
+		public:
 			// attribute accessors
 			void appearance(appearance_t img);
 			appearance_t appearance() const;
