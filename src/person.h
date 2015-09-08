@@ -43,11 +43,20 @@ namespace px
 			{
 				unit::serialize(node);
 				character::save(node);
+				auto skills = node->open("skills");
+				for (auto &skill : m_skills)
+				{
+					skills->write("skill", skill.tag());
+				}
 			}
 			virtual void deserialize(const reader::node &node) override
 			{
 				unit::deserialize(node);
 				character::load(node);
+				node["skills"].enumerate([&](const reader::node &node)
+				{
+					std::string tag = node["tag"].read<std::string>();
+				});
 			}
 
 		public:

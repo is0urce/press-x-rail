@@ -106,6 +106,7 @@
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\game_control.h" />
     <ClInclude Include="src\appearance.h" />
+    <ClInclude Include="src\projectile.h" />
     <ClInclude Include="src\serializer.h" />
     <ClInclude Include="src\user_ability.h" />
     <ClInclude Include="src\inventory.h" />
