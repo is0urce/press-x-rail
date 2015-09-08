@@ -122,6 +122,9 @@ renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera
 	m_light.vao.init({ vertice_depth });
 	m_light.program = glsl::program("shaders\\light");
 
+	m_projectiles.vao.init({ vertice_depth, texcoord_depth, color_depth });
+	m_projectiles.program = glsl::program("shaders\\units");
+
 	m_notification.vao.init({ vertice_depth, texcoord_depth, color_depth });
 	m_notification.program = glsl::program("shaders\\notify");
 
@@ -416,6 +419,38 @@ void renderer::fill_notifications(const perception_t &perception, font &fnt)
 	m_notification.vao.fill(letters_num * points_quad, { &vertices, &textures, &colors }, indices);
 }
 
+void renderer::fill_projectiles(const perception_t &perception, font &fnt, timespan_t time)
+{
+	// calculate number of required letter-squares
+	unsigned int count = perception.projectile_count();
+
+	std::vector<GLfloat> vertices(count * points_quad * vertice_depth);
+	std::vector<GLfloat> textures(count * points_quad * texcoord_depth);
+	std::vector<GLfloat> colors(count * points_quad * color_depth);
+	std::vector<GLuint> indices(count * index_quad);
+
+	// vertex attributes
+	unsigned int vertex_offset = 0;
+	unsigned int color_offset = 0;
+	unsigned int texture_offset = 0;
+	perception.enumerate_projectiles([&](const projectile &particle)
+	{
+		auto g = fnt[particle.image];
+		fill_vertex(particle.position(time) - perception.start(), { g.width, g.height }, &vertices[vertex_offset]);
+		fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
+		fill_color(particle.color, &colors[color_offset]);
+
+		vertex_offset += vertice_depth * points_quad;
+		color_offset += color_depth * points_quad;
+		texture_offset += texcoord_depth * points_quad;
+	});
+
+	fill_index(count, indices);
+
+	// bind
+	m_projectiles.vao.fill(count * points_quad, { &vertices, &textures, &colors }, indices);
+}
+
 void renderer::fill_ui(const canvas_t &gui, font &fnt)
 {
 	point range = gui.range();
@@ -475,24 +510,17 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 {
 	if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
 
+	// time
 	timespan_t delta = (std::max)(timespan - m_last, 0.0);
 	m_last = timespan;
 
+	// screen size
 	m_opengl->update(m_width, m_height);
 	if (m_width <= 0 || m_height <= 0) return;
 	m_aspect = m_width;
 	m_aspect /= m_height;
 
-	setup_scene(); // create / update framebuffers & their textures
-
-	fill_bg(perception);
-	fill_tiles(perception, *m_glyph.font);
-	fill_units(perception, *m_glyph.font);
-	fill_notifications(perception, *m_popup.font);
-	fill_ui(gui, *m_ui.font);
-
-	update_textures();
-
+	// calculate uniforms
 	double movement_phase = std::min(timespan * 5.0, 1.0);
 	vector center = perception.range() / 2 - (vector)perception.movement() * (1.0 - movement_phase);
 	GLfloat aspect = (GLfloat)m_aspect;
@@ -500,6 +528,18 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 	GLfloat x_center = (GLfloat)center.X;
 	GLfloat y_center = (GLfloat)center.Y;
 	GLfloat span = (GLfloat)timespan;
+
+	setup_scene(); // update framebuffers & their textures
+
+	// fill buffers
+	fill_bg(perception);
+	fill_tiles(perception, *m_glyph.font);
+	fill_units(perception, *m_glyph.font);
+	fill_projectiles(perception, *m_glyph.font, movement_phase);
+	fill_notifications(perception, *m_popup.font);
+	fill_ui(gui, *m_ui.font);
+
+	update_textures(); // update textures
 
 	// g-eometry
 	glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
@@ -548,7 +588,7 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 	glUniform1f(glGetUniformLocation(m_light.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_light.program, "center"), x_center, y_center);
 
-	point p;
+	vector p;
 	perception.enumerate_units([&](perception::avatar_t a)
 	{
 		p = a.position();
@@ -557,7 +597,7 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 		GLfloat elevation = 1.0;
 		color light(24.0f, 19.5f, 11.9f, 1.0f);
 
-		if (a.appearance().image != '@') return;
+		//if (a.appearance().image != '@') return;
 		//if (a.appearance().image == 'r')
 		//{
 		//	outer = 8.0;
@@ -566,6 +606,26 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 		//	light /= 5.0;
 		//	light.A = 1;
 		//}
+
+		glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
+		glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
+		glUniform4f(glGetUniformLocation(m_light.program, "pos"), (GLfloat)p.X, (GLfloat)p.Y, elevation, 1.0f);
+		glUniform4d(glGetUniformLocation(m_light.program, "col"), light.R, light.G, light.B, light.A);
+
+		std::vector<GLfloat> vertices(points_quad * vertice_depth);
+		std::vector<GLuint> indices(index_quad);
+		fill_vertex(p, outer * 2, &vertices[0]);
+		fill_index(1, &indices[0]);
+		m_light.vao.fill(points_quad, { &vertices }, indices);
+		m_light.vao.draw();
+	});
+	perception.enumerate_projectiles([&](const projectile &projectile)
+	{
+		p = projectile.position(movement_phase) - perception.start();
+		GLfloat outer = 10.0;
+		GLfloat inner = 0.0;
+		GLfloat elevation = 2.0;
+		color light(30.0f, 0.5f, 0.9f, 1.0f);
 
 		glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
 		glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
@@ -600,6 +660,17 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 	glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// particles
+	glUseProgram(m_projectiles.program);
+	glUniform1f(glGetUniformLocation(m_projectiles.program, "aspect"), aspect);
+	glUniform1f(glGetUniformLocation(m_projectiles.program, "scale"), scale);
+	glUniform2f(glGetUniformLocation(m_projectiles.program, "center"), x_center, y_center);
+	glUniform1i(glGetUniformLocation(m_projectiles.program, "img"), 0);
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
+	glBindSampler(0, m_sampler);
+	m_projectiles.vao.draw();
 
 	// notifications
 	glUseProgram(m_notification.program);
@@ -649,7 +720,7 @@ point renderer::world(const point &screen) const
 	double fy = -2.0 * screen.Y / m_height + 1.0;
 	fx = std::round(fx / m_scale);
 	fy = std::round(fy / m_scale / m_aspect);
-	return { (int)fx, (int)fy };
+	return{ (int)fx, (int)fy };
 }
 
 void renderer::size(int &width, int &height)

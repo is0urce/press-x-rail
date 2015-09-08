@@ -54,7 +54,7 @@ namespace px
 			{
 				vao vao;
 				GLuint program;
-			} m_background, m_tiles, m_units, m_scene, m_light, m_notification, m_uiback, m_uitext;
+			} m_background, m_tiles, m_units, m_scene, m_light, m_notification, m_projectiles, m_uiback, m_uitext;
 
 			GLuint m_light_frame, m_scene_frame;
 			GLuint m_scene_texture, m_light_texture;
@@ -66,7 +66,8 @@ namespace px
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&, font &tiles_font);
 			void fill_units(const perception_t&, font &units_font);
-			void fill_notifications(const perception_t&, font &notify_font);
+			void fill_notifications(const perception_t &p, font &notify_font);
+			void fill_projectiles(const perception_t &p, font &projectile_font, timespan_t span);
 			void fill_ui(const canvas_t &gui, font &ui_font);
 
 		public:

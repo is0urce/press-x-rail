@@ -87,6 +87,7 @@ namespace px
 
 			void add_projectile(projectile particle);
 			void enumerate_projectiles(std::function<void(const projectile&)> fn) const;
+			unsigned int projectile_count() const;
 
 			void start(point point);
 			point start() const;

@@ -173,6 +173,7 @@ void perception::swap(const point& start)
 {
 	m_units.clear();
 	m_notify.clear();
+	m_projectiles.clear();
 
 	std::swap(m_ground, m_ground_prev);
 	std::swap(m_color, m_color_prev);
@@ -214,4 +215,9 @@ void perception::add_projectile(projectile particle)
 void perception::enumerate_projectiles(std::function<void(const projectile&)> fn) const
 {
 	std::for_each(m_projectiles.begin(), m_projectiles.end(), fn);
+}
+
+unsigned int perception::projectile_count() const
+{
+	return m_projectiles.size();
 }
