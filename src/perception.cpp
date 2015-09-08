@@ -195,6 +195,7 @@ void perception::add_notification(notification::string_t text, color c, const po
 	m_notify.emplace_hint(range.first, pos, notification(text, c, vector(pos.X, elevation), notify_size * multiplier));
 	++m_version;
 }
+
 void perception::add_notification(notification::string_t text, color c, const point &position)
 {
 	add_notification(text, c, position, 1.0);
@@ -203,4 +204,14 @@ void perception::add_notification(notification::string_t text, color c, const po
 void perception::enumerate_notifications(std::function<void(const notification&)> fn) const
 {
 	std::for_each(m_notify.begin(), m_notify.end(), [&](const std::pair<point, notification> &p){ fn(p.second); });
+}
+
+void perception::add_projectile(projectile particle)
+{
+	m_projectiles.push_back(particle);
+}
+
+void perception::enumerate_projectiles(std::function<void(const projectile&)> fn) const
+{
+	std::for_each(m_projectiles.begin(), m_projectiles.end(), fn);
 }

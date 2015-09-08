@@ -12,6 +12,7 @@
 #include "appearance.h"
 #include "avatar.h"
 #include "notification.h"
+#include "projectile.h"
 
 #include <list>
 #include <string>
@@ -47,6 +48,7 @@ namespace px
 			point m_move; // current-prev start
 			unit_list m_units;
 			std::multimap<point, notification, std::function<bool(const point&, const point&)>> m_notify;
+			std::list<projectile> m_projectiles;
 
 		public:
 			perception(point range);
@@ -83,12 +85,14 @@ namespace px
 			void add_notification(notification::string_t text, color c, const point &position, double multiplier);
 			void enumerate_notifications(std::function<void(const notification&)> fn) const;
 
+			void add_projectile(projectile particle);
+			void enumerate_projectiles(std::function<void(const projectile&)> fn) const;
+
 			void start(point point);
 			point start() const;
 			point start_previous() const;
 			point movement() const;
 
-			//Point GetMovement() const;
 			void swap(const point &start);
 			unsigned int version() const;
 		};

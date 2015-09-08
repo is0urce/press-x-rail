@@ -39,6 +39,7 @@ namespace px
 		vector clamped(const vector &min, const vector &max) const { return vector((std::min)((std::max)(min.X, X), max.X), (std::min)((std::max)(min.Y, Y), max.Y)); }
 		void normalize() { auto len = magnitude(); X /= len; Y /= len; }
 		vector normalized() { vector result = *this; result.normalize(); return result; }
+		vector lerp(const vector &b, component t) const { return multiplied(1 - t).moved(b.multiplied(t)); }
 
 		point floor() const { return { (point::component)std::floor(X), (point::component)std::floor(Y) }; }
 		point ceil() const { return { (point::component)std::ceil(X), (point::component)std::ceil(Y) }; }

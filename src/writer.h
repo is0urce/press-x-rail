@@ -47,6 +47,7 @@ namespace px
 			node(const node &n) = delete;
 
 		public:
+			// close current opened list
 			void close()
 			{
 				if (m_child)
@@ -56,7 +57,7 @@ namespace px
 
 					auto current = m_stream_ptr->tellp();
 					m_stream_ptr->seekp(m_reserve);
-					m_stream_ptr->write((char*)&m_child->m_acc, sizeof(m_child->m_acc));
+					m_stream_ptr->write((char*)&m_child->m_acc, sizeof(chunk_size));
 					m_stream_ptr->seekp(current);
 
 					m_acc += sizeof(key_t) + sizeof(chunk_size) + m_child->m_acc;
@@ -68,13 +69,18 @@ namespace px
 			{
 				if (!m_opened) throw std::logic_error("writer::node::open() node closed");
 				close();
+				if (m_stream_ptr->fail()) throw std::runtime_error("px::writer::open() - stream not invalid");
 
-				chunk_size reserved = 0;
-				m_reserve = m_stream_ptr->tellp();
-				if (m_reserve == stream_t::streampos(-1)) throw std::runtime_error("stream buffer does not support tellp(), or it fails");
+				chunk_size reserved;
+				memset(&reserved, 0, sizeof(reserved));
 
 				m_stream_ptr->write((char*)&key, sizeof(key));
+
+				m_reserve = m_stream_ptr->tellp(); // reserve and save position for list size
+				if (m_reserve == stream_t::streampos(-1)) throw std::runtime_error("stream buffer does not support tellp(), or it fails");
 				m_stream_ptr->write((char*)&reserved, sizeof(reserved));
+
+				if (m_stream_ptr->fail()) throw std::runtime_error("px::writer::open() - operation fails");
 
 				m_child.reset(new node(m_stream_ptr));
 				return m_child;

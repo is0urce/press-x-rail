@@ -36,6 +36,21 @@ game::game()
 	m_player.reset(new rl::player(this));
 	m_player->appearance({ '@', 0xffffff });
 	m_player->health() = 100;
+	rl::person::action_t::target_fn tf([&](rl::person::user_t *user, rl::person::target_t unit)
+	{
+		broadcast({ "psssch", 0xffffff, unit->position() });
+		if (user && unit)
+		{
+			vector start = user->position();
+			vector fin = unit->position();
+			m_projectiles.push_back(projectile('*', 0xff0000, [=](double phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
+		}
+	});
+	rl::person::action_t::target_check_fn tfc([&](rl::person::user_t *user, rl::person::target_t unit)
+	{
+		return true;
+	});
+	m_player->add_skill({ tf, tfc });
 
 	m_scene.focus({ 8, 8 });
 	m_scene.add(m_player, { 8, 8 });
@@ -75,6 +90,13 @@ void game::fill_perception()
 		m_perception.add_notification(broadcast.text, broadcast.color, broadcast.position, broadcast.size);
 	}
 	m_broadcasts.clear();
+
+	// projectiles
+	for (auto &particle : m_projectiles)
+	{
+		m_perception.add_projectile(particle);
+	}
+	m_projectiles.clear();
 }
 
 bool game::step(const point &move)

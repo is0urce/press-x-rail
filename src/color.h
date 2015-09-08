@@ -76,6 +76,7 @@ namespace px
 		color transform_hsv(double hue, double saturation, double v) const { return transform_hsv(*this, hue, saturation, v); };
 		color average(const color &other) const { return (*this + other) / 2; };
 		double luminance() const { return 0.2125 * R + 0.7154 * G + 0.0721 * B; };
+		color lerp(const color b, component t) const { return *this * (t - 1) + b * t; }
 
 		// hue - hue shift (in degrees) saturation - saturation multiplier (scalar), v - value multiplier (scalar)
 		static color transform_hsv(const color &in, double hue, double saturation, double V)

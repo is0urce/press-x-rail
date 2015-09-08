@@ -10,6 +10,7 @@
 #include "canvas.h"
 #include "panel.h"
 #include "broadcast.h"
+#include "projectile.h"
 
 #include <memory>
 #include <list>
@@ -41,6 +42,7 @@ namespace px
 		target_ptr m_target;
 		point m_hover;
 		std::list<broadcast> m_broadcasts;
+		std::list<projectile> m_projectiles;
 		ui::canvas m_canvas;
 		std::unique_ptr<ui::panel> m_status;
 

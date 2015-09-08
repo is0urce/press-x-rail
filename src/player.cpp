@@ -15,18 +15,7 @@ using namespace px::rl;
 
 player::player(receiver_t *receiver) : m_receiver(receiver)
 {
-	action_t::target_fn tf([&](user_t *user, target_t unit)
-	{
-		if (unit && receiver)
-		{
-			m_receiver->broadcast({ "psssch", 0xffffff, unit->position() });
-		}
-	});
-	action_t::target_check_fn tfc([&](user_t *user, target_t unit)
-	{
-		return true;
-	});
-	m_skills.emplace_back(action_t(tf, tfc));
+
 }
 player::~player() {}
 
