@@ -82,6 +82,12 @@ namespace px
 			{
 				return m_size;
 			}
+			void read(char* destination, chunk_size size)
+			{
+				if (size != m_size) throw std::runtime_error("px::reader::node::read<_E>() - type size mismatch");
+				read_header();
+				m_stream_ptr->read(destination, size);
+			}
 			std::string& read(std::string &str)
 			{
 				read_header();
@@ -154,7 +160,7 @@ namespace px
 
 				throw std::logic_error("px::reader::node operator[](..) key not exists");
 			}
-			void enumerate(std::function<void(node)> fn)
+			void enumerate(std::function<void(node)> fn) const
 			{
 				if (m_size == 0) return; // no nodes
 

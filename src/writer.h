@@ -113,6 +113,18 @@ namespace px
 
 				m_acc += sizeof(key) + sizeof(element_size) + element_size;
 			}
+			void write(key_t key, const char* src, chunk_size size)
+			{
+				if (!m_opened) throw std::logic_error("writer::node::write() node closed");
+				close();
+
+				chunk_size element_size = size;
+				m_stream_ptr->write((char*)&key, sizeof(key));
+				m_stream_ptr->write((char*)&element_size, sizeof(element_size));
+				m_stream_ptr->write(src, size);
+
+				m_acc += sizeof(key) + sizeof(element_size) + element_size;
+			}
 			node_ptr open(const std::string &key)
 			{
 				return open(to_key(key));
@@ -133,6 +145,10 @@ namespace px
 			void write(key_t key, const char *cstr)
 			{
 				write(key, std::string(cstr));
+			}
+			void write(const std::string &key, const char* src, chunk_size size)
+			{
+				write(to_key(key), src, size);
 			}
 
 		};

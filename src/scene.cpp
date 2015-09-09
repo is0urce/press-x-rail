@@ -80,14 +80,14 @@ bool scene::traversable(const point &point, unsigned int layer) const
 
 void scene::add(unit_ptr unit)
 {
-	if (!unit) throw new std::logic_error("scene::add - unit is null");
+	if (!unit.operator bool()) throw new std::logic_error("scene::add - unit is null");
 
 	add(unit, unit->position());
 }
 
 void scene::add(unit_ptr unit, const point &position)
 {
-	if (!unit) throw new std::logic_error("scene::add - unit is null");
+	if (!unit.operator bool()) throw new std::logic_error("scene::add - unit is null");
 
 	unit->position(position);
 	m_units.emplace(position, unit);
@@ -217,17 +217,30 @@ scene::map_t* scene::select_map(const point &cell) const
 void scene::save(writer::node_ptr node)
 {
 	if (!node) throw std::logic_error("px:scene::save(..) - node is null");
-	enumerate_units([&](unit_ptr unit)
+
+	auto units = node->open("units");
+	enumerate_units([&](unit_ptr u)
 	{
-		auto u = node->open("unit");
-		unit->save(u);
+		u->save(units);
 	});
 }
 
 void scene::load(const reader::node &node)
 {
 	clear();
-	//node.enumerate(void(reader::node n))
-	//{
-	//});
+
+	node["units"].enumerate([&](reader::node n)
+	{
+		std::shared_ptr<unit> u;
+		if (n.name() == "unit")
+		{
+			u.reset(new unit());
+			u->load(n);
+		}
+		else
+		{
+			throw std::runtime_error("px::scene::load(..) unexpected element");
+		}
+		add(u);
+	});
 }

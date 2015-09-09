@@ -250,20 +250,24 @@ void game::save(file_path path)
 		writer save(path);
 		m_player->save(save->open("player"));
 		m_scene.save(save->open("scene"));
-		broadcast(broadcast_t("autosaving...", 0xffffff, m_player->position()));
 
 		m_scene.add(m_player);
+
+		broadcast(broadcast_t("autosaving...", 0xffffff, m_player->position()));
+		fill_perception();
 	}
 }
 
 void game::load(file_path path)
 {
-	reader f(path);
+	reader file(path);
 
 	m_scene.remove(m_player);
 
-	m_player->load(f["player"]);
-	m_scene.load(f["scene"]);
+	m_player->load(file["player"]["person"]);
+	m_scene.load(file["scene"]);
+
+	m_scene.focus(m_player->position());
 
 	m_scene.add(m_player);
 

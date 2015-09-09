@@ -61,12 +61,11 @@ void unit::serialize(writer::node_ptr node) const
 
 void unit::deserialize(const reader::node &node)
 {
-	auto l = node["unit"];
-	l["x"] >> m_position.X;
-	l["y"] >> m_position.Y;
-	l["remove"] >> m_remove;
-	l["static"] >> m_invincible;
-	entity::restore(l);
+	node["x"] >> m_position.X;
+	node["y"] >> m_position.Y;
+	node["remove"] >> m_remove;
+	node["static"] >> m_invincible;
+	entity::restore(node);
 }
 
 // methods

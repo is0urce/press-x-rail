@@ -44,7 +44,7 @@ namespace px
 			{
 				auto l = node->open("person");
 				unit::serialize(l);
-				character::store(l);
+				character::store(l->open("char"));
 				//auto skills = l->open("skills");
 				//for (auto &skill : m_skills)
 				//{
@@ -53,9 +53,8 @@ namespace px
 			}
 			virtual void deserialize(const reader::node &node) override
 			{
-				auto l = node["person"];
-				unit::deserialize(l);
-				character::restore(l);
+				unit::deserialize(node["unit"]);
+				character::restore(node["char"]);
 				//l["skills"].enumerate([&](const reader::node &skill_node)
 				//{
 				//	std::string tag = skill_node["tag"].read<std::string>();
@@ -65,7 +64,7 @@ namespace px
 		public:
 			ability_ptr skill(unsigned int slot)
 			{
-				return slot < m_skills.size()?
+				return slot < m_skills.size() ?
 					ability_ptr(new user_ability<user_t*, target_t>(this, &m_skills.at(slot)))
 					:
 					nullptr;
