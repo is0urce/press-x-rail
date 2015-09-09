@@ -51,20 +51,22 @@ void unit::apply_effect(effect &e)
 
 void unit::serialize(writer::node_ptr node) const
 {
-	node->write("x", m_position.X);
-	node->write("y", m_position.Y);
-	node->write("remove", m_remove);
-	node->write("static", m_invincible);
-	entity::save(node);
+	auto l = node->open("unit");
+	l->write("x", m_position.X);
+	l->write("y", m_position.Y);
+	l->write("remove", m_remove);
+	l->write("static", m_invincible);
+	entity::store(l);
 }
 
 void unit::deserialize(const reader::node &node)
 {
-	node["x"] >> m_position.X;
-	node["y"] >> m_position.Y;
-	node["remove"] >> m_remove;
-	node["static"] >> m_invincible;
-	entity::load(node);
+	auto l = node["unit"];
+	l["x"] >> m_position.X;
+	l["y"] >> m_position.Y;
+	l["remove"] >> m_remove;
+	l["static"] >> m_invincible;
+	entity::restore(l);
 }
 
 // methods

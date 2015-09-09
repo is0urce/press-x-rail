@@ -40,8 +40,8 @@ namespace px
 			virtual ~character();
 
 		protected:
-			void save(writer::node_ptr node) const;
-			void load(const reader::node &node);
+			void store(writer::node_ptr node) const;
+			void restore(const reader::node &node);
 
 		public:
 			resource_t& health();

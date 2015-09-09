@@ -29,7 +29,6 @@ const unsigned int game::perc_height = perc_range * 2 + 1;
 // initial canvas size not really important, it should be resized next drawing pass
 game::game()
 	:
-	m_shutdown(false),
 	m_perception(perc_reach),
 	m_canvas({ 1, 1 })
 {
@@ -242,33 +241,32 @@ void game::broadcast(broadcast_t message)
 	m_broadcasts.emplace_back(message);
 }
 
-void game::shutdown(bool shutdown)
-{
-	m_shutdown = shutdown;
-}
-void game::shutdown()
-{
-	shutdown(true);
-}
-bool game::finished() const
-{
-	return m_shutdown;
-}
-
 void game::save(file_path path)
 {
 	if (m_player)
 	{
+		m_scene.remove(m_player);
+
 		writer save(path);
+		m_player->save(save->open("player"));
 		m_scene.save(save->open("scene"));
 		broadcast(broadcast_t("autosaving...", 0xffffff, m_player->position()));
+
+		m_scene.add(m_player);
 	}
 }
 
 void game::load(file_path path)
 {
-	reader save(path);
-	m_scene.load(save["scene"]);
+	reader f(path);
 
+	m_scene.remove(m_player);
+
+	m_player->load(f["player"]);
+	m_scene.load(f["scene"]);
+
+	m_scene.add(m_player);
+
+	broadcast(broadcast_t("loaded autosave", 0xffffff, m_player->position()));
 	fill_perception();
 }

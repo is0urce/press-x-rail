@@ -35,7 +35,6 @@ namespace px
 		static const unsigned int perc_height;
 
 	private:
-		bool m_shutdown;
 		shell::perception m_perception;
 		rl::scene m_scene;
 		player_ptr m_player;
@@ -78,10 +77,5 @@ namespace px
 		// serialization
 		void save(file_path path);
 		void load(file_path path);
-
-		// shutdown
-		void shutdown(bool shutdown);
-		void shutdown();
-		bool finished() const;
 	};
 }

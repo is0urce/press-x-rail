@@ -223,7 +223,11 @@ void scene::save(writer::node_ptr node)
 		unit->save(u);
 	});
 }
+
 void scene::load(const reader::node &node)
 {
-
+	clear();
+	//node.enumerate(void(reader::node n))
+	//{
+	//});
 }

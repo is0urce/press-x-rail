@@ -42,22 +42,24 @@ namespace px
 			virtual void apply_effect(effect &e) override { e.apply(*this); }
 			virtual void serialize(writer::node_ptr node) const override
 			{
-				unit::serialize(node);
-				character::save(node);
-				auto skills = node->open("skills");
-				for (auto &skill : m_skills)
-				{
-					skills->write("skill", skill.tag());
-				}
+				auto l = node->open("person");
+				unit::serialize(l);
+				character::store(l);
+				//auto skills = l->open("skills");
+				//for (auto &skill : m_skills)
+				//{
+				//	skills->write("skill", skill.tag());
+				//}
 			}
 			virtual void deserialize(const reader::node &node) override
 			{
-				unit::deserialize(node);
-				character::load(node);
-				node["skills"].enumerate([&](const reader::node &node)
-				{
-					std::string tag = node["tag"].read<std::string>();
-				});
+				auto l = node["person"];
+				unit::deserialize(l);
+				character::restore(l);
+				//l["skills"].enumerate([&](const reader::node &skill_node)
+				//{
+				//	std::string tag = skill_node["tag"].read<std::string>();
+				//});
 			}
 
 		public:

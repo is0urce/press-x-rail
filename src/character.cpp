@@ -18,17 +18,27 @@ namespace
 character::character() : m_base(max_attribute), m_computed(max_attribute) {}
 character::~character() {}
 
-void character::save(writer::node_ptr node) const
+void character::store(writer::node_ptr node) const
 {
 	node->write("hp", m_hp);
 	node->write("mp", m_mp);
-	node->write("stats", m_base);
+	auto stats = node->open("stats");
+	for (unsigned int i = 0, len = m_base.size(); i < len; ++i)
+	{
+		node->write(io::to_key(i), m_base[i]);
+	}
 }
-void character::load(const reader::node &node)
+void character::restore(const reader::node &node)
 {
 	node["hp"] >> m_hp;
 	node["mp"] >> m_mp;
-	node["stats"] >> m_base;
+	unsigned int index = 0;
+	node["stats"].enumerate([&](reader::node stat_node)
+	{
+		stat_node.read(m_base[index]);
+		++index;
+	});
+	if (index != m_base.size()) throw std::runtime_error("px::character::restore stats size mismatch");
 }
 
 character::resource_t& character::health() { return m_hp; }

@@ -28,6 +28,10 @@ namespace px
 			{
 				std::fill(m_values.begin(), m_values.end(), 0);
 			}
+			unsigned int size() const
+			{
+				return m_values.size();
+			}
 
 			template <typename _A>
 			void enhance(_A stat, _T modify) { m_values.at((unsigned int)stat) += modify; }

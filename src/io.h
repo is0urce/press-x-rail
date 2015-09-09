@@ -22,7 +22,11 @@ namespace px
 		} key_t;
 		typedef unsigned long chunk_size;
 
-	protected:
+	public:
+		io() {}
+		virtual ~io() {}
+
+	public:
 		static key_t to_key(const std::string &str)
 		{
 			auto len = str.length();
@@ -34,10 +38,14 @@ namespace px
 			}
 			return result;
 		}
+		static key_t to_key(unsigned int key_value)
+		{
+			if (sizeof(key_value) > sizeof(key_t)) throw std::logic_error("not supported");
 
-	public:
-		io() {}
-		virtual ~io() {}
+			key_t result = to_key("_____key");
+			memcpy((char*)&result, &key_value, sizeof(key_value));
+			return result;
+		}
 	};
 	inline bool operator==(const io::key_t &a, const io::key_t &b) { return std::equal(a.letter, a.letter + sizeof(a.letter) / sizeof (*a.letter), b.letter); }
 	inline bool operator!=(const io::key_t &a, const io::key_t &b) { return !operator==(a,b); }

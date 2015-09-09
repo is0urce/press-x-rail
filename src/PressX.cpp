@@ -102,6 +102,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 				}
 			}
 		}
+		g_core->shutdown();
 	}
 	catch (std::exception &exc)
 	{
@@ -190,16 +191,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-	{
-		if (!g_bindings || !g_core) break;
-
-		key vkey;
-		if (g_bindings->find(wParam, vkey))
+		if (g_bindings && g_core)
 		{
-			g_core->press(vkey);
+			key vkey;
+			if (g_bindings->find(wParam, vkey))
+			{
+				g_core->press(vkey);
+			}
 		}
-	}
-	break;
+		break;
 	case WM_MOUSEMOVE:
 		if (!g_core) break;
 		g_core->hover(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));

@@ -36,7 +36,7 @@ namespace px
 
 			void frame()
 			{
-				if (!m_game.finished())
+				if (!m_control.finished())
 				{
 					// restart timer on new perception frame
 					auto &perception = m_game.perception();
@@ -61,7 +61,7 @@ namespace px
 
 			void press(key vk)
 			{
-				if (vk == key::command_cancel) m_game.shutdown();
+				if (vk == key::command_cancel) shutdown();
 
 				m_control.press(vk);
 			}
@@ -78,9 +78,14 @@ namespace px
 				m_graphics->scale(delta);
 			}
 
-			bool run()
+			bool run() const
 			{
-				return !m_game.finished();
+				return !m_control.finished();
+			}
+
+			void shutdown()
+			{
+				m_control.shutdown();
 			}
 		};
 	}

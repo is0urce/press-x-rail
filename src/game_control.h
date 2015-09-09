@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include  "game.h"
+#include "game.h"
 
 #include "point.h"
 #include "key.h"
@@ -19,15 +19,17 @@ namespace px
 		class game_control
 		{
 		public:
+			typedef game *game_ptr_t;
 			typedef unsigned int button_t;
 
 		private:
 			game *m_game;
+			bool m_shutdown;
 
 		public:
-			game_control(game *game_ptr) : m_game(game_ptr) 
+			game_control(game_ptr_t game_prt) : m_game(game_prt), m_shutdown(false)
 			{
-				if (!game_ptr) throw std::logic_error("game_control::ctor() game is null");
+				if (!game_prt) throw std::logic_error("game_control::ctor() game is null");
 			}
 			virtual ~game_control() {}
 
@@ -106,6 +108,23 @@ namespace px
 			bool click(point position, button_t button)
 			{
 				return m_game->click(position, button);
+			}
+
+			void shutdown(bool shutdown)
+			{
+				if (shutdown && !m_shutdown)
+				{
+					m_shutdown = true;
+					m_game->save("save\\current.sav");
+				}
+			}
+			void shutdown()
+			{
+				shutdown(true);
+			}
+			bool finished() const
+			{
+				return m_shutdown;
 			}
 		};
 	}

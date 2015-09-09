@@ -78,7 +78,7 @@ namespace px
 
 				m_reserve = m_stream_ptr->tellp(); // reserve and save position for list size
 				if (m_reserve == stream_t::streampos(-1)) throw std::runtime_error("stream buffer does not support tellp(), or it fails");
-				m_stream_ptr->write((char*)&reserved, sizeof(reserved));
+				m_stream_ptr->write((char*)&reserved, sizeof(chunk_size));
 
 				if (m_stream_ptr->fail()) throw std::runtime_error("px::writer::open() - operation fails");
 
