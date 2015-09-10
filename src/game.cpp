@@ -54,8 +54,8 @@ game::game()
 	});
 	m_player->add_skill({ tf, tfc });
 
-	m_scene.focus({ 8, 8 });
-	m_scene.add(m_player, { 8, 8 });
+	m_scene.focus({ 18, 18 });
+	m_scene.add(m_player, { 18, 18 });
 
 	m_status.reset(new ui::status_panel(m_player, &m_canvas));
 

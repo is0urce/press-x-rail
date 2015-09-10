@@ -46,6 +46,7 @@ namespace px
 
 	public:
 		map_ptr generate(const point &cell, std::function<void(unit_ptr)> fetch_fn);
+		void generate_wall(map_t &cell_map, std::function<void(unit_ptr)> fetch_fn);
 		void generate_rail(map_t &cell_map, std::function<void(unit_ptr)> fetch_fn);
 		void store(unit_ptr unit);
 

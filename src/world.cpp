@@ -55,7 +55,14 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 	bool sink = true;
 	bool &created = m_created.at(cell, sink);
 
-	generate_rail(*cell_map, created ? discard_fn : fetch_fn);
+	if (cell.Y == 0)
+	{
+		generate_rail(*cell_map, created ? discard_fn : fetch_fn);
+	}
+	else
+	{
+		generate_wall(*cell_map, created ? discard_fn : fetch_fn);
+	}
 
 	if (!created)
 	{
@@ -75,8 +82,8 @@ void world::generate_rail(map_t &cell_map, std::function<void(unit_ptr)> fetch_f
 	// fill
 	cell_range.enumerate([&](const point &position)
 	{
-		bool floor = (position.Y > 5 && position.Y < 15) || !walls.at(position) && position.Y != 0 && position.Y != cell_range.Y - 1;
-		bool rail = position.Y == 9 || position.Y == 10;
+		bool floor = (position.Y > 17 && position.Y < 22) || !walls.at(position) && position.Y != 0 && position.Y != cell_range.Y - 1;
+		bool rail = position.Y == 19 || position.Y == 20;
 		auto &t = cell_map.at(position);
 		unsigned int glyph = rail ? '+' : floor ? '.' : ' ';
 
@@ -92,6 +99,18 @@ void world::generate_rail(map_t &cell_map, std::function<void(unit_ptr)> fetch_f
 	vein->appearance({ 'O', 0xffffff });
 	vein->position({ 12, 12 });
 	fetch_fn(vein);
+}
+
+void world::generate_wall(map_t &cell_map, std::function<void(unit_ptr)> fetch_fn)
+{
+	// fill
+	cell_map.range().enumerate([&](const point &position)
+	{
+		auto &t = cell_map.at(position);
+		t.appearance({ ' ', color(0.1, 0.1, 0.1) });
+		t.transparent(false);
+		t.traversable(false);
+	});
 }
 
 void world::store(world::unit_ptr unit)
