@@ -178,7 +178,12 @@ void scene::focus(point absolute, bool force)
 		// generate neighbour maps
 		sight_range.enumerate([&](const point &range_point)
 		{
-			m_maps.at(range_point).swap(m_world.generate(m_focus + range_point - sight_center, [&](unit_ptr unit) { add(unit); }));
+			point cell = m_focus + range_point - sight_center;
+			m_maps.at(range_point).swap(m_world.generate(cell, [&](unit_ptr unit)
+			{
+				point position = unit->position() + cell * world::cell_range;
+				add(unit, position);
+			}));
 		});
 
 		// store out-of-range units back in world

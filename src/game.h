@@ -56,7 +56,7 @@ namespace px
 
 	public:
 		// controls
-		bool step(const point& move);
+		bool step(const point &move);
 		bool action(unsigned int cmd);
 		bool use();
 		bool hover(point position);

@@ -10,13 +10,13 @@
 #include "map.h"
 #include "writer.h"
 #include "reader.h"
-#include "library.h"
 
 #include <memory>
 #include <list>
 
 namespace px
 {
+	class library;
 	namespace rl
 	{
 		class unit;
@@ -37,7 +37,7 @@ namespace px
 	private:
 		map<bool> m_created;
 		std::list<unit_ptr> m_outher;
-		library m_library;
+		std::unique_ptr<library> m_library;
 
 	public:
 		world();
@@ -46,6 +46,7 @@ namespace px
 
 	public:
 		map_ptr generate(const point &cell, std::function<void(unit_ptr)> fetch_fn);
+		void generate_rail(map_t &cell_map, std::function<void(unit_ptr)> fetch_fn);
 		void store(unit_ptr unit);
 
 		void save(writer::node_ptr node) const;
