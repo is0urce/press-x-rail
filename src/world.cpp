@@ -21,7 +21,7 @@ namespace
 {
 	const unsigned int cell_length = 50;
 	const point world_range(23, 1);
-	const std::function<void(world::unit_ptr)> discard_fn([&](world::unit_ptr sink){});
+	const world::fetch_op discard_fn([&](world::unit_ptr sink, point p){});
 }
 
 const point world::cell_range(cell_length, cell_length);
@@ -29,8 +29,17 @@ const point world::cell_range(cell_length, cell_length);
 world::world()
 	:
 	m_created(world_range, false),
-	m_library(new library())
+	m_landmarks(world_range),
+	m_library(new library()),
+	m_units(world_range)
 {
+	// landmarks
+	m_landmarks.range().enumerate([this](const point &cell)
+	{
+		m_landmarks.at(cell) = [this](map_t &m, fetch_op f) { generate_rail(m, f); };
+	});
+	m_landmark_outer = [this](map_t &m, fetch_op f) { generate_wall(m, f); };
+
 	rl::npc rat;
 	rat.appearance({ 'r', 0x330000, 0.95f });
 	rat.health() = 100;
@@ -46,23 +55,21 @@ world::world()
 }
 world::~world() {}
 
-world::map_ptr world::generate(const point &cell, std::function<void(world::unit_ptr)> fetch_fn)
+world::map_ptr world::generate(const point &cell, fetch_op fetch_fn)
 {
 	std::srand(cell.X + cell.Y * 911);
 
 	world::map_ptr cell_map(new map_t(cell_range));
+	point offset = cell * cell_range;
 
 	bool sink = true;
 	bool &created = m_created.at(cell, sink);
 
-	if (cell.Y == 0)
+	m_landmarks.at(cell, m_landmark_outer) // operator()
+		(*cell_map, created ? discard_fn : [&](unit_ptr unit, point position)
 	{
-		generate_rail(*cell_map, created ? discard_fn : fetch_fn);
-	}
-	else
-	{
-		generate_wall(*cell_map, created ? discard_fn : fetch_fn);
-	}
+		fetch_fn(unit, position + offset);
+	});
 
 	if (!created)
 	{
@@ -72,7 +79,7 @@ world::map_ptr world::generate(const point &cell, std::function<void(world::unit
 	return cell_map;
 }
 
-void world::generate_rail(map_t &cell_map, std::function<void(unit_ptr)> fetch_fn)
+void world::generate_rail(map_t &cell_map, fetch_op fetch_fn)
 {
 	// generate
 	automata<bool> walls(cell_range);
@@ -80,7 +87,7 @@ void world::generate_rail(map_t &cell_map, std::function<void(unit_ptr)> fetch_f
 	walls.execute<unsigned int>([](unsigned int summ, bool element) { return summ + (element ? 1 : 0); }, 0, [](int summ) { return summ == 0 || summ >= 5; }, 4);
 
 	// fill
-	cell_range.enumerate([&](const point &position)
+	cell_map.range().enumerate([&](const point &position)
 	{
 		bool floor = (position.Y > 17 && position.Y < 22) || !walls.at(position) && position.Y != 0 && position.Y != cell_range.Y - 1;
 		bool rail = position.Y == 19 || position.Y == 20;
@@ -97,11 +104,11 @@ void world::generate_rail(map_t &cell_map, std::function<void(unit_ptr)> fetch_f
 
 	world::unit_ptr vein(new rl::deposit(ore));
 	vein->appearance({ 'O', 0xffffff });
-	vein->position({ 12, 12 });
-	fetch_fn(vein);
+
+	fetch_fn(vein, { 12, 12 });
 }
 
-void world::generate_wall(map_t &cell_map, std::function<void(unit_ptr)> fetch_fn)
+void world::generate_wall(map_t &cell_map, fetch_op fetch_fn)
 {
 	// fill
 	cell_map.range().enumerate([&](const point &position)
@@ -115,13 +122,13 @@ void world::generate_wall(map_t &cell_map, std::function<void(unit_ptr)> fetch_f
 
 void world::store(world::unit_ptr unit)
 {
-	m_outher.emplace_back(unit);
+	m_units_outher.emplace_back(unit);
 }
 
 void world::save(writer::node_ptr node) const
 {
 	auto outher = node->open("outher");
-	for (auto unit : m_outher)
+	for (auto unit : m_units_outher)
 	{
 		auto u = node->open("unit");
 		u->write("tag", unit->tag());

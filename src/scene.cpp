@@ -179,9 +179,8 @@ void scene::focus(point absolute, bool force)
 		sight_range.enumerate([&](const point &range_point)
 		{
 			point cell = m_focus + range_point - sight_center;
-			m_maps.at(range_point).swap(m_world.generate(cell, [&](unit_ptr unit)
+			m_maps.at(range_point).swap(m_world.generate(cell, [&](unit_ptr unit, point position)
 			{
-				point position = unit->position() + cell * world::cell_range;
 				add(unit, position);
 			}));
 		});
