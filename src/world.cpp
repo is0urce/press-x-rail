@@ -117,7 +117,7 @@ void world::generate_rail(map_t &cell_map, fetch_op fetch_fn)
 	fetch_fn(vein, { 12, 12 });
 
 	std::shared_ptr<rl::door> door(new rl::door());
-	door->appearance({ ',', 0xffffff }, { '=', 0x333333 });
+	door->appearance({ ' ', 0x333333 }, { '+', 0x333333 });
 	fetch_fn(door, { 20, 20 });
 }
 

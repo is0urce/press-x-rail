@@ -128,11 +128,14 @@ void perception::ground(const point &position, const perception::ground_t &groun
 	++m_version;
 }
 
-void perception::add_unit(perception::appearance_t appearance, point position, point position_previous)
+void perception::add_unit(perception::appearance_t appearance, point position, point position_previous, bool hide)
 {
 	m_units.emplace_back(appearance, position - m_start, position_previous - m_start_prev);
-	bool sink;
-	m_hide->at(position - m_start, sink) = true;
+	if (hide)
+	{
+		bool sink;
+		m_hide->at(position - m_start, sink) = true;
+	}
 	++m_version;
 }
 

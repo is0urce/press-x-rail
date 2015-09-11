@@ -83,7 +83,7 @@ void game::fill_perception()
 	// units
 	m_scene.enumerate_units([&](rl::scene::unit_ptr unit)
 	{
-		m_perception.add_unit(unit->appearance(), unit->position(), unit->previous_position());
+		m_perception.add_unit(unit->appearance(), unit->position(), unit->previous_position(), !unit->traversable());
 	});
 
 	// notifications

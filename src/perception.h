@@ -77,7 +77,7 @@ namespace px
 			void ground(const point &position, const ground_t &ground_value);
 			void ground_previous(const point &position, const ground_t &ground_value);
 
-			void add_unit(appearance_t appearance, point position, point position_previous);
+			void add_unit(appearance_t appearance, point position, point position_previous, bool hide); // hide - hide tile under unit
 			unit_list::size_type unit_count() const;
 			void enumerate_units(enum_fn fn) const;
 
