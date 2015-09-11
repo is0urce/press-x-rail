@@ -11,7 +11,7 @@
 
 #include "person.h"
 #include "deposit.h"
-#include "item.h"
+#include "door.h"
 
 #include "automata.h"
 #include "vector.h"
@@ -112,10 +112,13 @@ void world::generate_rail(map_t &cell_map, fetch_op fetch_fn)
 
 	auto ore = std::make_shared<rl::item>(m_library->prototype<rl::item>("ore_copper"));
 
-	world::unit_ptr vein(new rl::deposit(ore));
-	vein->appearance({ 'O', 0xffffff });
-
+	std::shared_ptr<rl::deposit> vein(new rl::deposit(ore));
+	vein->appearance({ 'O', 0xffffff }); 
 	fetch_fn(vein, { 12, 12 });
+
+	std::shared_ptr<rl::door> door(new rl::door());
+	door->appearance({ ',', 0xffffff }, { '=', 0x333333 });
+	fetch_fn(door, { 20, 20 });
 }
 
 void world::generate_wall(map_t &cell_map, fetch_op fetch_fn)

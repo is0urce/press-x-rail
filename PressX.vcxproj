@@ -100,6 +100,7 @@
     <ClInclude Include="src\control.h" />
     <ClInclude Include="src\core.h" />
     <ClInclude Include="src\deposit.h" />
+    <ClInclude Include="src\door.h" />
     <ClInclude Include="src\effect.h" />
     <ClInclude Include="src\enhancement.h" />
     <ClInclude Include="src\entity.h" />

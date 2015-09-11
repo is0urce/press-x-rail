@@ -8,7 +8,7 @@
 #include "scene.h"
 
 #include "unit.h"
-#include "vector.h"
+#include "door.h"
 
 using namespace px;
 using namespace px::rl;
@@ -231,15 +231,20 @@ void scene::load(const reader::node &node)
 	node["units"].enumerate([&](reader::node n)
 	{
 		std::shared_ptr<unit> u;
-		if (n.name() == "unit")
+		auto name = n.name();
+		if (name == "unit")
 		{
 			u.reset(new unit());
-			u->load(n);
+		}
+		else if (name == "door")
+		{
+			u.reset(new door());
 		}
 		else
 		{
 			throw std::runtime_error("px::scene::load(..) unexpected element");
 		}
+		u->load(n);
 		add(u);
 	});
 }
