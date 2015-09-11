@@ -76,10 +76,12 @@ world::map_ptr world::generate(const point &cell, fetch_op fetch_fn)
 	// (re)store already generated units
 	if (created)
 	{
-		for (auto unit : m_units.at(cell, m_units_outher))
+		auto &list = m_units.at(cell, m_units_outher);
+		for (auto unit : list)
 		{
 			fetch_fn(unit, unit->position());
 		}
+		list.clear();
 	}
 	else
 	{
@@ -102,9 +104,9 @@ void world::generate_rail(map_t &cell_map, fetch_op fetch_fn)
 		bool floor = (position.Y > 17 && position.Y < 22) || !walls.at(position) && position.Y != 0 && position.Y != cell_range.Y - 1;
 		bool rail = position.Y == 19 || position.Y == 20;
 		auto &t = cell_map.at(position);
-		unsigned int glyph = rail ? '+' : floor ? '.' : ' ';
+		unsigned int glyph = rail ? 8212 : floor ? '.' : ' ';
 
-		t.appearance({ glyph, rail ? color(0.5, 0.6, 0.7) : floor ? color(0.2, 0.2, 0.2) : color(0.1, 0.1, 0.1) });
+		t.appearance({ glyph, rail ? color(0.5, 0.5, 0.5) : floor ? color(0.2, 0.2, 0.2) : color(0.1, 0.1, 0.1) });
 		t.transparent(floor);
 		t.traversable(floor);
 	});

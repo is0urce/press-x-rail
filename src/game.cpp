@@ -53,6 +53,16 @@ game::game()
 		return true;
 	});
 	m_player->add_skill({ tf, tfc });
+	rl::person::action_t::ground_fn ttf([&](rl::person::user_t *user, const point &position)
+	{
+		m_scene.focus(position);
+		m_scene.move(m_player, position);
+	});
+	rl::person::action_t::ground_check_fn ttfc([&](rl::person::user_t *user, const point &position)
+	{
+		return m_scene.traversable(position);
+	});
+	m_player->add_skill({ ttf, ttfc });
 
 	m_scene.focus({ 18, 18 });
 	m_scene.add(m_player, { 18, 18 });
