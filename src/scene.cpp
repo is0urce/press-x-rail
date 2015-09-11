@@ -34,14 +34,14 @@ scene::~scene()
 
 scene::tile_t& scene::tile(const point &position)
 {
-	point c = cell(position);
+	point c = m_world.cell(position);
 	auto *map = select_map(c);
 	return map ? map->at(position - c * world::cell_range) : m_default;
 }
 
 const scene::tile_t& scene::tile(const point &position) const
 {
-	point c = cell(position);
+	point c = m_world.cell(position);
 	auto *map = select_map(c);
 	return map ? map->at(position - c * world::cell_range) : m_default;
 }
@@ -170,7 +170,7 @@ scene::unit_ptr scene::blocking(const point& place) const
 
 void scene::focus(point absolute, bool force)
 {
-	point focus = cell(absolute);
+	point focus = m_world.cell(absolute);
 	if (force || m_focus != focus)
 	{
 		m_focus = focus;
@@ -188,7 +188,7 @@ void scene::focus(point absolute, bool force)
 		// store out-of-range units back in world
 		for (auto i = m_units.begin(), end = m_units.end(); i != end; )
 		{
-			if (!select_map(cell(i->first)))
+			if (!select_map(m_world.cell(i->first)))
 			{
 				m_world.store(i->second);
 				i = m_units.erase(i);
@@ -204,11 +204,6 @@ void scene::focus(point absolute, bool force)
 void scene::focus(point absolute)
 {
 	focus(absolute, false);
-}
-
-point scene::cell(const point &absolute) const
-{
-	return (vector(absolute) / world::cell_range).floor();
 }
 
 scene::map_t* scene::select_map(const point &cell) const

@@ -14,6 +14,7 @@
 #include "item.h"
 
 #include "automata.h"
+#include "vector.h"
 
 using namespace px;
 
@@ -65,13 +66,22 @@ world::map_ptr world::generate(const point &cell, fetch_op fetch_fn)
 	bool sink = true;
 	bool &created = m_created.at(cell, sink);
 
+	// use generator for cell with offset unit placement function
 	m_landmarks.at(cell, m_landmark_outer) // operator()
 		(*cell_map, created ? discard_fn : [&](unit_ptr unit, point position)
 	{
 		fetch_fn(unit, position + offset);
 	});
 
-	if (!created)
+	// (re)store already generated units
+	if (created)
+	{
+		for (auto unit : m_units.at(cell, m_units_outher))
+		{
+			fetch_fn(unit, unit->position());
+		}
+	}
+	else
 	{
 		created = true;
 	}
@@ -122,7 +132,7 @@ void world::generate_wall(map_t &cell_map, fetch_op fetch_fn)
 
 void world::store(world::unit_ptr unit)
 {
-	m_units_outher.emplace_back(unit);
+	m_units.at(cell(unit->position()), m_units_outher).emplace_back(unit);
 }
 
 void world::save(writer::node_ptr node) const
@@ -136,4 +146,9 @@ void world::save(writer::node_ptr node) const
 		u->write("color", unit->appearance().color);
 		u->write("size", unit->appearance().size);
 	}
+}
+
+point world::cell(const point &absolute) const
+{
+	return (vector(absolute) / cell_range).floor();
 }

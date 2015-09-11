@@ -46,7 +46,6 @@ namespace px
 			scene(const scene&) = delete; // disable copy
 
 		private:
-			point cell(const point &absolute) const;
 			map_t* select_map(const point &cell) const;
 
 		public:

@@ -55,6 +55,8 @@ namespace px
 		world(const world&) = delete;
 
 	public:
+		point cell(const point &absolute) const;
+
 		map_ptr generate(const point &cell, fetch_op fetch);
 		void generate_wall(map_t &cell_map, fetch_op fetch);
 		void generate_rail(map_t &cell_map, fetch_op fetch);
