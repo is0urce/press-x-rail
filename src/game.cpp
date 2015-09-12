@@ -60,7 +60,7 @@ game::game()
 	});
 	rl::person::action_t::ground_check_fn ttfc([&](rl::person::user_t *user, const point &position)
 	{
-		return m_scene.traversable(position);
+		return true;// m_scene.traversable(position);
 	});
 	m_player->add_skill({ ttf, ttfc });
 

@@ -60,6 +60,7 @@ namespace px
 		map_ptr generate(const point &cell, fetch_op fetch);
 		void generate_wall(map_t &cell_map, fetch_op fetch);
 		void generate_rail(map_t &cell_map, fetch_op fetch);
+		void generate_station(map_t &cell_map, fetch_op fetch);
 		void store(unit_ptr unit);
 
 		void save(writer::node_ptr node) const;
