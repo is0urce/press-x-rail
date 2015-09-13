@@ -2,7 +2,7 @@
 
 #include "catch.hpp"
 
-#include "../src/map.h"
+#include <px/map.h>
 
 using namespace px;
 

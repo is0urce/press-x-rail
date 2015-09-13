@@ -2,8 +2,8 @@
 
 #include "catch.hpp"
 
-#include "../src/writer.h"
-#include "../src/reader.h"
+#include <px/writer.h>
+#include <px/reader.h>
 
 using namespace px;
 

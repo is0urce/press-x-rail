@@ -1,4 +1,10 @@
-// name: String.h
+// name: string.h
+// type: c++ header
+// desc: string functions
+// auth: is0urce
+
+#ifndef PX_STRING_H
+#define PX_STRING_H
 
 #include <string>
 #include <functional>
@@ -78,3 +84,5 @@ namespace px
 		}
 	};
 }
+
+#endif

@@ -1,11 +1,14 @@
 // name: ability.h
 // type: c++ header
-// desc: interface class declaration
+// desc: interface template class declaration
 // auth: is0urce
 
-#pragma once
+// abstract ability used on target or on specified position
 
-#include "point.h"
+#ifndef PX_ABILITY_H
+#define PX_ABILITY_H
+
+#include <px/point.h>
 
 namespace px
 {
@@ -33,3 +36,5 @@ namespace px
 		void use(const point &target) { use_ability(target); }
 	};
 }
+
+#endif

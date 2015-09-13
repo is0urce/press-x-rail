@@ -5,10 +5,11 @@
 
 // 2-d point with real components
 
-#pragma once
+#ifndef PX_VECTOR_H
+#define PX_VECTOR_H
 
-#include "coordinate.h"
-#include "point.h"
+#include <px/coordinate.h>
+#include <px/point.h>
 
 namespace px
 {
@@ -49,3 +50,5 @@ namespace px
 	inline vector operator+(vector lhs, const vector &rhs) { lhs += rhs; return lhs; }
 	inline vector operator-(vector lhs, const vector &rhs) { lhs -= rhs; return lhs; }
 }
+
+#endif

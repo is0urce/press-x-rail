@@ -5,7 +5,8 @@
 
 // template 2-d coordinate with generic methods
 
-#pragma once
+#ifndef PX_COORDINATE_H
+#define PX_COORDINATE_H
 
 #include <algorithm>
 
@@ -84,3 +85,5 @@ namespace px
 	template <typename _C>
 	inline bool operator!=(const coordinate<_C> &a, const coordinate<_C> &b) { return !operator==(a, b); }
 }
+
+#endif

@@ -5,9 +5,10 @@
 
 // 2-d point with integer components
 
-#pragma once
+#ifndef PX_POINT_H
+#define PX_POINT_H
 
-#include "coordinate.h"
+#include <px/coordinate.h>
 
 #include <algorithm>
 #include <functional>
@@ -65,3 +66,5 @@ namespace px
 	inline point operator+(point lhs, const point &rhs) { lhs += rhs; return lhs; }
 	inline point operator-(point lhs, const point &rhs) { lhs -= rhs; return lhs; }
 }
+
+#endif

@@ -5,11 +5,11 @@
 
 #include "PressX.h"
 
-#include "renderer.h"
-#include "wingl.h"
-#include "key_bindings.h"
-#include "key.h"
-#include "core.h"
+#include "px/renderer.h"
+#include "px/wingl.h"
+#include "px/key_bindings.h"
+#include "px/key.h"
+#include "px/core.h"
 
 using namespace px;
 using namespace px::shell;

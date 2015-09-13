@@ -2,8 +2,8 @@
 
 #include "catch.hpp"
 
-#include "../src/vector.h"
-#include "../src/point.h"
+#include <px/vector.h>
+#include <px/point.h>
 
 using namespace px;
 

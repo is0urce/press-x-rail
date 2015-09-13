@@ -3,13 +3,14 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_WORLD_H
+#define PX_WORLD_H
 
-#include "appearance.h"
-#include "tile.h"
-#include "map.h"
-#include "writer.h"
-#include "reader.h"
+#include <px/appearance.h>
+#include <px/tile.h>
+#include <px/map.h>
+#include <px/writer.h>
+#include <px/reader.h>
 
 #include <memory>
 #include <list>
@@ -67,3 +68,5 @@ namespace px
 		void load(reader::node &node);
 	};
 }
+
+#endif

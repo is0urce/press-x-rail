@@ -3,11 +3,12 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_GENERATOR_H
+#define PX_RL_GENERATOR_H
 
-#include "unit.h"
-#include "inventory.h"
-#include "item.h"
+#include <px/unit.h>
+#include <px/inventory.h>
+#include <px/item.h>
 
 #include <memory>
 #include <vector>
@@ -33,3 +34,5 @@ namespace px
 		};
 	}
 }
+
+#endif
