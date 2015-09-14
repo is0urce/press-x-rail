@@ -7,11 +7,11 @@
 
 #include "game.h"
 
-#include "player.h"
+#include <px/rl/player.h>
 #include "status_panel.h"
 
-#include "writer.h"
-#include "reader.h"
+#include "px/writer.h"
+#include "px/reader.h"
 
 using namespace px;
 

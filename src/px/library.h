@@ -7,8 +7,8 @@
 
 #include "resource.h"
 
-#include "npc.h"
-#include "status.h"
+#include <px/rl/npc.h>
+#include <px/rl/status.h>
 
 #include <string>
 #include <stdexcept>

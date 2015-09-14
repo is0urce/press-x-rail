@@ -3,13 +3,14 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_UNIT_H
+#define PX_RL_UNIT_H
 
-#include "entity.h"
-#include "point.h"
+#include <px/rl/entity.h>
+#include <px/point.h>
 
-#include "reader.h"
-#include "writer.h"
+#include "px/reader.h"
+#include "px/writer.h"
 
 #include <memory>
 
@@ -71,3 +72,5 @@ namespace px
 		};
 	}
 }
+
+#endif

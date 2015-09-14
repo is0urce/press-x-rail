@@ -7,8 +7,8 @@
 
 #include "scene.h"
 
-#include "unit.h"
-#include "door.h"
+#include <px/rl/unit.h>
+#include <px/rl/door.h>
 
 using namespace px;
 using namespace px::rl;

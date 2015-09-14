@@ -31,13 +31,7 @@
     <ClInclude Include="src\px\ability.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\appearance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\attribute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\bar.h">
@@ -47,9 +41,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\canvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\character.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\color.h">
@@ -67,34 +58,13 @@
     <ClInclude Include="src\px\delegate_action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\deposit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\door.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\effect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\enhancement.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\game_control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\inventory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\key.h">
@@ -109,19 +79,10 @@
     <ClInclude Include="src\px\map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\npc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\performance_timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\person.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\point.h">
@@ -145,15 +106,6 @@
     <ClInclude Include="src\px\shadowcasting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\skill.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\statistics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\status.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\status_panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -164,9 +116,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\tile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\user_ability.h">
@@ -217,6 +166,57 @@
     <ClInclude Include="src\px\shell\perception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\rl\actor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\attribute.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\deposit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\door.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\npc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\person.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\unit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\skill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\statistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\inventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\enhancement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\effect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -228,28 +228,16 @@
     <ClCompile Include="src\px\canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\character.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\px\entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\px\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\px\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\status_panel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\px\unit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\world.cpp">
@@ -271,6 +259,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\shell\perception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\rl\character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\rl\entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\rl\player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\rl\unit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

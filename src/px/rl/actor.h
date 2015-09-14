@@ -6,9 +6,9 @@
 #ifndef PX_RL_GENERATOR_H
 #define PX_RL_GENERATOR_H
 
-#include <px/unit.h>
-#include <px/inventory.h>
-#include <px/item.h>
+#include <px/rl/unit.h>
+#include <px/rl/inventory.h>
+#include <px/rl/item.h>
 
 #include <memory>
 #include <vector>

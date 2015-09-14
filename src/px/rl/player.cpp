@@ -7,8 +7,8 @@
 
 #include "player.h"
 
-#include "game.h"
-#include "delegate_action.h"
+#include "px/game.h"
+#include "px/delegate_action.h"
 
 using namespace px;
 using namespace px::rl;

@@ -9,9 +9,9 @@
 
 #include "library.h"
 
-#include "person.h"
-#include "deposit.h"
-#include "door.h"
+#include <px/rl/person.h>
+#include <px/rl/deposit.h>
+#include <px/rl/door.h>
 
 #include <px/fn/automata.h>
 #include <px/vector.h>

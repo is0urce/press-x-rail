@@ -91,19 +91,19 @@
   <ItemGroup>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="src\px\ability.h" />
-    <ClInclude Include="src\px\actor.h" />
-    <ClInclude Include="src\px\attribute.h" />
+    <ClInclude Include="src\px\rl\actor.h" />
+    <ClInclude Include="src\px\rl\attribute.h" />
     <ClInclude Include="src\px\shell\avatar.h" />
     <ClInclude Include="src\px\bar.h" />
     <ClInclude Include="src\px\broadcast.h" />
-    <ClInclude Include="src\px\character.h" />
+    <ClInclude Include="src\px\rl\character.h" />
     <ClInclude Include="src\px\control.h" />
     <ClInclude Include="src\px\core.h" />
-    <ClInclude Include="src\px\deposit.h" />
-    <ClInclude Include="src\px\door.h" />
-    <ClInclude Include="src\px\effect.h" />
-    <ClInclude Include="src\px\enhancement.h" />
-    <ClInclude Include="src\px\entity.h" />
+    <ClInclude Include="src\px\rl\deposit.h" />
+    <ClInclude Include="src\px\rl\door.h" />
+    <ClInclude Include="src\px\rl\effect.h" />
+    <ClInclude Include="src\px\rl\enhancement.h" />
+    <ClInclude Include="src\px\rl\entity.h" />
     <ClInclude Include="src\px\fn\generator.h" />
     <ClInclude Include="src\px\game.h" />
     <ClInclude Include="src\px\game_control.h" />
@@ -111,23 +111,23 @@
     <ClInclude Include="src\px\projectile.h" />
     <ClInclude Include="src\px\serializer.h" />
     <ClInclude Include="src\px\user_ability.h" />
-    <ClInclude Include="src\px\inventory.h" />
+    <ClInclude Include="src\px\rl\inventory.h" />
     <ClInclude Include="src\px\io.h" />
-    <ClInclude Include="src\px\item.h" />
+    <ClInclude Include="src\px\rl\item.h" />
     <ClInclude Include="src\px\canvas.h" />
     <ClInclude Include="src\px\library.h" />
     <ClInclude Include="src\px\shell\notification.h" />
-    <ClInclude Include="src\px\npc.h" />
+    <ClInclude Include="src\px\rl\npc.h" />
     <ClInclude Include="src\px\panel.h" />
-    <ClInclude Include="src\px\person.h" />
-    <ClInclude Include="src\px\player.h" />
+    <ClInclude Include="src\px\rl\person.h" />
+    <ClInclude Include="src\px\rl\player.h" />
     <ClInclude Include="src\px\reader.h" />
     <ClInclude Include="src\px\resource.h" />
     <ClInclude Include="src\px\shadowcasting.h" />
     <ClInclude Include="src\px\delegate_action.h" />
-    <ClInclude Include="src\px\skill.h" />
-    <ClInclude Include="src\px\statistics.h" />
-    <ClInclude Include="src\px\status.h" />
+    <ClInclude Include="src\px\rl\skill.h" />
+    <ClInclude Include="src\px\rl\statistics.h" />
+    <ClInclude Include="src\px\rl\status.h" />
     <ClInclude Include="src\px\status_panel.h" />
     <ClInclude Include="src\px\string.h" />
     <ClInclude Include="src\px\symbol.h" />
@@ -150,23 +150,23 @@
     <ClInclude Include="src\px\shell\renderer.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\targetver.h" />
-    <ClInclude Include="src\px\unit.h" />
+    <ClInclude Include="src\px\rl\unit.h" />
     <ClInclude Include="src\px\shell\vao.h" />
     <ClInclude Include="src\px\vector.h" />
     <ClInclude Include="src\px\shell\wingl.h" />
     <ClInclude Include="src\px\writer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\px\character.cpp" />
+    <ClCompile Include="src\px\rl\character.cpp" />
     <ClCompile Include="src\px\fn\generator.cpp" />
     <ClCompile Include="src\px\game.cpp" />
     <ClCompile Include="src\px\canvas.cpp" />
-    <ClCompile Include="src\px\entity.cpp" />
+    <ClCompile Include="src\px\rl\entity.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
     <ClCompile Include="src\px\panel.cpp" />
     <ClCompile Include="src\px\shell\perception.cpp" />
-    <ClCompile Include="src\px\player.cpp" />
+    <ClCompile Include="src\px\rl\player.cpp" />
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\scene.cpp" />
@@ -175,7 +175,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\px\unit.cpp" />
+    <ClCompile Include="src\px\rl\unit.cpp" />
     <ClCompile Include="src\px\shell\wingl.cpp" />
     <ClCompile Include="src\px\world.cpp" />
   </ItemGroup>

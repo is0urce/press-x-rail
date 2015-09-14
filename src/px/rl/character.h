@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "bar.h"
-#include "statistics.h"
-#include "status.h"
+#include <px/bar.h>
+#include <px/rl/statistics.h>
+#include <px/rl/status.h>
 
-#include "attribute.h"
+#include <px/rl/attribute.h>
 
 #include <memory>
 #include <list>

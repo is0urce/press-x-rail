@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include "actor.h"
-#include "character.h"
+#include <px/rl/actor.h>
+#include <px/rl/character.h>
 
-#include "delegate_action.h"
-#include "ability.h"
-#include "user_ability.h"
+#include "px/delegate_action.h"
+#include "px/ability.h"
+#include "px/user_ability.h"
 
 #include "effect.h"
 
