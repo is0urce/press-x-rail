@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "point.h"
-#include "map.h"
-#include "symbol.h"
+#include <px/point.h>
+#include <px/map.h>
+#include <px/ui/symbol.h>
 
 namespace px
 {

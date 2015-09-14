@@ -7,13 +7,13 @@
 
 #include "renderer.h"
 
+#include "px/game.h"
 #include <px/shell/font.h>
+#include <px/shell/perception.h>
+#include <px/shell/glsl.h>
+#include <px/ui/canvas.h>
 #include <px/vector.h>
 #include <px/color.h>
-#include <px/shell/perception.h>
-#include "px/canvas.h"
-#include "px/game.h"
-#include <px/shell/glsl.h>
 #include <px/string.h>
 
 #include <memory>

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "color.h"
+#include <px/color.h>
 
 namespace px
 {

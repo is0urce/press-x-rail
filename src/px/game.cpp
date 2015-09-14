@@ -8,7 +8,7 @@
 #include "game.h"
 
 #include <px/rl/player.h>
-#include "status_panel.h"
+#include <px/ui/status_panel.h>
 
 #include "px/writer.h"
 #include "px/reader.h"

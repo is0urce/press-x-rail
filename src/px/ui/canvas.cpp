@@ -7,7 +7,7 @@
 
 #include "canvas.h"
 
-#include "string.h"
+#include <px/string.h>
 
 using namespace px;
 using namespace px::ui;

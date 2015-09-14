@@ -40,9 +40,6 @@
     <ClInclude Include="src\px\broadcast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\canvas.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -79,9 +76,6 @@
     <ClInclude Include="src\px\map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\panel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\performance_timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -106,13 +100,7 @@
     <ClInclude Include="src\px\shadowcasting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\status_panel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\string.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\symbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\tile.h">
@@ -217,6 +205,18 @@
     <ClInclude Include="src\px\rl\item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\ui\status_panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\ui\symbol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\ui\panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\ui\canvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -225,19 +225,10 @@
     <ClCompile Include="src\px\fn\generator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\canvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\px\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\px\panel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\px\scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\px\status_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\world.cpp">
@@ -271,6 +262,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\rl\unit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\ui\status_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\ui\panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\ui\canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

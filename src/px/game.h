@@ -6,9 +6,9 @@
 #pragma once
 
 #include <px/shell/perception.h>
-#include "scene.h"
-#include "canvas.h"
-#include "panel.h"
+#include "px/scene.h"
+#include <px/ui/canvas.h>
+#include <px/ui/panel.h>
 #include "broadcast.h"
 #include "projectile.h"
 

@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "point.h"
-#include "control.h"
+#include <px/point.h>
+#include "px/control.h"
 
 #include <stdexcept>
 

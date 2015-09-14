@@ -114,11 +114,11 @@
     <ClInclude Include="src\px\rl\inventory.h" />
     <ClInclude Include="src\px\io.h" />
     <ClInclude Include="src\px\rl\item.h" />
-    <ClInclude Include="src\px\canvas.h" />
+    <ClInclude Include="src\px\ui\canvas.h" />
     <ClInclude Include="src\px\library.h" />
     <ClInclude Include="src\px\shell\notification.h" />
     <ClInclude Include="src\px\rl\npc.h" />
-    <ClInclude Include="src\px\panel.h" />
+    <ClInclude Include="src\px\ui\panel.h" />
     <ClInclude Include="src\px\rl\person.h" />
     <ClInclude Include="src\px\rl\player.h" />
     <ClInclude Include="src\px\reader.h" />
@@ -128,9 +128,9 @@
     <ClInclude Include="src\px\rl\skill.h" />
     <ClInclude Include="src\px\rl\statistics.h" />
     <ClInclude Include="src\px\rl\status.h" />
-    <ClInclude Include="src\px\status_panel.h" />
+    <ClInclude Include="src\px\ui\status_panel.h" />
     <ClInclude Include="src\px\string.h" />
-    <ClInclude Include="src\px\symbol.h" />
+    <ClInclude Include="src\px\ui\symbol.h" />
     <ClInclude Include="src\px\world.h" />
     <ClInclude Include="src\px\key.h" />
     <ClInclude Include="src\px\key_bindings.h" />
@@ -160,17 +160,17 @@
     <ClCompile Include="src\px\rl\character.cpp" />
     <ClCompile Include="src\px\fn\generator.cpp" />
     <ClCompile Include="src\px\game.cpp" />
-    <ClCompile Include="src\px\canvas.cpp" />
+    <ClCompile Include="src\px\ui\canvas.cpp" />
     <ClCompile Include="src\px\rl\entity.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
-    <ClCompile Include="src\px\panel.cpp" />
+    <ClCompile Include="src\px\ui\panel.cpp" />
     <ClCompile Include="src\px\shell\perception.cpp" />
     <ClCompile Include="src\px\rl\player.cpp" />
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\scene.cpp" />
-    <ClCompile Include="src\px\status_panel.cpp" />
+    <ClCompile Include="src\px\ui\status_panel.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

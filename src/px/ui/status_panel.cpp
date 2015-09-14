@@ -8,7 +8,7 @@
 #include "status_panel.h"
 
 #include <px/rl/person.h>
-#include "px/canvas.h"
+#include <px/ui/canvas.h>
 
 using namespace px;
 using namespace px::ui;
