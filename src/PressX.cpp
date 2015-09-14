@@ -7,9 +7,9 @@
 
 #include <px/shell/renderer.h>
 #include <px/shell/wingl.h>
-#include "px/key_bindings.h"
-#include "px/key.h"
-#include "px/core.h"
+#include <px/shell/key_bindings.h>
+#include <px/key.h>
+#include <px/core.h>
 
 using namespace px;
 using namespace px::shell;

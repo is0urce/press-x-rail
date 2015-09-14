@@ -58,16 +58,10 @@
     <ClInclude Include="src\px\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\game_control.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\key.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\key_bindings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\library.h">
@@ -215,6 +209,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\ui\canvas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\shell\key_bindings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\shell\game_control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

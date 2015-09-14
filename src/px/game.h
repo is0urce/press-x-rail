@@ -9,8 +9,8 @@
 #include "px/scene.h"
 #include <px/ui/canvas.h>
 #include <px/ui/panel.h>
-#include "broadcast.h"
-#include "projectile.h"
+#include "px/broadcast.h"
+#include "px/projectile.h"
 
 #include <memory>
 #include <list>

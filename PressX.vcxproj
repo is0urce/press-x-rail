@@ -106,7 +106,7 @@
     <ClInclude Include="src\px\rl\entity.h" />
     <ClInclude Include="src\px\fn\generator.h" />
     <ClInclude Include="src\px\game.h" />
-    <ClInclude Include="src\px\game_control.h" />
+    <ClInclude Include="src\px\shell\game_control.h" />
     <ClInclude Include="src\px\appearance.h" />
     <ClInclude Include="src\px\projectile.h" />
     <ClInclude Include="src\px\serializer.h" />
@@ -133,7 +133,7 @@
     <ClInclude Include="src\px\ui\symbol.h" />
     <ClInclude Include="src\px\world.h" />
     <ClInclude Include="src\px\key.h" />
-    <ClInclude Include="src\px\key_bindings.h" />
+    <ClInclude Include="src\px\shell\key_bindings.h" />
     <ClInclude Include="src\px\fn\automata.h" />
     <ClInclude Include="src\px\color.h" />
     <ClInclude Include="src\px\coordinate.h" />

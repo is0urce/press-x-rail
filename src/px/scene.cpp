@@ -7,8 +7,10 @@
 
 #include "scene.h"
 
-#include <px/rl/unit.h>
-#include <px/rl/door.h>
+//#include <px/rl/unit.h>
+//#include <px/rl/door.h>
+
+#include <px/serializer.h>
 
 using namespace px;
 using namespace px::rl;
@@ -208,8 +210,6 @@ void scene::focus(point absolute)
 
 scene::map_t* scene::select_map(const point &cell) const
 {
-	//point p = cell - m_focus + sight_center;
-	//if (m_maps.in_range(p)) return m_maps.at(p).get(); else return nullptr;
 	return m_maps.at(cell - m_focus + sight_center, nullptr).get();
 }
 
@@ -217,10 +217,10 @@ void scene::save(writer::node_ptr node)
 {
 	if (!node) throw std::logic_error("px:scene::save(..) - node is null");
 
-	auto units = node->open("units");
-	enumerate_units([&](unit_ptr u)
+	auto units_node = node->open("units");
+	enumerate_units([&](unit_ptr u_ptr)
 	{
-		u->save(units);
+		serializer::save(u_ptr, units_node);
 	});
 }
 
@@ -228,23 +228,8 @@ void scene::load(const reader::node &node)
 {
 	clear();
 
-	node["units"].enumerate([&](reader::node n)
+	node["units"].enumerate([this](reader::node n)
 	{
-		std::shared_ptr<unit> u;
-		auto name = n.name();
-		if (name == "unit")
-		{
-			u.reset(new unit());
-		}
-		else if (name == "door")
-		{
-			u.reset(new door());
-		}
-		else
-		{
-			throw std::runtime_error("px::scene::load(..) unexpected element");
-		}
-		u->load(n);
-		add(u);
+		add(serializer::load(n));
 	});
 }

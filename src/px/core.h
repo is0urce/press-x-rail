@@ -5,12 +5,12 @@
 
 #pragma once
 
-#include "game.h"
-#include "game_control.h"
-#include <px/shell/perception.h>
-#include "performance_timer.h"
+#include <px/game.h>
+#include <px/key.h>
 #include <px/shell/renderer.h>
-#include "key.h"
+#include <px/shell/game_control.h>
+#include <px/shell/perception.h>
+#include "px/performance_timer.h"
 
 namespace px
 {
