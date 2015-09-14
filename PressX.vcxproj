@@ -93,7 +93,7 @@
     <ClInclude Include="src\px\ability.h" />
     <ClInclude Include="src\px\actor.h" />
     <ClInclude Include="src\px\attribute.h" />
-    <ClInclude Include="src\px\avatar.h" />
+    <ClInclude Include="src\px\shell\avatar.h" />
     <ClInclude Include="src\px\bar.h" />
     <ClInclude Include="src\px\broadcast.h" />
     <ClInclude Include="src\px\character.h" />
@@ -116,7 +116,7 @@
     <ClInclude Include="src\px\item.h" />
     <ClInclude Include="src\px\canvas.h" />
     <ClInclude Include="src\px\library.h" />
-    <ClInclude Include="src\px\notification.h" />
+    <ClInclude Include="src\px\shell\notification.h" />
     <ClInclude Include="src\px\npc.h" />
     <ClInclude Include="src\px\panel.h" />
     <ClInclude Include="src\px\person.h" />
@@ -134,26 +134,26 @@
     <ClInclude Include="src\px\world.h" />
     <ClInclude Include="src\px\key.h" />
     <ClInclude Include="src\px\key_bindings.h" />
-    <ClInclude Include="src\px\automata.h" />
+    <ClInclude Include="src\px\fn\automata.h" />
     <ClInclude Include="src\px\color.h" />
     <ClInclude Include="src\px\coordinate.h" />
-    <ClInclude Include="src\px\font.h" />
-    <ClInclude Include="src\px\glsl.h" />
-    <ClInclude Include="src\px\perception.h" />
+    <ClInclude Include="src\px\shell\font.h" />
+    <ClInclude Include="src\px\shell\glsl.h" />
+    <ClInclude Include="src\px\shell\perception.h" />
     <ClInclude Include="src\px\performance_timer.h" />
     <ClInclude Include="src\px\scene.h" />
     <ClInclude Include="src\px\tile.h" />
     <ClInclude Include="src\px\map.h" />
-    <ClInclude Include="src\px\opengl.h" />
+    <ClInclude Include="src\px\shell\opengl.h" />
     <ClInclude Include="src\px\point.h" />
     <ClInclude Include="src\PressX.h" />
-    <ClInclude Include="src\px\renderer.h" />
+    <ClInclude Include="src\px\shell\renderer.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\targetver.h" />
     <ClInclude Include="src\px\unit.h" />
-    <ClInclude Include="src\px\vao.h" />
+    <ClInclude Include="src\px\shell\vao.h" />
     <ClInclude Include="src\px\vector.h" />
-    <ClInclude Include="src\px\wingl.h" />
+    <ClInclude Include="src\px\shell\wingl.h" />
     <ClInclude Include="src\px\writer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -162,13 +162,13 @@
     <ClCompile Include="src\px\game.cpp" />
     <ClCompile Include="src\px\canvas.cpp" />
     <ClCompile Include="src\px\entity.cpp" />
-    <ClCompile Include="src\px\font.cpp" />
-    <ClCompile Include="src\px\opengl.cpp" />
+    <ClCompile Include="src\px\shell\font.cpp" />
+    <ClCompile Include="src\px\shell\opengl.cpp" />
     <ClCompile Include="src\px\panel.cpp" />
-    <ClCompile Include="src\px\perception.cpp" />
+    <ClCompile Include="src\px\shell\perception.cpp" />
     <ClCompile Include="src\px\player.cpp" />
     <ClCompile Include="src\PressX.cpp" />
-    <ClCompile Include="src\px\renderer.cpp" />
+    <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\scene.cpp" />
     <ClCompile Include="src\px\status_panel.cpp" />
     <ClCompile Include="src\stdafx.cpp">
@@ -176,7 +176,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\px\unit.cpp" />
-    <ClCompile Include="src\px\wingl.cpp" />
+    <ClCompile Include="src\px\shell\wingl.cpp" />
     <ClCompile Include="src\px\world.cpp" />
   </ItemGroup>
   <ItemGroup>

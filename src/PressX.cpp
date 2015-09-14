@@ -5,8 +5,8 @@
 
 #include "PressX.h"
 
-#include "px/renderer.h"
-#include "px/wingl.h"
+#include <px/shell/renderer.h>
+#include <px/shell/wingl.h>
 #include "px/key_bindings.h"
 #include "px/key.h"
 #include "px/core.h"

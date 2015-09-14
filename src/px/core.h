@@ -7,9 +7,9 @@
 
 #include "game.h"
 #include "game_control.h"
-#include "perception.h"
+#include <px/shell/perception.h>
 #include "performance_timer.h"
-#include "renderer.h"
+#include <px/shell/renderer.h>
 #include "key.h"
 
 namespace px

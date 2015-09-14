@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "point.h"
-#include "map.h"
-#include "appearance.h"
-#include "avatar.h"
-#include "notification.h"
-#include "projectile.h"
+#include <px/point.h>
+#include <px/map.h>
+#include "px/appearance.h"
+#include <px/shell/avatar.h>
+#include <px/shell/notification.h>
+#include "px/projectile.h"
 
 #include <list>
 #include <string>

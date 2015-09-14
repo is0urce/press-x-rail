@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "opengl.h"
-#include "vao.h"
-#include "point.h"
+#include <px/shell/opengl.h>
+#include <px/shell/vao.h>
+#include <px/point.h>
 
 #include <memory>
 

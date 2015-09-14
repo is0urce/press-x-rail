@@ -3,10 +3,11 @@
 // desc: struct definition
 // auth: is0urce
 
-#pragma once
+#ifndef PX_SHELL_NOTIFICATION_H
+#define PX_SHELL_NOTIFICATION_H
 
-#include "color.h"
-#include "vector.h"
+#include <px/color.h>
+#include <px/vector.h>
 
 #include <string>
 
@@ -41,3 +42,5 @@ namespace px
 		};
 	}
 }
+
+#endif

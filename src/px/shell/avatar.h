@@ -3,11 +3,12 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_SHELL_AVATAR_H
+#define PX_SHELL_AVATAR_H
 
 // model view of unit
 
-#include "point.h"
+#include <px/point.h>
 
 namespace px
 {
@@ -34,3 +35,5 @@ namespace px
 		};
 	}
 }
+
+#endif

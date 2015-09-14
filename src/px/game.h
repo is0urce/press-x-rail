@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "perception.h"
+#include <px/shell/perception.h>
 #include "scene.h"
 #include "canvas.h"
 #include "panel.h"

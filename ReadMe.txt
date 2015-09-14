@@ -14,5 +14,6 @@ namespace
 
 px - press x - contains utility classes
 px::shell - rendering
+px::fn - procedural generation
 px::rl - rpg system and game mechanics
 px::ui - user interface

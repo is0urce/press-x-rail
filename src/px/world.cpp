@@ -13,8 +13,8 @@
 #include "deposit.h"
 #include "door.h"
 
-#include "automata.h"
-#include "vector.h"
+#include <px/fn/automata.h>
+#include <px/vector.h>
 
 using namespace px;
 
