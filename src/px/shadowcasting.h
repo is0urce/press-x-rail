@@ -3,9 +3,10 @@
 // auth: is0urce
 // date: 2014-12-16
 
-#pragma once
+#ifndef PX_SHADOWCASTING_H
+#define PX_SHADOWCASTING_H
 
-#include "point.h"
+#include <px/point.h>
 
 #include <memory>
 #include <functional>
@@ -171,3 +172,5 @@ namespace px
 		}
 	};
 }
+
+#endif

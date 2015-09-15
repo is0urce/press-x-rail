@@ -36,7 +36,7 @@ namespace px
 
 	private:
 		shell::perception m_perception;
-		rl::scene m_scene;
+		scene m_scene;
 		player_ptr m_player;
 		target_ptr m_target;
 		point m_hover;
