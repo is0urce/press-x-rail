@@ -3,9 +3,10 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_APPEARANCE_H
+#define PX_APPEARANCE_H
 
-#include "color.h"
+#include <px/color.h>
 
 namespace px
 {
@@ -24,3 +25,5 @@ namespace px
 		double size;
 	};
 }
+
+#endif

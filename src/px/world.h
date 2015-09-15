@@ -11,17 +11,19 @@
 #include <px/map.h>
 #include <px/writer.h>
 #include <px/reader.h>
+#include <px/fn/builder.h>
 
 #include <memory>
 #include <list>
 
 namespace px
 {
-	class library;
 	namespace rl
 	{
 		class unit;
 	}
+
+	class library;
 
 	class world
 	{
@@ -32,18 +34,18 @@ namespace px
 		typedef std::shared_ptr<rl::unit> unit_ptr;
 		typedef std::list<unit_ptr> unit_list;
 		typedef std::unique_ptr<map_t> map_ptr;
-		typedef std::function<void(unit_ptr, point)> fetch_op; // std::function<void(unit_ptr, point)>
-		typedef std::function<void(map_t&, fetch_op)> landmark_t;
+		typedef fn::builder<map_t, unit_ptr> builder_t;
+		typedef std::unique_ptr<builder_t> builder_ptr;
 
 	public:
 		static const point cell_range;
 
 	private:
-		std::unique_ptr<library> m_library;
+		std::shared_ptr<library> m_library;
 		map<bool> m_created;
 
-		map<landmark_t> m_landmarks;
-		landmark_t m_landmark_outer;
+		map<builder_ptr> m_landmarks;
+		builder_ptr m_landmark_outer;
 
 		map<unit_list> m_units;
 		unit_list m_units_outher;
@@ -58,10 +60,9 @@ namespace px
 	public:
 		point cell(const point &absolute) const;
 
-		map_ptr generate(const point &cell, fetch_op fetch);
-		void generate_wall(map_t &cell_map, fetch_op fetch);
-		void generate_rail(map_t &cell_map, fetch_op fetch);
-		void generate_station(map_t &cell_map, fetch_op fetch);
+		map_ptr generate(const point &cell, builder_t::fetch_op fetch);
+		void generate_wall(map_t &cell_map, builder_t::fetch_op fetch);
+		void generate_station(map_t &cell_map, builder_t::fetch_op fetch);
 		void store(unit_ptr unit);
 
 		void save(writer::node_ptr node) const;

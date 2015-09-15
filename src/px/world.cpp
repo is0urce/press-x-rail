@@ -7,11 +7,10 @@
 
 #include "world.h"
 
-#include "library.h"
+#include <px/library.h>
 
-#include <px/rl/person.h>
-#include <px/rl/deposit.h>
-#include <px/rl/door.h>
+#include <px/fn/delegate_builder.h>
+#include <px/fn/cave_builder.h>
 
 #include <px/fn/automata.h>
 #include <px/vector.h>
@@ -22,7 +21,8 @@ namespace
 {
 	const unsigned int cell_length = 50;
 	const point world_range(23, 1);
-	const world::fetch_op discard_fn([&](world::unit_ptr sink, point p){});
+	const world::builder_t::fetch_op discard_fn([&](world::unit_ptr sink, point p){});
+
 	template <typename _V>
 	inline void draw_square(map<_V> &map, point start, point range, _V rect_value)
 	{
@@ -45,14 +45,14 @@ world::world()
 		auto &generator = m_landmarks.at(cell);
 		if (cell.X % 2 == 0)
 		{
-			generator = [this](map_t &m, fetch_op f) { generate_rail(m, f); };
+			generator.reset(new fn::cave_builder(m_library));
 		}
 		else
 		{
-			generator = [this](map_t &m, fetch_op f) { generate_station(m, f); };
+			generator.reset(new fn::delegate_builder<map_t, unit_ptr>([this](map_t &m, builder_t::fetch_op f) { generate_station(m, f); }));
 		}
 	});
-	m_landmark_outer = [this](map_t &m, fetch_op f) { generate_wall(m, f); };
+	m_landmark_outer.reset(new fn::delegate_builder<map_t, unit_ptr>([this](map_t &m, builder_t::fetch_op f) { generate_wall(m, f); }));
 
 	rl::npc rat;
 	rat.appearance({ 'r', 0x330000, 0.95f });
@@ -69,7 +69,7 @@ world::world()
 }
 world::~world() {}
 
-world::map_ptr world::generate(const point &cell, fetch_op fetch_fn)
+world::map_ptr world::generate(const point &cell, builder_t::fetch_op fetch_fn)
 {
 	std::srand(cell.X + cell.Y * 911);
 
@@ -81,7 +81,7 @@ world::map_ptr world::generate(const point &cell, fetch_op fetch_fn)
 
 	// use generator for cell with offset unit placement function
 	auto &generator = m_landmarks.at(cell, m_landmark_outer);
-	generator(*cell_map, created ? discard_fn : [&](unit_ptr unit, point position)
+	generator->build(*cell_map, created ? discard_fn : [&](unit_ptr unit, point position)
 	{
 		fetch_fn(unit, position + offset);
 	});
@@ -127,41 +127,7 @@ point world::cell(const point &absolute) const
 	return (vector(absolute) / cell_range).floor();
 }
 
-void world::generate_rail(map_t &cell_map, fetch_op fetch_fn)
-{
-	// generate
-	automata<bool> walls(cell_range);
-	walls.fill_indexed([](const point& p) { return std::rand() % 100 < 42; });
-	walls.execute<unsigned int>([](unsigned int summ, bool element) { return summ + (element ? 1 : 0); }, 0, [](int summ) { return summ == 0 || summ >= 5; }, 4);
-
-	int h = 19;
-	// fill
-	cell_map.range().enumerate([&](const point &position)
-	{
-		bool wall = walls.at(position);
-		bool floor = (position.Y > h - 2 && position.Y < h + 3) || !wall && position.Y != 0 && position.Y != cell_range.Y - 1;
-		bool rail = position.Y == h || position.Y == h + 1;
-		unsigned int glyph = rail ? 8212 : floor ? '.' : ' ';
-
-		auto &t = cell_map.at(position);
-		t.appearance({ glyph, rail ? color(0.5, 0.5, 0.5) : floor ? color(0.2, 0.2, 0.2) : color(0.1, 0.1, 0.1) });
-		t.transparent(floor);
-		t.traversable(floor);
-	});
-
-
-	auto ore = std::make_shared<rl::item>(m_library->prototype<rl::item>("ore_copper"));
-
-	std::shared_ptr<rl::deposit> vein(new rl::deposit(ore));
-	vein->appearance({ 'O', 0xffffff });
-	fetch_fn(vein, { 12, 12 });
-
-	std::shared_ptr<rl::door> door(new rl::door());
-	door->appearance({ ' ', 0x333333 }, { '+', 0x333333 });
-	fetch_fn(door, { 20, 20 });
-}
-
-void world::generate_wall(map_t &cell_map, fetch_op fetch_fn)
+void world::generate_wall(map_t &cell_map, builder_t::fetch_op fetch_fn)
 {
 	// fill
 	cell_map.range().enumerate([&](const point &position)
@@ -173,7 +139,7 @@ void world::generate_wall(map_t &cell_map, fetch_op fetch_fn)
 	});
 }
 
-void world::generate_station(map_t &cell_map, fetch_op fetch_fn)
+void world::generate_station(map_t &cell_map, builder_t::fetch_op fetch_fn)
 {
 	map<bool> walls(cell_range);
 	walls.fill(true);

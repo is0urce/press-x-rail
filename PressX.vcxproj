@@ -91,6 +91,8 @@
   <ItemGroup>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="src\px\ability.h" />
+    <ClInclude Include="src\px\fn\cave_builder.h" />
+    <ClInclude Include="src\px\fn\delegate_builder.h" />
     <ClInclude Include="src\px\rl\actor.h" />
     <ClInclude Include="src\px\rl\attribute.h" />
     <ClInclude Include="src\px\shell\avatar.h" />
@@ -104,7 +106,7 @@
     <ClInclude Include="src\px\rl\effect.h" />
     <ClInclude Include="src\px\rl\enhancement.h" />
     <ClInclude Include="src\px\rl\entity.h" />
-    <ClInclude Include="src\px\fn\generator.h" />
+    <ClInclude Include="src\px\fn\builder.h" />
     <ClInclude Include="src\px\game.h" />
     <ClInclude Include="src\px\shell\game_control.h" />
     <ClInclude Include="src\px\appearance.h" />
@@ -157,8 +159,8 @@
     <ClInclude Include="src\px\writer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\px\fn\cave_builder.cpp" />
     <ClCompile Include="src\px\rl\character.cpp" />
-    <ClCompile Include="src\px\fn\generator.cpp" />
     <ClCompile Include="src\px\game.cpp" />
     <ClCompile Include="src\px\ui\canvas.cpp" />
     <ClCompile Include="src\px\rl\entity.cpp" />

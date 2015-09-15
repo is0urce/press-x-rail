@@ -6,9 +6,10 @@
 // template for cellular automata based on map
 // _C - cell / element type
 
-#pragma once
+#ifndef PX_FN_AUTOMATA_H
+#define PX_FN_AUTOMATA_H
 
-#include "map.h"
+#include <px/map.h>
 
 namespace px
 {
@@ -64,3 +65,4 @@ namespace px
 	};
 }
 
+#endif
