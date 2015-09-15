@@ -3,7 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_CHARACTER_H
+#define PX_RL_CHARACTER_H
 
 #include <px/bar.h>
 #include <px/rl/statistics.h>
@@ -55,3 +56,5 @@ namespace px
 		};
 	}
 }
+
+#endif

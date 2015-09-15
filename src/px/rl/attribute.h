@@ -5,7 +5,8 @@
 
 // enum for statistics attributes
 
-#pragma once
+#ifndef PX_RL_ATTRIBUTE_H
+#define PX_RL_ATTRIBUTE_H
 
 namespace px
 {
@@ -35,3 +36,5 @@ namespace px
 
 	}
 }
+
+#endif

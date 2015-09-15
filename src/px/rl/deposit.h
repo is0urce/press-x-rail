@@ -3,11 +3,12 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_DEPOSIT_H
+#define PX_RL_DEPOSIT_H
 
-#include "unit.h"
-#include "item.h"
-#include "actor.h"
+#include <px/rl/unit.h>
+#include <px/rl/item.h>
+#include <px/rl/actor.h>
 
 namespace px
 {
@@ -36,3 +37,5 @@ namespace px
 		};
 	}
 }
+
+#endif

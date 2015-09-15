@@ -5,8 +5,8 @@
 
 // px::fn::generator
 // abstract generator class template
-// uses operator() for filling referenced map with generated tiles provided by late-binded 'generate' overload
-// _T - tile type, _U - unit type
+// uses build() or operator() for filling referenced map with late-binded 'generate' overload
+// _T - map type, _U - unit type
 
 #ifndef PX_FN_BUILDER_H
 #define PX_FN_BUILDER_H

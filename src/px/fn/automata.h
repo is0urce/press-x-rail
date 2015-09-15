@@ -17,7 +17,6 @@ namespace px
 	class automata : public map<_C>
 	{
 	public:
-
 		automata(point::component x, point::component y) : map(x, y) {}
 		automata(const point &range) : map(range) {}
 		automata(point::component x, point::component y, const element &initial) : map(x, y, initial) {}

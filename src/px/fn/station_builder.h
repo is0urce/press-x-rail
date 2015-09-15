@@ -1,6 +1,6 @@
 // name: station_builder.h
 // type: c++ header
-// desc: interface class declaration
+// desc: class declaration
 // auth: is0urce
 
 #ifndef PX_FN_STATION_BUILDER_H

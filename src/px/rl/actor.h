@@ -3,8 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
-#ifndef PX_RL_GENERATOR_H
-#define PX_RL_GENERATOR_H
+#ifndef PX_RL_ACTOR_H
+#define PX_RL_ACTOR_H
 
 #include <px/rl/unit.h>
 #include <px/rl/inventory.h>

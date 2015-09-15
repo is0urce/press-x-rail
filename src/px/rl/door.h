@@ -3,9 +3,10 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_DOOR_H
+#define PX_RL_DOOR_H
 
-#include "unit.h"
+#include <px/rl/unit.h>
 
 namespace px
 {
@@ -81,3 +82,5 @@ namespace px
 		};
 	}
 }
+
+#endif
