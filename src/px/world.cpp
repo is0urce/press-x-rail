@@ -11,6 +11,7 @@
 
 #include <px/fn/delegate_builder.h>
 #include <px/fn/cave_builder.h>
+#include <px/fn/station_builder.h>
 
 #include <px/fn/automata.h>
 #include <px/vector.h>
@@ -22,12 +23,6 @@ namespace
 	const unsigned int cell_length = 50;
 	const point world_range(23, 1);
 	const world::builder_t::fetch_op discard_fn([&](world::unit_ptr sink, point p){});
-
-	template <typename _V>
-	inline void draw_square(map<_V> &map, point start, point range, _V rect_value)
-	{
-		range.enumerate(start, [&](const point &p) { map.at(p) = rect_value; });
-	}
 }
 
 const point world::cell_range(cell_length, cell_length);
@@ -49,7 +44,7 @@ world::world()
 		}
 		else
 		{
-			generator.reset(new fn::delegate_builder<map_t, unit_ptr>([this](map_t &m, builder_t::fetch_op f) { generate_station(m, f); }));
+			generator.reset(new fn::station_builder(m_library));
 		}
 	});
 	m_landmark_outer.reset(new fn::delegate_builder<map_t, unit_ptr>([this](map_t &m, builder_t::fetch_op f) { generate_wall(m, f); }));
@@ -136,28 +131,5 @@ void world::generate_wall(map_t &cell_map, builder_t::fetch_op fetch_fn)
 		t.appearance({ ' ', color(0.1, 0.1, 0.1) });
 		t.transparent(false);
 		t.traversable(false);
-	});
-}
-
-void world::generate_station(map_t &cell_map, builder_t::fetch_op fetch_fn)
-{
-	map<bool> walls(cell_range);
-	walls.fill(true);
-	int w = cell_range.X / 4;
-	int h = 19;
-	draw_square(walls, { w, h }, { w * 2, 10 }, false);
-
-	// fill
-	cell_map.range().enumerate([&](const point &position)
-	{
-		bool wall = walls.at(position);
-		bool floor = (position.Y > h - 2  && position.Y < h + 3) || !wall && position.Y != 0 && position.Y != cell_range.Y - 1;
-		bool rail = position.Y == h || position.Y == h + 1;
-		unsigned int glyph = rail ? 8212 : floor ? '.' : ' ';
-
-		auto &t = cell_map.at(position);
-		t.appearance({ glyph, rail ? color(0.5, 0.5, 0.5) : floor ? color(0.2, 0.2, 0.2) : color(0.1, 0.1, 0.1) });
-		t.transparent(floor);
-		t.traversable(floor);
 	});
 }

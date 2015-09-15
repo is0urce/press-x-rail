@@ -6,7 +6,7 @@
 #pragma once
 
 #include "tile.h"
-#include "world.h"
+#include <px/world.h>
 
 #include "reader.h"
 #include "writer.h"

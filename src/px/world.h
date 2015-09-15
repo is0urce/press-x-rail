@@ -57,12 +57,13 @@ namespace px
 	private:
 		world(const world&) = delete;
 
+	private:
+		void generate_wall(map_t &cell_map, builder_t::fetch_op fetch);
+
 	public:
 		point cell(const point &absolute) const;
 
 		map_ptr generate(const point &cell, builder_t::fetch_op fetch);
-		void generate_wall(map_t &cell_map, builder_t::fetch_op fetch);
-		void generate_station(map_t &cell_map, builder_t::fetch_op fetch);
 		void store(unit_ptr unit);
 
 		void save(writer::node_ptr node) const;

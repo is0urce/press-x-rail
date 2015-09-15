@@ -93,6 +93,7 @@
     <ClInclude Include="src\px\ability.h" />
     <ClInclude Include="src\px\fn\cave_builder.h" />
     <ClInclude Include="src\px\fn\delegate_builder.h" />
+    <ClInclude Include="src\px\fn\station_builder.h" />
     <ClInclude Include="src\px\rl\actor.h" />
     <ClInclude Include="src\px\rl\attribute.h" />
     <ClInclude Include="src\px\shell\avatar.h" />
@@ -142,7 +143,7 @@
     <ClInclude Include="src\px\shell\font.h" />
     <ClInclude Include="src\px\shell\glsl.h" />
     <ClInclude Include="src\px\shell\perception.h" />
-    <ClInclude Include="src\px\performance_timer.h" />
+    <ClInclude Include="src\px\timer.h" />
     <ClInclude Include="src\px\scene.h" />
     <ClInclude Include="src\px\tile.h" />
     <ClInclude Include="src\px\map.h" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\px\fn\cave_builder.cpp" />
+    <ClCompile Include="src\px\fn\station_builder.cpp" />
     <ClCompile Include="src\px\rl\character.cpp" />
     <ClCompile Include="src\px\game.cpp" />
     <ClCompile Include="src\px\ui\canvas.cpp" />

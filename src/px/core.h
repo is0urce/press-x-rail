@@ -10,7 +10,7 @@
 #include <px/shell/renderer.h>
 #include <px/shell/game_control.h>
 #include <px/shell/perception.h>
-#include "px/performance_timer.h"
+#include <px/timer.h>
 
 namespace px
 {
