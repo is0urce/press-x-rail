@@ -62,8 +62,16 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /deyvq "$(SolutionDir)config" "$(TargetDir)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>xcopy /deyvq "$(SolutionDir)config" "$(TargetDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -81,8 +89,16 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /deyvq "$(SolutionDir)config" "$(TargetDir)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>xcopy /deyvq "$(SolutionDir)config" "$(TargetDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="include\readme.txt" />
@@ -196,6 +212,10 @@
     <None Include="config\shaders\ground.vert" />
     <None Include="config\shaders\light.frag" />
     <None Include="config\shaders\light.vert" />
+    <None Include="config\shaders\lightdraw.frag" />
+    <None Include="config\shaders\lightdraw.vert" />
+    <None Include="config\shaders\lightmap.frag" />
+    <None Include="config\shaders\lightmap.vert" />
     <None Include="config\shaders\notify.frag" />
     <None Include="config\shaders\notify.vert" />
     <None Include="config\shaders\scene.frag" />

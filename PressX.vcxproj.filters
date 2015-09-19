@@ -319,5 +319,9 @@
     <None Include="config\shaders\uiback.vert" />
     <None Include="config\shaders\uitext.frag" />
     <None Include="config\shaders\uitext.vert" />
+    <None Include="config\shaders\lightmap.frag" />
+    <None Include="config\shaders\lightmap.vert" />
+    <None Include="config\shaders\lightdraw.frag" />
+    <None Include="config\shaders\lightdraw.vert" />
   </ItemGroup>
 </Project>

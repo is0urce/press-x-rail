@@ -13,14 +13,29 @@
 #include "px/writer.h"
 #include "px/reader.h"
 
+#include <px/shadowcasting.h>
+
+#include <algorithm>
+
 using namespace px;
 
 namespace
 {
-	static const unsigned int perc_range = 25;
-	static const point perc_center = point(perc_range, perc_range);
-	static const point perc_reach = point(perc_range * 2 + 1, perc_range * 2 + 1);
-	static const unsigned int action_distance = 1;
+	const unsigned int perc_range = 25;
+	const point perc_center = point(perc_range, perc_range);
+	const point perc_reach = point(perc_range * 2 + 1, perc_range * 2 + 1);
+	const unsigned int action_distance = 1;
+	const unsigned int light_range = 10;
+	const double light_range_inverted = 1.0 / light_range;
+
+	inline double saturate(double x)
+	{
+		return std::min(1.0, std::max(0.0, x));
+	}
+	inline double fade(double d)
+	{
+		return saturate(1.0 - pow(d * light_range_inverted, 4.0)) / (d * d + 1.0);
+	}
 }
 
 const unsigned int game::perc_width = perc_range * 2 + 1;
@@ -82,13 +97,37 @@ void game::fill_perception()
 	point start = m_player->position() - perc_center;
 	m_perception.swap(start);
 
+	// generate lightmap
+	map<color> lightmap(perc_reach);
+	lightmap.fill(color(0, 0, 0));
+	m_scene.enumerate_units([&](scene::unit_ptr unit)
+	{
+		auto l = unit->light();
+		if (l.enabled()) //  && l.shadowcasting()
+		{
+			shadowcasting fov([&](const point& p)
+			{
+				return m_scene.transparent(p);
+			}, unit->position(), light_range);
+
+			point light_pos = unit->position();
+			perc_reach.enumerate([&](const point &range_point)
+			{
+				if (fov.in_fov(start + range_point))
+				{
+					lightmap.at(range_point) += l.color() * fade(light_pos.distance(start + range_point));
+				}
+			});
+		}
+	});
+
 	// tiles
 	m_perception.range().enumerate([&](const point &range_point)
 	{
 		auto &tile = m_scene.tile(start + range_point).appearance();
 		m_perception.appearance(range_point, tile.image);
 		m_perception.ground(range_point, tile.color);
-		m_perception.light(range_point, color(1, 1, 1));
+		m_perception.light(range_point, lightmap.at(range_point));
 	});
 
 	// units

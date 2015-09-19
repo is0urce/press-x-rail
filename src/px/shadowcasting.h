@@ -57,7 +57,7 @@ namespace px
 		}
 		void clear()
 		{
-			for (int i = 0; i < m_len; ++i)
+			for (unsigned int i = 0; i < m_len; ++i)
 			{
 				m_fov[i] = false;
 			}
@@ -66,8 +66,8 @@ namespace px
 		{
 			position += point(m_radius, m_radius) - m_offset;
 
-			int pos = position.Y * m_width + position.X;
-			if (pos < 0 || pos >= m_len)
+			unsigned int pos = position.Y * m_width + position.X;
+			if (pos == 0 || pos >= m_len)
 			{
 				throw std::runtime_error("px::shadowcasting::light(..) point out of range");
 			}
@@ -78,7 +78,7 @@ namespace px
 		{
 			position += point(m_radius, m_radius) - m_offset;
 
-			if (position.X < 0 || position.Y < 0 || position.X >= m_width || position.Y >= m_width) return false;
+			if (position.X < 0 || position.Y < 0 || position.X >= (int)m_width || position.Y >= (int)m_width) return false;
 
 			return m_fov[position.Y * m_width + position.X];
 		}
@@ -113,8 +113,8 @@ namespace px
 			float next_start_slope = start;
 			for (unsigned int i = row; i <= radius_size; ++i)
 			{
-				int dx = -i - 1;
-				int dy = -i;
+				int dx = 0 - i - 1;
+				int dy = 0 - i;
 				bool blocked = false;
 				while (dx <= 0)
 				{
@@ -138,7 +138,11 @@ namespace px
 						float slope = (float)(dx) / (float)(dy);
 						bool wall = !map_fn(absolute);
 						bool center = start >= slope && slope >= end;
-						if ((center || wall) && (dx * dx + dy * dy < radius2))
+						//if ((center || wall) && (dx * dx + dy * dy < (int)radius2))
+						//{
+						//	light(absolute);
+						//}
+						if (center && !wall && (dx * dx + dy * dy < (int)radius2))
 						{
 							light(absolute);
 						}
