@@ -7,12 +7,13 @@
 
 #pragma once
 
-#include <px/point.h>
 #include <px/map.h>
-#include "px/appearance.h"
+#include <px/point.h>
+#include <px/appearance.h>
+#include <px/light.h>
 #include <px/shell/avatar.h>
 #include <px/shell/notification.h>
-#include "px/projectile.h"
+#include <px/projectile.h>
 
 #include <list>
 #include <string>
@@ -30,6 +31,7 @@ namespace px
 			typedef color ground_t;
 			typedef appearance<unsigned int> tile_t;
 			typedef appearance<unsigned int> appearance_t;
+			typedef light light_t;
 			typedef avatar<appearance_t> avatar_t;
 			typedef std::list<avatar_t> unit_list;
 			typedef std::function<void(const avatar_t&)> enum_fn;
@@ -77,9 +79,9 @@ namespace px
 			void ground(const point &position, const ground_t &ground_value);
 			void ground_previous(const point &position, const ground_t &ground_value);
 
-			void add_unit(appearance_t appearance, point position, point position_previous, bool hide); // hide - hide tile under unit
-			unit_list::size_type unit_count() const;
-			void enumerate_units(enum_fn fn) const;
+			void add_avatar(appearance_t appearance, point position, point position_previous, light_t light_source, bool hide); // hide - hide tile under unit
+			unit_list::size_type avatar_count() const;
+			void enumerate_avatars(enum_fn fn) const;
 
 			void add_notification(notification::string_t text, color c, const point &position);
 			void add_notification(notification::string_t text, color c, const point &position, double multiplier);

@@ -35,6 +35,7 @@ game::game()
 	m_player.reset(new rl::player(this));
 	m_player->appearance({ '@', 0xffffff });
 	m_player->health() = 100;
+	m_player->light({ color(24.0f, 19.5f, 11.9f), true });
 	rl::person::action_t::target_fn tf([&](rl::person::caster_t *user, rl::person::target_t unit)
 	{
 		if (user)
@@ -93,7 +94,7 @@ void game::fill_perception()
 	// units
 	m_scene.enumerate_units([&](scene::unit_ptr unit)
 	{
-		m_perception.add_unit(unit->appearance(), unit->position(), unit->previous_position(), !unit->traversable());
+		m_perception.add_avatar(unit->appearance(), unit->position(), unit->previous_position(), unit->light(), !unit->traversable());
 	});
 
 	// notifications

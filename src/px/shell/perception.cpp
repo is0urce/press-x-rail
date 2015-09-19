@@ -128,9 +128,9 @@ void perception::ground(const point &position, const perception::ground_t &groun
 	++m_version;
 }
 
-void perception::add_unit(perception::appearance_t appearance, point position, point position_previous, bool hide)
+void perception::add_avatar(appearance_t appearance, point position, point position_previous, light_t light_source, bool hide)
 {
-	m_units.emplace_back(appearance, position - m_start, position_previous - m_start_prev);
+	m_units.emplace_back(appearance, light_source, position - m_start, position_previous - m_start_prev);
 	if (hide)
 	{
 		bool sink;
@@ -139,14 +139,14 @@ void perception::add_unit(perception::appearance_t appearance, point position, p
 	++m_version;
 }
 
-void perception::enumerate_units(perception::enum_fn fn) const
+void perception::enumerate_avatars(perception::enum_fn fn) const
 {
 	if (!fn) throw std::logic_error("perception::enumerate_units - fn is null");
 
 	std::for_each(m_units.begin(), m_units.end(), fn);
 }
 
-perception::unit_list::size_type perception::unit_count() const
+perception::unit_list::size_type perception::avatar_count() const
 {
 	return m_units.size();
 }

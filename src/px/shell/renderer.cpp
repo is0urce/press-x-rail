@@ -323,7 +323,7 @@ void renderer::fill_tiles(const perception_t &perception, font &fnt)
 
 void renderer::fill_units(const perception_t &perception, font &fnt)
 {
-	unsigned int unit_num = perception.unit_count();
+	unsigned int unit_num = perception.avatar_count();
 
 	std::vector<GLfloat> vertices(unit_num * points_quad * vertice_depth);
 	std::vector<GLfloat> textures(unit_num * points_quad * texcoord_depth);
@@ -334,7 +334,7 @@ void renderer::fill_units(const perception_t &perception, font &fnt)
 	unsigned int vertex_offset = 0;
 	unsigned int color_offset = 0;
 	unsigned int texture_offset = 0;
-	perception.enumerate_units([&](const perception::avatar_t &unit)
+	perception.enumerate_avatars([&](const perception::avatar_t &unit)
 	{
 		auto &appear = unit.appearance();
 		auto g = fnt[appear.image];
@@ -588,40 +588,32 @@ void renderer::draw(const perception_t &perception, const canvas_t &gui, timespa
 	glUniform1f(glGetUniformLocation(m_light.program, "scale"), scale);
 	glUniform2f(glGetUniformLocation(m_light.program, "center"), x_center, y_center);
 
-	vector p;
-	perception.enumerate_units([&](perception::avatar_t a)
+	perception.enumerate_avatars([&](perception::avatar_t a)
 	{
-		p = a.position();
-		GLfloat outer = 10.0;
-		GLfloat inner = 0.0;
-		GLfloat elevation = 1.0;
-		color light(24.0f, 19.5f, 11.9f, 1.0f);
+		if (a.light().enabled()) //  && !a.light().shadowcasting()
+		{
+			vector p = a.position();
+			GLfloat outer = 10.0;
+			GLfloat inner = 0.0;
+			GLfloat elevation = 1.0;
+			color light = a.light().color();
 
-		//if (a.appearance().image != '@') return;
-		//if (a.appearance().image == 'r')
-		//{
-		//	outer = 8.0;
-		//	inner = 0.0;
-		//	elevation = 1.0;
-		//	light /= 5.0;
-		//	light.A = 1;
-		//}
+			glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
+			glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
+			glUniform4f(glGetUniformLocation(m_light.program, "pos"), (GLfloat)p.X, (GLfloat)p.Y, elevation, 1.0f);
+			glUniform4d(glGetUniformLocation(m_light.program, "col"), light.R, light.G, light.B, light.A);
 
-		glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
-		glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
-		glUniform4f(glGetUniformLocation(m_light.program, "pos"), (GLfloat)p.X, (GLfloat)p.Y, elevation, 1.0f);
-		glUniform4d(glGetUniformLocation(m_light.program, "col"), light.R, light.G, light.B, light.A);
-
-		std::vector<GLfloat> vertices(points_quad * vertice_depth);
-		std::vector<GLuint> indices(index_quad);
-		fill_vertex(p, outer * 2, &vertices[0]);
-		fill_index(1, &indices[0]);
-		m_light.vao.fill(points_quad, { &vertices }, indices);
-		m_light.vao.draw();
+			std::vector<GLfloat> vertices(points_quad * vertice_depth);
+			std::vector<GLuint> indices(index_quad);
+			fill_vertex(p, outer * 2, &vertices[0]);
+			fill_index(1, &indices[0]);
+			m_light.vao.fill(points_quad, { &vertices }, indices);
+			m_light.vao.draw();
+		}
 	});
 	perception.enumerate_projectiles([&](const projectile &projectile)
 	{
-		p = projectile.position(movement_phase) - perception.start();
+		vector p = projectile.position(movement_phase) - perception.start();
 		GLfloat outer = 10.0;
 		GLfloat inner = 0.0;
 		GLfloat elevation = 2.0;
