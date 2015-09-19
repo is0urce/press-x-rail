@@ -1,11 +1,11 @@
-// name: Statistics.h
+// name: statistics.h
 // type: c++
-// desc: class header
+// desc: class template header
 // auth: is0urce
 
 #pragma once
 
-#include "enhancement.h"
+#include <px/rl/enhancement.h>
 
 #include <vector>
 

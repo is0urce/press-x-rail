@@ -3,9 +3,10 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_SKILL_H
+#define PX_RL_SKILL_H
 
-#include "entity.h"
+#include <px/rl/entity.h>
 
 namespace px
 {
@@ -50,3 +51,5 @@ namespace px
 		};
 	}
 }
+
+#endif

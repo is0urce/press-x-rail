@@ -226,6 +226,9 @@
     <ClInclude Include="src\px\fn\station_builder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

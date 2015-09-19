@@ -35,7 +35,7 @@ game::game()
 	m_player.reset(new rl::player(this));
 	m_player->appearance({ '@', 0xffffff });
 	m_player->health() = 100;
-	rl::person::action_t::target_fn tf([&](rl::person::user_t *user, rl::person::target_t unit)
+	rl::person::action_t::target_fn tf([&](rl::person::caster_t *user, rl::person::target_t unit)
 	{
 		if (user)
 		{
@@ -48,17 +48,17 @@ game::game()
 			m_projectiles.push_back(projectile('*', 0xff0000, [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
 		}
 	});
-	rl::person::action_t::target_check_fn tfc([&](rl::person::user_t *user, rl::person::target_t unit)
+	rl::person::action_t::target_check_fn tfc([&](rl::person::caster_t *user, rl::person::target_t unit)
 	{
 		return true;
 	});
 	m_player->add_skill({ tf, tfc });
-	rl::person::action_t::ground_fn ttf([&](rl::person::user_t *user, const point &position)
+	rl::person::action_t::ground_fn ttf([&](rl::person::caster_t *user, const point &position)
 	{
 		m_scene.focus(position);
 		m_scene.move(m_player, position);
 	});
-	rl::person::action_t::ground_check_fn ttfc([&](rl::person::user_t *user, const point &position)
+	rl::person::action_t::ground_check_fn ttfc([&](rl::person::caster_t *user, const point &position)
 	{
 		return true;// m_scene.traversable(position);
 	});

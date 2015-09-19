@@ -6,6 +6,7 @@
 #pragma once
 
 #include <px/appearance.h>
+#include <px/light.h>
 
 #include "px/reader.h"
 #include "px/writer.h"
@@ -23,12 +24,14 @@ namespace px
 			typedef std::string name_t;
 			typedef std::string tag_t;
 			typedef unsigned int faction_t;
+			typedef light light_t;
 
 		protected:
 			name_t m_name;
 			tag_t m_tag;
 			appearance_t m_appearance;
 			faction_t m_faction;
+			light_t m_light;
 
 			// ctor & dtor
 		public:
@@ -47,6 +50,9 @@ namespace px
 			name_t name() const;
 			void tag(tag_t str);
 			tag_t tag() const;
+			const light_t& light() const;
+			light_t& light();
+			void light(light_t light_source);
 
 			// faction
 			void faction(faction_t handle);

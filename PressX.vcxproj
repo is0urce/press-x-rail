@@ -94,6 +94,7 @@
     <ClInclude Include="src\px\fn\cave_builder.h" />
     <ClInclude Include="src\px\fn\delegate_builder.h" />
     <ClInclude Include="src\px\fn\station_builder.h" />
+    <ClInclude Include="src\px\light.h" />
     <ClInclude Include="src\px\rl\actor.h" />
     <ClInclude Include="src\px\rl\attribute.h" />
     <ClInclude Include="src\px\shell\avatar.h" />

@@ -12,7 +12,7 @@
 #include "px/ability.h"
 #include "px/user_ability.h"
 
-#include "effect.h"
+#include "px/rl/effect.h"
 
 namespace px
 {
@@ -23,9 +23,9 @@ namespace px
 			public character
 		{
 		public:
-			typedef person user_t;
+			typedef person caster_t;
 			typedef std::shared_ptr<unit> target_t;
-			typedef delegate_action<user_t*, target_t> action_t;
+			typedef delegate_action<caster_t*, target_t> action_t;
 
 			typedef ability<target_t> ability_t; // value-type to save intristic values - cd
 			typedef std::unique_ptr<ability_t> ability_ptr;
@@ -45,27 +45,18 @@ namespace px
 				auto l = node->open("person");
 				unit::serialize(l);
 				character::store(l->open("char"));
-				//auto skills = l->open("skills");
-				//for (auto &skill : m_skills)
-				//{
-				//	skills->write("skill", skill.tag());
-				//}
 			}
 			virtual void deserialize(const reader::node &node) override
 			{
 				unit::deserialize(node["unit"]);
 				character::restore(node["char"]);
-				//l["skills"].enumerate([&](const reader::node &skill_node)
-				//{
-				//	std::string tag = skill_node["tag"].read<std::string>();
-				//});
 			}
 
 		public:
 			ability_ptr skill(unsigned int slot)
 			{
 				return slot < m_skills.size() ?
-					ability_ptr(new user_ability<user_t*, target_t>(this, &m_skills.at(slot)))
+					ability_ptr(new user_ability<caster_t*, target_t>(this, &m_skills.at(slot)))
 					:
 					nullptr;
 			}
