@@ -3,9 +3,10 @@
 // desc: class with implementation
 // auth: is0urce
 
-#pragma once
+#ifndef PX_READER_H
+#define PX_READER_H
 
-#include "io.h"
+#include <px/io.h>
 
 #include <fstream>
 #include <functional>
@@ -232,3 +233,5 @@ namespace px
 		}
 	};
 }
+
+#endif

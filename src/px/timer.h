@@ -32,7 +32,7 @@ namespace px
 		}
 
 		// time in seconds
-		double measure() const
+		float measure() const
 		{
 			return fsec(clock_t::now() - m_last).count();
 		}

@@ -10,9 +10,10 @@
 // data can be nested, open(key) for create nesting
 // writing another value-size or opening another nested list at same level invalidates previous
 
-#pragma once
+#ifndef PX_WRITER_H
+#define PX_WRITER_H
 
-#include "io.h"
+#include <px/io.h>
 
 #include <fstream>
 #include <string>
@@ -180,3 +181,5 @@ namespace px
 		node_ptr operator->() { return m_top; }
 	};
 }
+
+#endif

@@ -3,7 +3,8 @@
 // desc: class with implementation
 // auth: is0urce
 
-#pragma once
+#ifndef PX_IO_H
+#define PX_IO_H
 
 #include <string>
 #include <stdexcept>
@@ -58,7 +59,7 @@ namespace px
 		}
 		static key_t to_key(unsigned int key_value)
 		{
-			if (sizeof(key_value) > sizeof(key_t)) throw std::logic_error("not supported");
+			if (sizeof(key_value) > sizeof(key_t)) throw std::logic_error("not supported - int type size > key type size");
 
 			key_t result = to_key("_____key");
 			memcpy((char*)&result, &key_value, sizeof(key_value));
@@ -74,3 +75,5 @@ namespace px
 	inline bool operator!=(const char *a, const io::key_t &b) { return !operator==(io::to_key(a), b); }
 	inline bool operator!=(const io::key_t &a, const char *b) { return !operator==(a, io::to_key(b)); }
 }
+
+#endif

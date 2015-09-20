@@ -1,12 +1,10 @@
 #version 330
 
 smooth in vec2 theTexture;
-smooth in vec2 lmTexture;
 
 out vec4 outputColor;
 uniform sampler2D img;
 uniform sampler2D light;
-uniform sampler2D lightmap;
 uniform vec3 rng;
 
 // noise functions
@@ -52,7 +50,7 @@ vec3 tonemap(vec3 color)
 void main()
 {
 	vec3 s = texture(img, theTexture.xy).rgb;
-	vec3 l = texture(light, theTexture.xy).rgb + texture(lightmap, lmTexture.xy).rgb;
+	vec3 l = texture(light, theTexture.xy).rgb;
 	vec3 n = noise3(rng) / 64;
 
 	outputColor = vec4(tonemap(s * l) + n, 1);

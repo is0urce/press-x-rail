@@ -44,6 +44,7 @@ namespace px
 		std::list<projectile> m_projectiles;
 		ui::canvas m_canvas;
 		std::unique_ptr<ui::panel> m_status;
+		std::function<bool(const point &position)> m_fov_fn;
 
 	public:
 		game();

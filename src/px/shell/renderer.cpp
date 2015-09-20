@@ -730,11 +730,8 @@ namespace px
 			glBindTexture(GL_TEXTURE_2D, m_scene_texture);
 			glActiveTexture(GL_TEXTURE0 + 1);
 			glBindTexture(GL_TEXTURE_2D, m_light_texture);
-			glActiveTexture(GL_TEXTURE0 + 2);
-			glBindTexture(GL_TEXTURE_2D, m_lightmap_texture);
 			glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
 			glUniform1i(glGetUniformLocation(m_scene.program, "light"), 1);
-			glUniform1i(glGetUniformLocation(m_scene.program, "lightmap"), 2);
 			glUniform3f(glGetUniformLocation(m_scene.program, "rng"), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100));
 			m_scene.vao.draw();
 

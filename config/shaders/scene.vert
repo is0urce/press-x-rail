@@ -4,11 +4,9 @@ layout(location = 0) in vec2 position;
 layout(location = 1) in vec2 texture;
 
 smooth out vec2 theTexture;
-smooth out vec2 lmTexture;
 
 void main()
 {
     theTexture = texture;
-	lmTexture = vec2(0.5, 0.5);
 	gl_Position = vec4(position, 0, 1);
 }

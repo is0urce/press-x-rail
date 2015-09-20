@@ -45,7 +45,8 @@ const unsigned int game::perc_height = perc_range * 2 + 1;
 game::game()
 	:
 	m_perception(perc_reach),
-	m_canvas({ 1, 1 })
+	m_canvas({ 1, 1 }),
+	m_fov_fn([&](const point& p) { return m_scene.transparent(p); })
 {
 	m_player.reset(new rl::player(this));
 	m_player->appearance({ '@', 0xffffff });
@@ -80,9 +81,11 @@ game::game()
 	});
 	m_player->add_skill({ ttf, ttfc });
 
+	// add player
 	m_scene.focus({ 18, 18 });
 	m_scene.add(m_player, { 18, 18 });
 
+	// ui
 	m_status.reset(new ui::status_panel(m_player, &m_canvas));
 
 	fill_perception();
@@ -97,27 +100,31 @@ void game::fill_perception()
 	point start = m_player->position() - perc_center;
 	m_perception.swap(start);
 
-	// generate lightmap
-	map<color> lightmap(perc_reach);
-	lightmap.fill(color(0, 0, 0));
+	// units
+	shadowcasting player_fov(m_fov_fn, m_player->position(), perc_range);
+	map<color> lightmap(perc_reach, color(0, 0, 0));
 	m_scene.enumerate_units([&](scene::unit_ptr unit)
 	{
+		// lightmap casting
 		auto l = unit->light();
-		if (l.enabled()) //  && l.shadowcasting()
+		point position = unit->position();
+		if (l.enabled() && l.shadowcasting())
 		{
-			shadowcasting fov([&](const point& p)
-			{
-				return m_scene.transparent(p);
-			}, unit->position(), light_range);
-
-			point light_pos = unit->position();
+			shadowcasting light_fov(m_fov_fn, unit->position(), light_range);
 			perc_reach.enumerate([&](const point &range_point)
 			{
-				if (fov.in_fov(start + range_point))
+				point absolute = start + range_point;
+				if (light_fov.in_fov(absolute) && player_fov.in_fov(absolute) && m_scene.transparent(absolute))
 				{
-					lightmap.at(range_point) += l.color() * fade(light_pos.distance(start + range_point));
+					lightmap.at(range_point) += l.color() * fade(position.distance(absolute));
 				}
 			});
+		}
+
+		// avatar
+		if (player_fov.in_fov(position))
+		{
+			m_perception.add_avatar(unit->appearance(), position, unit->previous_position(), l, !unit->traversable());
 		}
 	});
 
@@ -128,12 +135,6 @@ void game::fill_perception()
 		m_perception.appearance(range_point, tile.image);
 		m_perception.ground(range_point, tile.color);
 		m_perception.light(range_point, lightmap.at(range_point));
-	});
-
-	// units
-	m_scene.enumerate_units([&](scene::unit_ptr unit)
-	{
-		m_perception.add_avatar(unit->appearance(), unit->position(), unit->previous_position(), unit->light(), !unit->traversable());
 	});
 
 	// notifications

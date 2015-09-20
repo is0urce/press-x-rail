@@ -35,19 +35,21 @@ namespace px
 		void station_builder::generate(map_t &cell_map, fetch_op fetch_fn)
 		{
 			point range = cell_map.range();
-			int h = 19; // rails Y
-			int w = range.X / 4;
+			int rail_h = 19; // rails Y
+			int w = range.X;
 
 			map<bool> walls(range);
 			walls.fill(true);
-			draw_square(walls, { w, h }, { w * 2, 10 }, false);
+			draw_square(walls, { w / 4, rail_h }, { w / 4 * 2, 10 }, false);
+			draw_square(walls, { 1, rail_h + 1 }, { w / 4, 10 }, false);
+			walls.at({ w / 4 - 1, rail_h + 5 }) = false;
 
 			// fill
 			cell_map.range().enumerate([&](const point &position)
 			{
 				bool wall = walls.at(position);
-				bool floor = (position.Y > h - 2 && position.Y < h + 3) || !wall && position.Y != 0 && position.Y != range.Y - 1;
-				bool rail = position.Y == h || position.Y == h + 1;
+				bool floor = (position.Y > rail_h - 2 && position.Y < rail_h + 3) || !wall && position.Y != 0 && position.Y != range.Y - 1;
+				bool rail = position.Y == rail_h || position.Y == rail_h + 1;
 				unsigned int glyph = rail ? 8212 : floor ? '.' : ' ';
 
 				auto &t = cell_map.at(position);

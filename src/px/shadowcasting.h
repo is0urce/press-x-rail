@@ -25,6 +25,9 @@ namespace px
 
 	class shadowcasting
 	{
+	public:
+		typedef std::function<bool(const point &position)> map_fn; // std::function<bool(const point &position)>
+
 	private:
 		std::unique_ptr<bool[]> m_fov;
 		unsigned int m_radius;
@@ -138,11 +141,7 @@ namespace px
 						float slope = (float)(dx) / (float)(dy);
 						bool wall = !map_fn(absolute);
 						bool center = start >= slope && slope >= end;
-						//if ((center || wall) && (dx * dx + dy * dy < (int)radius2))
-						//{
-						//	light(absolute);
-						//}
-						if (center && !wall && (dx * dx + dy * dy < (int)radius2))
+						if ((center || wall) && (dx * dx + dy * dy < (int)radius2))
 						{
 							light(absolute);
 						}
