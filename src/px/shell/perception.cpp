@@ -90,7 +90,7 @@ const color& perception::light(const point &position) const
 
 const color& perception::light_previous(const point &position) const
 {
-	point prev = position - m_move;
+	point prev = position + m_move;
 	return m_color_prev->in_range(prev) ? m_color_prev->at(prev) : black_color; // _color->getelement(position); // to fade in
 }
 
@@ -101,7 +101,7 @@ const perception::ground_t& perception::ground(const point &position) const
 
 const perception::ground_t& perception::ground_previous(const point &position) const
 {
-	point prev = position - m_move;
+	point prev = position + m_move;
 	return m_ground_prev->in_range(prev) ? m_color_prev->at(prev) : black_color; // m_ground->at(position);
 }
 

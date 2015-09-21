@@ -82,8 +82,9 @@ namespace px
 		m_player->add_skill({ ttf, ttfc });
 
 		// add player
-		m_scene.focus({ 18, 18 });
-		m_scene.add(m_player, { 18, 18 });
+		point player_pos(20, 20);
+		m_scene.focus(player_pos);
+		m_scene.add(m_player, player_pos);
 
 		// ui
 		m_status.reset(new ui::status_panel(m_player, &m_canvas));

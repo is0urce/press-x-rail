@@ -62,8 +62,8 @@ world::world()
 	m_library->push("ore_copper", ore);
 
 	rl::unit lantern;
-	lantern.appearance({ 'P', color(1, 1, 1) });
-	lantern.light({ { 10, 10, 9 }, true });
+	lantern.appearance({ ' ', color(1, 1, 1) });
+	lantern.light({ { 3, 3, 3 }, true });
 	m_library->push("lantern", lantern);
 
 	rl::door door;

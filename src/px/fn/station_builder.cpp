@@ -59,16 +59,21 @@ namespace px
 
 			map<bool> walls(range);
 			walls.fill(true);
+			point room(1, rail_h + 4);
+			point room_size(w / 4 - 2, 11);
 			draw_square(walls, { w / 4, rail_h }, { w / 4 * 2, 10 }, false);
-			draw_square(walls, { 1, rail_h + 4 }, { w / 4 - 2, 11 }, false);
-			draw_horisontal(walls, { 1, rail_h + 4 + 3 }, 3, true);
-			draw_horisontal(walls, { 1, rail_h + 4 + 7 }, 3, true);
+			draw_square(walls, room, room_size, false);
+			draw_horisontal(walls, { room.X, room.Y + 3 }, 5, true);
+			draw_horisontal(walls, { room.X, room.Y + 7 }, 5, true);
+			draw_vertical(walls, { room.X + 5, room.Y + 2 }, 3, true);
+			draw_vertical(walls, { room.X + 5, room.Y + 6 }, 3, true);
+			draw_vertical(walls, { room.X + 5, room.Y + 10 }, 3, true);
+			walls.at({ room.X + 5, room.Y + 0 }) = true;
 
-			fetch_fn(m_library->make<rl::unit>("lantern"), { 1, rail_h + 4 + 1 });
-			fetch_fn(m_library->make<rl::unit>("lantern"), { 1, rail_h + 4 + 5 });
-			fetch_fn(m_library->make<rl::unit>("lantern"), { 1, rail_h + 4 + 9 });
+			//fetch_fn(m_library->make<rl::unit>("lantern"), { room.X + 5, room.Y + 3 });
+			//fetch_fn(m_library->make<rl::unit>("lantern"), { room.X + 5, room.Y + 7 });
 
-			point door_pos(w / 4 - 1, rail_h + 5);
+			point door_pos(room.X + room_size.X, room.Y + 1);
 			walls.at(door_pos) = false;
 			fetch_fn(m_library->make<rl::door>("door"), door_pos);
 

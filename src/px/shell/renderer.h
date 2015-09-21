@@ -55,10 +55,11 @@ namespace px
 			{
 				vao vao;
 				GLuint program;
-			} m_background, m_tiles, m_units, m_notification, m_projectiles, m_light, m_lightmap, m_scene, m_lightdraw, m_uiback, m_uitext;
+			} m_background, m_tiles, m_units, m_notification, m_projectiles, m_light, m_lightmap, m_lightmap_prev, m_scene, m_lightdraw, m_uiback, m_uitext;
 
-			GLuint m_scene_frame, m_light_frame, m_lightmap_frame;
-			GLuint m_scene_texture, m_light_texture, m_lightmap_texture;
+			GLuint m_scene_frame, m_light_frame, m_lightmap_frame; // framebuffers
+			GLuint m_scene_texture, m_light_texture; // framebuffer textures for g-geometry and lights
+			GLuint m_lightmap_texture, m_lightmap_prev_texture; // static lights textures
 			unsigned int m_scene_size;
 			unsigned int m_lightmap_size;
 

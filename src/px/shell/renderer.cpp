@@ -124,6 +124,7 @@ namespace px
 			m_light.program = glsl::program("shaders\\light");
 
 			m_lightmap.vao.init({ vertice_depth, color_depth });
+			m_lightmap_prev.vao.init({ vertice_depth, color_depth });
 			m_lightmap.program = glsl::program("shaders\\lightmap");
 
 			m_lightdraw.vao.init({ vertice_depth, texcoord_depth });
@@ -157,6 +158,7 @@ namespace px
 			glGenTextures(1, &m_scene_texture);
 			glGenTextures(1, &m_light_texture);
 			glGenTextures(1, &m_lightmap_texture);
+			glGenTextures(1, &m_lightmap_prev_texture);
 
 			m_ui.font.reset(new font(font_path_ui, font_size_ui));
 			m_popup.font.reset(new font(font_path_notify, font_size_notify));
@@ -173,10 +175,13 @@ namespace px
 			}
 			glBindTexture(GL_TEXTURE_2D, m_lightmap_texture);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_lightmap_size, m_lightmap_size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+			glBindTexture(GL_TEXTURE_2D, m_lightmap_prev_texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_lightmap_size, m_lightmap_size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
 			glBindFramebuffer(GL_FRAMEBUFFER, m_lightmap_frame);
 			glBindTexture(GL_TEXTURE_2D, m_lightmap_texture);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_lightmap_texture, 0);
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("scene framebuffer not complete");
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("lightmap framebuffer not complete");
 
 			// scene vao
 			std::vector<GLfloat> vertices(points_quad * vertice_depth);
@@ -225,6 +230,7 @@ namespace px
 			glDeleteTextures(1, &m_scene_texture);
 			glDeleteTextures(1, &m_light_texture);
 			glDeleteTextures(1, &m_lightmap_texture);
+			glDeleteTextures(1, &m_lightmap_prev_texture);
 
 			glDeleteSamplers(1, &m_sampler);
 		}
@@ -544,6 +550,7 @@ namespace px
 		{
 			std::vector<GLfloat> vertices(range_size * vertice_depth);
 			std::vector<GLfloat> colors(range_size * color_depth);
+			std::vector<GLfloat> colors_prev(range_size * color_depth);
 			std::vector<GLuint> indices(range_size);
 
 			// vertex attributes
@@ -551,10 +558,11 @@ namespace px
 			unsigned int color_offset = 0;
 			point(range_width, range_height).enumerate([&](const point &position)
 			{
-				color light_color = perception.light(position);
+				color light_color_prev = perception.light_previous(position);
 
 				position.write(&vertices[vertex_offset]);
-				light_color.write(&colors[color_offset]);
+				perception.light(position).write(&colors[color_offset]);
+				perception.light_previous(position).write(&colors_prev[color_offset]);
 
 				vertex_offset += vertice_depth;
 				color_offset += color_depth;
@@ -567,6 +575,7 @@ namespace px
 
 			// bind
 			m_lightmap.vao.fill(range_size, { &vertices, &colors }, indices);
+			m_lightmap_prev.vao.fill(range_size, { &vertices, &colors_prev }, indices);
 		}
 
 		void renderer::draw(const perception_t &perception, const canvas_t &gui, timespan_t timespan)
@@ -631,14 +640,22 @@ namespace px
 			m_tiles.vao.draw();
 
 			// lights (static)
-			glBindFramebuffer(GL_FRAMEBUFFER, m_lightmap_frame);
-			glViewport(0, 0, (GLsizei)m_lightmap_size, (GLsizei)m_lightmap_size);
-			glClearColor(0.0, 0.0, 0.0, 0.0);
-			glClear(GL_COLOR_BUFFER_BIT);
 			glDisable(GL_BLEND);
+			glBindFramebuffer(GL_FRAMEBUFFER, m_lightmap_frame);
 			glUseProgram(m_lightmap.program);
 			glUniform1f(glGetUniformLocation(m_lightmap.program, "tsize"), 2.0f / m_lightmap_size);
+			// current
+			glBindTexture(GL_TEXTURE_2D, m_lightmap_texture);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_lightmap_texture, 0);
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("lightmap framebuffer not complete");
+			glViewport(0, 0, (GLsizei)m_lightmap_size, (GLsizei)m_lightmap_size);
 			m_lightmap.vao.draw(GL_POINTS);
+			// prev
+			glBindTexture(GL_TEXTURE_2D, m_lightmap_prev_texture); 
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_lightmap_prev_texture, 0);
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("lightmap framebuffer not complete");
+			glViewport(0, 0, (GLsizei)m_lightmap_size, (GLsizei)m_lightmap_size);
+			m_lightmap_prev.vao.draw(GL_POINTS);
 
 			// lights (non-static)
 			glBindFramebuffer(GL_FRAMEBUFFER, m_light_frame);
@@ -649,14 +666,19 @@ namespace px
 			glBlendFunc(GL_ONE, GL_ONE); // additive
 
 			// copy static lightmapmap
-			glUseProgram(m_lightdraw.program);
+			glUseProgram(m_lightdraw.program); 
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_lightmap_texture);
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, m_lightmap_prev_texture);
 			glUniform1f(glGetUniformLocation(m_lightdraw.program, "aspect"), aspect);
 			glUniform1f(glGetUniformLocation(m_lightdraw.program, "scale"), scale * range_width / 2);
 			glUniform2f(glGetUniformLocation(m_lightdraw.program, "center"), GLfloat(lightmap_center.X), GLfloat(lightmap_center.Y));
-			glUniform1i(glGetUniformLocation(m_lightdraw.program, "lmtexture"), 0); 
+			glUniform1f(glGetUniformLocation(m_lightdraw.program, "phase"), GLfloat(movement_phase));
+			glUniform1i(glGetUniformLocation(m_lightdraw.program, "lmtexture"), 0);
+			glUniform1i(glGetUniformLocation(m_lightdraw.program, "lmprevtexture"), 1);
 			glBindSampler(0, m_sampler);
+			glBindSampler(1, m_sampler);
 			m_lightdraw.vao.draw();
 
 			glUseProgram(m_light.program);
