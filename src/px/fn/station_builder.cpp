@@ -22,11 +22,30 @@ namespace px
 	namespace
 	{
 		template <typename _V>
-		inline void draw_square(map<_V> &map, point start, point range, _V rect_value)
+		void draw_square(map<_V> &map, point start, point range, _V tile)
 		{
-			range.enumerate(start, [&](const point &p) { map.at(p) = rect_value; });
+			range.enumerate(start, [&](const point &p) { map.at(p) = tile; });
+		}
+		template <typename _V>
+		void draw_horisontal(map<_V> &map, point start, unsigned int size, _V tile)
+		{
+			for (unsigned int i = 0; i < size; ++i)
+			{
+				map.at(start) = tile;
+				++start.X;
+			}
+		}
+		template <typename _V>
+		void draw_vertical(map<_V> &map, point start, unsigned int size, _V tile)
+		{
+			for (unsigned int i = 0; i < size; ++i)
+			{
+				map.at(start) = tile;
+				++start.Y;
+			}
 		}
 	}
+
 	namespace fn
 	{
 		station_builder::station_builder(lib_ptr lib) : m_library(lib) {}
@@ -41,8 +60,17 @@ namespace px
 			map<bool> walls(range);
 			walls.fill(true);
 			draw_square(walls, { w / 4, rail_h }, { w / 4 * 2, 10 }, false);
-			draw_square(walls, { 1, rail_h + 1 }, { w / 4, 10 }, false);
-			walls.at({ w / 4 - 1, rail_h + 5 }) = false;
+			draw_square(walls, { 1, rail_h + 4 }, { w / 4 - 2, 11 }, false);
+			draw_horisontal(walls, { 1, rail_h + 4 + 3 }, 3, true);
+			draw_horisontal(walls, { 1, rail_h + 4 + 7 }, 3, true);
+
+			fetch_fn(m_library->make<rl::unit>("lantern"), { 1, rail_h + 4 + 1 });
+			fetch_fn(m_library->make<rl::unit>("lantern"), { 1, rail_h + 4 + 5 });
+			fetch_fn(m_library->make<rl::unit>("lantern"), { 1, rail_h + 4 + 9 });
+
+			point door_pos(w / 4 - 1, rail_h + 5);
+			walls.at(door_pos) = false;
+			fetch_fn(m_library->make<rl::door>("door"), door_pos);
 
 			// fill
 			cell_map.range().enumerate([&](const point &position)
@@ -57,6 +85,8 @@ namespace px
 				t.transparent(floor);
 				t.traversable(floor);
 			});
+
+			cell_map.at(door_pos).appearance().color = { 0.15, 0.15, 0.15 };
 		}
 	}
 }

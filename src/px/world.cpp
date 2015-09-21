@@ -53,7 +53,6 @@ world::world()
 	rat.appearance({ 'r', 0x330000, 0.95f });
 	rat.health() = 100;
 	rat.tag("mob_r");
-
 	m_library->push("mob_r", rat);
 
 	rl::item ore;
@@ -61,6 +60,15 @@ world::world()
 	ore.name("copper ore");
 	ore.tag("ore_copper");
 	m_library->push("ore_copper", ore);
+
+	rl::unit lantern;
+	lantern.appearance({ 'P', color(1, 1, 1) });
+	lantern.light({ { 10, 10, 9 }, true });
+	m_library->push("lantern", lantern);
+
+	rl::door door;
+	door.appearance({ ' ', 0x333333 }, { '+', 0x333333 });
+	m_library->push("door", door);
 }
 world::~world() {}
 

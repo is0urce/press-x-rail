@@ -3,7 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_GAME_H
+#define PX_GAME_H
 
 #include <px/shell/perception.h>
 #include "px/scene.h"
@@ -80,3 +81,5 @@ namespace px
 		void load(file_path path);
 	};
 }
+
+#endif

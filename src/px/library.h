@@ -7,17 +7,22 @@
 
 #include "resource.h"
 
+#include <px/rl/unit.h>
 #include <px/rl/npc.h>
+#include <px/rl/door.h>
 #include <px/rl/status.h>
 
 #include <string>
 #include <stdexcept>
+#include <memory>
 
 namespace px
 {
 	class library :
+		public resource<rl::unit>,
 		public resource<rl::npc>,
 		public resource<rl::item>,
+		public resource<rl::door>,
 		public resource<rl::status<std::shared_ptr<rl::unit>>>
 	{
 	public:
@@ -57,6 +62,16 @@ namespace px
 		void push(const char *ctag, _T res)
 		{
 			push<_T>(std::string(ctag), res);
+		}
+		template <typename _T>
+		std::shared_ptr<_T> make(std::string &key)
+		{
+			return std::make_shared<_T>(prototype<_T>(key));
+		}
+		template <typename _T>
+		std::shared_ptr<_T> make(const char *key)
+		{
+			return std::make_shared<_T>(prototype<_T>(std::string(key)));
 		}
 	};
 }

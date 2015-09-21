@@ -46,15 +46,11 @@ namespace px
 			});
 
 
-			auto ore = std::make_shared<rl::item>(m_library->prototype<rl::item>("ore_copper"));
-
-			std::shared_ptr<rl::deposit> vein(new rl::deposit(ore));
+			auto vein = std::make_shared<rl::deposit>(m_library->make<rl::item>("ore_copper"));
 			vein->appearance({ 'O', 0xffffff });
 			fetch_fn(vein, { 12, 12 });
 
-			std::shared_ptr<rl::door> door(new rl::door());
-			door->appearance({ ' ', 0x333333 }, { '+', 0x333333 });
-			fetch_fn(door, { 20, 20 });
+			fetch_fn(m_library->make<rl::door>("door"), { 20, 20 });
 		}
 	}
 }

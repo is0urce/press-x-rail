@@ -630,16 +630,6 @@ namespace px
 			glBindSampler(0, m_sampler);
 			m_tiles.vao.draw();
 
-			glUseProgram(m_units.program);
-			glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
-			glUniform2f(glGetUniformLocation(m_units.program, "center"), x_center, y_center);
-			glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
-			glActiveTexture(GL_TEXTURE0 + 0);
-			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
-			glBindSampler(0, m_sampler);
-			m_units.vao.draw();
-
 			// lights (static)
 			glBindFramebuffer(GL_FRAMEBUFFER, m_lightmap_frame);
 			glViewport(0, 0, (GLsizei)m_lightmap_size, (GLsizei)m_lightmap_size);
@@ -738,6 +728,17 @@ namespace px
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			// units
+			glUseProgram(m_units.program);
+			glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
+			glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
+			glUniform2f(glGetUniformLocation(m_units.program, "center"), x_center, y_center);
+			glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
+			glActiveTexture(GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
+			glBindSampler(0, m_sampler);
+			m_units.vao.draw();
 
 			// particles
 			glUseProgram(m_projectiles.program);

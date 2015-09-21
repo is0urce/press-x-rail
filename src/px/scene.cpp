@@ -78,14 +78,14 @@ namespace px
 
 	void scene::add(unit_ptr unit)
 	{
-		if (!unit.operator bool()) throw new std::logic_error("scene::add - unit is null");
+		if (!unit) throw new std::logic_error("scene::add - unit is null");
 
 		add(unit, unit->position());
 	}
 
 	void scene::add(unit_ptr unit, const point &position)
 	{
-		if (!unit.operator bool()) throw new std::logic_error("scene::add - unit is null");
+		if (!unit) throw new std::logic_error("scene::add - unit is null");
 
 		unit->position(position);
 		m_units.emplace(position, unit);
