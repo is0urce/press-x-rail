@@ -3,7 +3,8 @@
 // desc: class to translate system virtual key messages to shell virtual key messages
 // auth: is0urce
 
-#pragma once
+#ifndef PX_SHELL_KEY_BINDINGS_H
+#define PX_SHELL_KEY_BINDINGS_H
 
 #include <map>
 
@@ -37,3 +38,5 @@ namespace px
 		};
 	}
 }
+
+#endif

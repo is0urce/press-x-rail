@@ -6,7 +6,8 @@
 // opengl graphics platform-independent abstraction
 // platform-specific implementation must inherit from it
 
-#pragma once
+#ifndef PX_SHELL_OPENGL_H
+#define PX_SHELL_OPENGL_H
 
 namespace px
 {
@@ -28,3 +29,5 @@ namespace px
 		};
 	}
 }
+
+#endif

@@ -5,7 +5,8 @@
 
 // "wiew" of game board
 
-#pragma once
+#ifndef PX_SHELL_PERCEPTION_H
+#define PX_SHELL_PERCEPTION_H
 
 #include <px/map.h>
 #include <px/point.h>
@@ -101,3 +102,5 @@ namespace px
 		};
 	}
 }
+
+#endif

@@ -5,9 +5,10 @@
 
 // windows-specific opengl graphics
 
-#pragma once
+#ifndef PX_SHELL_WINGL_H
+#define PX_SHELL_WINGL_H
 
-#include "opengl.h"
+#include <px/shell/opengl.h>
 
 #include "gl\glew.h"
 #include <gl\gl.h>
@@ -44,3 +45,5 @@ namespace px
 		};
 	}
 }
+
+#endif

@@ -3,7 +3,8 @@
 // desc: one header opengl shader compilation functions
 // auth: is0urce
 
-#pragma once
+#ifndef PX_SHELL_GLSL_H
+#define PX_SHELL_GLSL_H
 
 #include <fstream>
 #include <string>
@@ -98,3 +99,5 @@ namespace px
 		};
 	}
 }
+
+#endif

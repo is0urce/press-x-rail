@@ -3,12 +3,13 @@
 // desc: class
 // auth: is0uce
 
-#pragma once
+#ifndef PX_SHELL_GAME_CONTROL_H
+#define PX_SHELL_GAME_CONTROL_H
 
-#include "game.h"
+#include <px/game.h>
 
-#include "point.h"
-#include "key.h"
+#include <px/point.h>
+#include <px/key.h>
 
 #include <string>
 
@@ -129,3 +130,5 @@ namespace px
 		};
 	}
 }
+
+#endif

@@ -3,7 +3,8 @@
 // desc: class header
 // auth: is0urce
 
-#pragma once
+#ifndef PX_SHELL_FONT_H
+#define PX_SHELL_FONT_H
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -76,3 +77,5 @@ namespace px
 		};
 	}
 }
+
+#endif

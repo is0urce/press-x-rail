@@ -5,9 +5,10 @@
 
 // vertex array object for opengl
 
-#pragma once
+#ifndef PX_SHELL_VAO_H
+#define PX_SHELL_VAO_H
 
-#include "gl\glew.h"
+#include <gl\glew.h>
 #include <gl\gl.h>
 #include <gl\glu.h>
 
@@ -162,3 +163,5 @@ namespace px
 		};
 	}
 }
+
+#endif
