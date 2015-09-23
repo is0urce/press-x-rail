@@ -44,7 +44,7 @@ namespace px
 		std::list<broadcast> m_broadcasts;
 		std::list<projectile> m_projectiles;
 		ui::canvas m_canvas;
-		std::unique_ptr<ui::panel> m_status;
+		std::unique_ptr<ui::panel> m_ui;
 		std::function<bool(const point &position)> m_fov_fn;
 
 	public:

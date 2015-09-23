@@ -7,22 +7,23 @@
 
 #include "player.h"
 
-#include "px/game.h"
-#include "px/delegate_action.h"
+#include <px/game.h>
+#include <px/delegate_action.h>
 
-using namespace px;
-using namespace px::rl;
-
-player::player(receiver_t *receiver) : m_receiver(receiver)
+namespace px
 {
-
-}
-player::~player() {}
-
-void player::acquire(item_t item)
-{
-	if (m_receiver)
+	namespace rl
 	{
-		m_receiver->broadcast(broadcast(std::string("+ ") + item->name(), 0xffffff, position()));
+
+		player::player(receiver_t *receiver) : m_receiver(receiver) {}
+		player::~player() {}
+
+		void player::acquire(item_t item, bool silent)
+		{
+			if (!silent && m_receiver)
+			{
+				m_receiver->broadcast(broadcast(std::string("+ ") + item->name(), 0xffffff, position()));
+			}
+		}
 	}
 }

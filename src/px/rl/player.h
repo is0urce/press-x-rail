@@ -3,9 +3,10 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_PLAYER_H
+#define PX_RL_PLAYER_H
 
-#include "person.h"
+#include <px/rl/person.h>
 
 namespace px
 {
@@ -26,7 +27,9 @@ namespace px
 			virtual ~player();
 
 		protected:
-			virtual void acquire(player::item_t item) override;
+			virtual void acquire(player::item_t item, bool silent) override;
 		};
 	}
 }
+
+#endif

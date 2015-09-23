@@ -3,10 +3,11 @@
 // desc: base class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_UI_PANEL_H
+#define PX_UI_PANEL_H
 
 #include <px/point.h>
-#include "px/control.h"
+#include <px/control.h>
 
 #include <stdexcept>
 
@@ -40,3 +41,5 @@ namespace px
 		};
 	}
 }
+
+#endif

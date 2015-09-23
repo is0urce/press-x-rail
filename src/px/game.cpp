@@ -8,7 +8,9 @@
 #include "game.h"
 
 #include <px/rl/player.h>
+#include <px/ui/stack_panel.h>
 #include <px/ui/status_panel.h>
+#include <px/ui/inventory_panel.h>
 
 #include "px/writer.h"
 #include "px/reader.h"
@@ -87,7 +89,10 @@ namespace px
 		m_scene.add(m_player, player_pos);
 
 		// ui
-		m_status.reset(new ui::status_panel(m_player, &m_canvas));
+		std::unique_ptr<ui::stack_panel> ui(new ui::stack_panel(&m_canvas));
+		ui->add(std::make_shared<ui::status_panel>(m_player, &m_canvas));
+		ui->add(std::make_shared<ui::inventory_panel>(m_player, &m_canvas));
+		m_ui = std::move(ui);
 
 		fill_perception();
 	}
@@ -284,7 +289,7 @@ namespace px
 		{
 			m_canvas.resize(width, height);
 			m_canvas.cls();
-			m_status->draw();
+			m_ui->draw();
 		}
 	}
 

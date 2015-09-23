@@ -3,7 +3,8 @@
 // desc: class
 // auth: is0uce
 
-#pragma once
+#ifndef PX_RL_INVENTORY_H
+#define PX_RL_INVENTORY_H
 
 #include <list>
 #include <functional>
@@ -27,14 +28,18 @@ namespace px
 			virtual ~inventory() {}
 
 		protected:
-			virtual void acquire(_I item) {}
+			virtual void acquire(_I item, bool silent) {}
+			virtual void unaquire(_I item, bool silent) {}
 
 		public:
 			void enumerate_items(std::function<void(_I)> fn) { std::for_each(m_items.begin(), m_items.end(), fn); }
-			void add_item(_I item, bool silent) { m_items.push_back(item); if (!silent) { acquire(item); } }
+			void add_item(_I item, bool silent) { m_items.push_back(item); acquire(item, silent); }
 			void add_item(_I item) { add_item(item, false); }
-			void remove_item(_I item) { m_items.remove(item); }
-			unsigned int count(_I item) { return m_items.size(); }
+			void remove_item(_I item, bool silent) { m_items.remove(item); unaquire(item, silent); }
+			void remove_item(_I item) { remove_item(_I, false); }
+			unsigned int count() const { return m_items.size(); }
 		};
 	}
 }
+
+#endif

@@ -3,9 +3,10 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_UI_STATUS_PANEL_H
+#define PX_UI_STATUS_PANEL_H
 
-#include "panel.h"
+#include <px/ui/panel.h>
 
 #include <memory>
 
@@ -34,3 +35,5 @@ namespace px
 		};
 	}
 }
+
+#endif

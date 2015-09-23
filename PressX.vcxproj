@@ -130,6 +130,8 @@
     <ClInclude Include="src\px\appearance.h" />
     <ClInclude Include="src\px\projectile.h" />
     <ClInclude Include="src\px\serializer.h" />
+    <ClInclude Include="src\px\ui\inventory_panel.h" />
+    <ClInclude Include="src\px\ui\stack_panel.h" />
     <ClInclude Include="src\px\user_ability.h" />
     <ClInclude Include="src\px\rl\inventory.h" />
     <ClInclude Include="src\px\io.h" />
@@ -185,12 +187,14 @@
     <ClCompile Include="src\px\rl\entity.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
+    <ClCompile Include="src\px\ui\inventory_panel.cpp" />
     <ClCompile Include="src\px\ui\panel.cpp" />
     <ClCompile Include="src\px\shell\perception.cpp" />
     <ClCompile Include="src\px\rl\player.cpp" />
     <ClCompile Include="src\PressX.cpp" />
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\scene.cpp" />
+    <ClCompile Include="src\px\ui\stack_panel.cpp" />
     <ClCompile Include="src\px\ui\status_panel.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
