@@ -202,15 +202,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_MOUSEMOVE:
 		if (!g_core) break;
-		g_core->hover(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		g_core->hover({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	case WM_LBUTTONDOWN:
 		if (!g_core) break;
-		g_core->click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 1);
+		g_core->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 1);
 		break;
 	case WM_RBUTTONDOWN:
 		if (!g_core) break;
-		g_core->click(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 2);
+		g_core->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 2);
 		break;
 	case WM_MOUSEWHEEL:
 		if (!g_core) break;

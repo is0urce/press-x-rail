@@ -823,6 +823,10 @@ namespace px
 			fy = std::round(fy / m_scale / m_aspect);
 			return{ (int)fx, (int)fy };
 		}
+		point renderer::ui(const point &screen) const
+		{
+			return point((screen.X - m_width % ui_cell_width / 2) / ui_cell_width, (screen.Y - m_height % ui_cell_height / 2) / ui_cell_height);
+		}
 
 		void renderer::size(int &width, int &height)
 		{

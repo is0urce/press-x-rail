@@ -24,7 +24,7 @@ namespace px
 
 		public:
 			bool stackable() const { return m_stackable; }
-			bool stackable(bool is_stackable) { m_stackable = is_stackable; }
+			void stackable(bool is_stackable) { m_stackable = is_stackable; }
 		};
 	}
 }

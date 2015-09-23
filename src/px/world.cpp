@@ -59,6 +59,7 @@ world::world()
 	ore.appearance('o');
 	ore.name("copper ore");
 	ore.tag("ore_copper");
+	ore.stackable(true);
 	m_library->push("ore_copper", ore);
 
 	rl::unit lantern;

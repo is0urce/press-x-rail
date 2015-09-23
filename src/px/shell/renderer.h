@@ -82,6 +82,7 @@ namespace px
 			void scale(double pan);
 			void size(int &width, int &height);
 			point world(const point &screen) const;
+			point ui(const point &screen) const;
 		};
 	}
 }

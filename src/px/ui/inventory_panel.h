@@ -33,6 +33,7 @@ namespace px
 
 		protected:
 			virtual void draw_panel() override;
+			virtual bool click_control(const point &position, unsigned int button) override;
 		};
 	}
 }

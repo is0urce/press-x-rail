@@ -45,12 +45,18 @@ namespace px
 				t.traversable(floor);
 			});
 
-
-			auto vein = std::make_shared<rl::deposit>(m_library->make<rl::item>("ore_copper"));
-			vein->appearance({ 'O', 0xffffff });
-			fetch_fn(vein, { 12, 12 });
-
-			fetch_fn(m_library->make<rl::door>("door"), { 20, 20 });
+			for (unsigned int n = 0; n < 10; ++n)
+			{
+				auto vein = std::make_shared<rl::deposit>(m_library->make<rl::item>("ore_copper"));
+				vein->appearance({ 'O', 0xffffff });
+				point pos;
+				do
+				{
+					pos = { std::rand() % cell_map.width(), std::rand() % cell_map.height() };
+				}
+				while (walls.at(pos));
+				fetch_fn(vein, pos);
+			}
 		}
 	}
 }

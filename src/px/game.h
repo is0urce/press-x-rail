@@ -71,6 +71,7 @@ namespace px
 
 		// ui
 		const ui::canvas& canvas() const;
+		ui::panel& panel() const;
 		void draw_ui(int w, int h);
 
 		// receiver

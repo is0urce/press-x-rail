@@ -208,9 +208,6 @@
     <ClInclude Include="src\px\shell\key_bindings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\shell\game_control.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\fn\cave_builder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -298,6 +295,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\ui\stack_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

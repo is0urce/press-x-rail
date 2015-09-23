@@ -283,6 +283,11 @@ namespace px
 		return m_canvas;
 	}
 
+	ui::panel& game::panel() const
+	{
+		return *m_ui;
+	}
+
 	void game::draw_ui(int width, int height)
 	{
 		if (width > 0 && height > 0)

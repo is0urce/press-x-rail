@@ -3,90 +3,52 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_CORE_H
+#define PX_CORE_H
 
-#include <px/game.h>
 #include <px/key.h>
-#include <px/shell/renderer.h>
-#include <px/shell/game_control.h>
-#include <px/shell/perception.h>
-#include <px/timer.h>
+#include <px/point.h>
+
+#include <memory>
 
 namespace px
 {
+	class game;
+	class timer;
 	namespace shell
 	{
+		class renderer;
+		class opengl;
 		class core
 		{
+		public:
+			typedef std::unique_ptr<opengl> opengl_handle;
+
 		private:
 			std::unique_ptr<renderer> m_graphics;
-			game m_game;
-			game_control m_control;
-
-			unsigned int m_version = 0;
-			px::timer m_time;
+			std::unique_ptr<game> m_game;
+			std::unique_ptr<timer> m_time;
+			bool m_shutdown;
+			unsigned int m_version;
 
 		public:
-			core(renderer::opengl_handle ogl) : m_graphics(new renderer(std::move(ogl))), m_control(&m_game)
-			{
-				std::srand((unsigned int)m_time.counter());
-				auto turn = m_game.perception().version();
-			}
-			virtual ~core() {}
+			core(opengl_handle ogl);
+			virtual ~core();
 
-			void frame()
-			{
-				if (!m_control.finished())
-				{
-					// restart timer on new perception frame
-					auto &perception = m_game.perception();
-					auto current = perception.version();
-					if (m_version != current)
-					{
-						m_version = current;
-						m_time.restart();
-					}
+			void frame();
 
-					auto &gui = m_game.canvas();
+			bool press(key vk);
+			bool hover(const point &screen);
+			bool click(const point &screen, unsigned int button);
+			bool scroll(int delta);
 
-					// update interface
-					int width, height;
-					m_graphics->size(width, height);
-					m_game.draw_ui(width / renderer::ui_cell_width, height / renderer::ui_cell_height);
+			bool run() const;
 
-					// drawcalls before windows destruction
-					m_graphics->draw(perception, m_game.canvas(), m_time.measure());
-				}
-			}
-
-			void press(key vk)
-			{
-				if (vk == key::command_cancel) shutdown();
-
-				m_control.press(vk);
-			}
-			void hover(int x, int y)
-			{
-				m_control.hover(m_graphics->world({ x, y }));
-			}
-			void click(int x, int y, unsigned int button)
-			{
-				m_control.click(m_graphics->world({ x, y }), button);
-			}
-			void scroll(int delta)
-			{
-				m_graphics->scale(delta);
-			}
-
-			bool run() const
-			{
-				return !m_control.finished();
-			}
-
-			void shutdown()
-			{
-				m_control.shutdown();
-			}
+			void shutdown(bool shutdown);
+			void shutdown();
+			bool finished() const;
 		};
 	}
 }
+
+#endif
