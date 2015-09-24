@@ -25,11 +25,16 @@ namespace px
 			point items_range(const point &range) { return range.moved(-2, -3); }
 			point element_range(const point &range) { return{ range.X, 1 }; }
 			const std::string title = "inventory";
+			const std::string dots = ". . .";
 		}
 
 		inventory_panel::inventory_panel(target_ptr target, canvas *ui_canvas)
-			: panel(ui_canvas), m_target(target), m_scroll(0) {}
-		inventory_panel::~inventory_panel() {}
+			: panel(ui_canvas), m_target(target), m_scroll(0)
+		{
+		}
+		inventory_panel::~inventory_panel()
+		{
+		}
 
 		void inventory_panel::update()
 		{
@@ -38,10 +43,11 @@ namespace px
 			m_list_start = items_start(m_panel_start);
 			m_list_range = items_range(m_panel_range);
 			m_count = m_list_range.Y / element_range(m_list_range).Y;
+			m_scroll = std::max(std::min(m_scroll, (int)m_target->item_count() - m_count), 0);
 		}
 		void inventory_panel::do_scroll(int delta)
 		{
-			m_scroll = std::max(std::min(m_scroll + delta, (int)m_target->item_count() - m_count), 0);
+			m_scroll += delta > 0 ? 1 : -1;
 		}
 
 		void inventory_panel::draw_panel()
@@ -54,11 +60,29 @@ namespace px
 
 			point pen_start = m_list_start;
 			point pen_range = element_range(m_list_range);
+			int current = 0;
+			if (m_scroll > 0)
+			{
+				m_canvas->write(pen_start.moved(pen_range.X / 2 - dots.length() / 2, -1), dots);
+			}
 			m_target->enumerate_items([&](target_t::item_t item)
 			{
-				m_canvas->write(pen_start, item->name());
-				pen_start.move(0, pen_range.Y);
+				int relative = current - m_scroll;
+				if (relative >= 0 && relative < m_count)
+				{
+					if (m_hover.in_range(pen_start, pen_range))
+					{
+						m_canvas->rectangle(pen_start, pen_range, color(0.5, 0.5, 0.5, 0.75));
+					}
+					m_canvas->write(pen_start, item->name());
+					pen_start.move(0, pen_range.Y);
+				}
+				++current;
 			});
+			if (m_scroll + m_count < (int)m_target->item_count())
+			{
+				m_canvas->write(m_panel_start.moved(m_panel_range.X / 2 - dots.length() / 2, m_panel_range.Y - 1), dots);
+			}
 		}
 		bool inventory_panel::click_control(const point &position, unsigned int button)
 		{
@@ -66,6 +90,27 @@ namespace px
 			m_hover = position;
 			if (position.in_range(m_panel_start, m_panel_range))
 			{
+				target_t::item_t found;
+				point pen_start = m_list_start;
+				point pen_range = element_range(m_list_range);
+				int current = 0;
+				m_target->enumerate_items([&](target_t::item_t item)
+				{
+					int relative = current - m_scroll;
+					if (relative >= 0 && relative < m_count)
+					{
+						if (m_hover.in_range(pen_start, pen_range))
+						{
+							found = item;
+						}
+						pen_start.move(0, pen_range.Y);
+					}
+					++current;
+				});
+				if (found)
+				{
+					//m_target->remove_item(found);
+				}
 				return true;
 			}
 			else

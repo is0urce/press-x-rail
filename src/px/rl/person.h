@@ -7,6 +7,7 @@
 
 #include <px/rl/actor.h>
 #include <px/rl/character.h>
+#include <px/rl/equipment.h>
 
 #include "px/delegate_action.h"
 #include "px/ability.h"
@@ -20,7 +21,8 @@ namespace px
 	{
 		class person : 
 			public actor, 
-			public character
+			public character,
+			public equipment
 		{
 		public:
 			typedef person caster_t;
@@ -37,6 +39,7 @@ namespace px
 		public:
 			person() {}
 			virtual ~person() {}
+
 
 		protected:
 			virtual void apply_effect(effect &e) override { e.apply(*this); }

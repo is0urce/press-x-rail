@@ -83,6 +83,16 @@ namespace px
 		});
 		m_player->add_skill({ ttf, ttfc });
 
+		// starting inventory
+		for (int i = 0; i < 50; ++i)
+		{
+			auto itm = std::make_shared<rl::item>();
+			itm->name("orb of idunno #" + i);
+			m_player->add_item(itm, true);
+		}
+		m_player->weapon() = std::make_shared<rl::item>();
+		m_player->weapon()->name() = "weapon of choice";
+
 		// add player
 		point player_pos(20, 20);
 		m_scene.focus(player_pos);

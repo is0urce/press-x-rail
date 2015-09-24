@@ -1,4 +1,4 @@
-// name: world.cpp
+﻿// name: world.cpp
 // type: c++
 // desc: class implementation
 // auth: is0urce

@@ -12,7 +12,7 @@ namespace px
 {
 	namespace rl
 	{
-		class Actor;
+		class person;
 
 		class item : public unit
 		{
@@ -21,6 +21,9 @@ namespace px
 		public:
 			item() : m_stackable(false) {}
 			virtual ~item() {}
+
+		protected:
+			virtual void activate(std::shared_ptr<person> activator) {}
 
 		public:
 			bool stackable() const { return m_stackable; }

@@ -27,7 +27,7 @@ namespace px
 		private:
 			target_ptr m_target;
 			int m_scroll;
-			int m_count;
+			int m_count; // number of items shown
 			point m_hover;
 			point m_panel_start;
 			point m_panel_range;

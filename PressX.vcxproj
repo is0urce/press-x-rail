@@ -113,6 +113,7 @@
     <ClInclude Include="src\px\light.h" />
     <ClInclude Include="src\px\rl\actor.h" />
     <ClInclude Include="src\px\rl\attribute.h" />
+    <ClInclude Include="src\px\rl\equipment.h" />
     <ClInclude Include="src\px\shell\avatar.h" />
     <ClInclude Include="src\px\bar.h" />
     <ClInclude Include="src\px\broadcast.h" />
