@@ -32,6 +32,8 @@ namespace px
 
 		public:
 			item_ptr& weapon() { return m_weapon; }
+			item_ptr& armor() { return m_armor; }
+			item_ptr& helmet() { return m_helmet; }
 		};
 	}
 }

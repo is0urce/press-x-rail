@@ -87,7 +87,7 @@ namespace px
 		for (int i = 0; i < 50; ++i)
 		{
 			auto itm = std::make_shared<rl::item>();
-			itm->name("orb of idunno #" + i);
+			itm->name(std::string("orb of idunno #") + std::to_string(i));
 			m_player->add_item(itm, true);
 		}
 		m_player->weapon() = std::make_shared<rl::item>();

@@ -16,6 +16,9 @@ namespace px
 
 		class item : public unit
 		{
+		public:
+			typedef std::shared_ptr<person> activator_ptr;
+
 		private:
 			bool m_stackable;
 		public:
@@ -23,9 +26,10 @@ namespace px
 			virtual ~item() {}
 
 		protected:
-			virtual void activate(std::shared_ptr<person> activator) {}
+			virtual void activate_item(activator_ptr activator) {}
 
 		public:
+			void activate(activator_ptr activator) { activate_item(activator); }
 			bool stackable() const { return m_stackable; }
 			void stackable(bool is_stackable) { m_stackable = is_stackable; }
 		};

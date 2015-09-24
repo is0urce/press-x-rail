@@ -109,7 +109,7 @@ namespace px
 				});
 				if (found)
 				{
-					//m_target->remove_item(found);
+					found->activate(m_target);
 				}
 				return true;
 			}
