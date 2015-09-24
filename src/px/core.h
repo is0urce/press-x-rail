@@ -43,10 +43,9 @@ namespace px
 			bool scroll(int delta);
 
 			bool run() const;
-
+			bool finished() const;
 			void shutdown(bool shutdown);
 			void shutdown();
-			bool finished() const;
 		};
 	}
 }
