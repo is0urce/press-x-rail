@@ -36,8 +36,8 @@ namespace px
 			unsigned int item_count() const { return m_items.size(); }
 			void add_item(_I item, bool silent) { m_items.push_back(item); acquire(item, silent); }
 			void add_item(_I item) { add_item(item, false); }
-			void remove_item(_I item, bool silent) { m_items.remove(item); unaquire(item, silent); }
-			void remove_item(_I item) { remove_item(item, false); }
+			bool remove_item(_I item, bool silent) { m_items.remove(item); unaquire(item, silent); return true; }
+			bool remove_item(_I item) { remove_item(item, false); return true; }
 		};
 	}
 }
