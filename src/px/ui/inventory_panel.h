@@ -8,6 +8,7 @@
 
 #include <px/ui/panel.h>
 
+#include <functional>
 #include <memory>
 
 namespace px
@@ -25,14 +26,14 @@ namespace px
 			typedef std::shared_ptr<target_t> target_ptr;
 
 		private:
-			target_ptr m_target;
-			int m_scroll;
-			int m_count; // number of items shown
+			target_ptr m_target; // inventory container
 			point m_hover;
 			point m_panel_start;
 			point m_panel_range;
 			point m_list_start;
 			point m_list_range;
+			int m_scroll; // first shown item offset in list
+			int m_count; // number of items shown
 
 		public:
 			inventory_panel(target_ptr unit, canvas *ui_canvas);

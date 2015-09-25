@@ -26,11 +26,36 @@ namespace px
 			point element_range(const point &range) { return{ range.X, 1 }; }
 			const std::string title = "inventory";
 			const std::string dots = ". . .";
+			const std::string multiplier = " x";
+			void enumerate_inventory(
+				const point &list_start,
+				const point &list_range,
+				int scroll,
+				const inventory_panel::target_t &target,
+				std::function<void(const point &pen_start, const point &pen_range, inventory_panel::target_t::item_t item, int stack)> enum_fn)
+			{
+				point pen = list_start;
+				point range = element_range(list_range);
+				int current = 0;
+				int count = list_range.Y / range.Y;
+
+				target.enumerate_items([&](rl::person::item_t item)
+				{
+					int relative = current - scroll;
+					if (relative >= 0 && relative < count)
+					{
+						enum_fn(pen, range, item, 1);
+						pen.move(0, range.Y);
+					}
+					++current;
+				});
+			}
 		}
 
 		inventory_panel::inventory_panel(target_ptr target, canvas *ui_canvas)
 			: panel(ui_canvas), m_target(target), m_scroll(0)
 		{
+			if (!target) throw std::logic_error("px::ui::inventory_panel::ctor() - target is null");
 		}
 		inventory_panel::~inventory_panel()
 		{
@@ -58,27 +83,21 @@ namespace px
 			m_canvas->rectangle(m_panel_start, { m_panel_range.X, 1 }, color(0.5, 0.5, 0.5, 0.75));
 			m_canvas->write({ m_panel_start.moved(m_panel_range.X / 2 - title.length() / 2, 0) }, title);
 
-			point pen_start = m_list_start;
-			point pen_range = element_range(m_list_range);
-			int current = 0;
+			enumerate_inventory(m_list_start, m_list_range, m_scroll, *m_target,
+				[&](const point &pen, const point &pen_range, target_t::item_t item, int stack)
+			{
+				if (m_hover.in_range(pen, pen_range))
+				{
+					m_canvas->rectangle(pen, pen_range, color(0.5, 0.5, 0.5, 0.75));
+				}
+				m_canvas->write(pen, item->name() + (stack > 1 ? multiplier + std::to_string(stack) : ""));
+			});
+
+			// trailing dots if list exceeds range
 			if (m_scroll > 0)
 			{
-				m_canvas->write(pen_start.moved(pen_range.X / 2 - dots.length() / 2, -1), dots);
+				m_canvas->write(m_panel_start.moved(m_panel_range.X / 2 - dots.length() / 2, 1), dots);
 			}
-			m_target->enumerate_items([&](target_t::item_t item)
-			{
-				int relative = current - m_scroll;
-				if (relative >= 0 && relative < m_count)
-				{
-					if (m_hover.in_range(pen_start, pen_range))
-					{
-						m_canvas->rectangle(pen_start, pen_range, color(0.5, 0.5, 0.5, 0.75));
-					}
-					m_canvas->write(pen_start, item->name());
-					pen_start.move(0, pen_range.Y);
-				}
-				++current;
-			});
 			if (m_scroll + m_count < (int)m_target->item_count())
 			{
 				m_canvas->write(m_panel_start.moved(m_panel_range.X / 2 - dots.length() / 2, m_panel_range.Y - 1), dots);
@@ -91,21 +110,13 @@ namespace px
 			if (position.in_range(m_panel_start, m_panel_range))
 			{
 				target_t::item_t found;
-				point pen_start = m_list_start;
-				point pen_range = element_range(m_list_range);
-				int current = 0;
-				m_target->enumerate_items([&](target_t::item_t item)
+				enumerate_inventory(m_list_start, m_list_range, m_scroll, *m_target,
+					[&](const point &pen, const point &pen_range, target_t::item_t item, int stack)
 				{
-					int relative = current - m_scroll;
-					if (relative >= 0 && relative < m_count)
+					if (m_hover.in_range(pen, pen_range))
 					{
-						if (m_hover.in_range(pen_start, pen_range))
-						{
-							found = item;
-						}
-						pen_start.move(0, pen_range.Y);
+						found = item;
 					}
-					++current;
 				});
 				if (found)
 				{
@@ -143,12 +154,12 @@ namespace px
 				m_scroll = 0;
 				disable();
 				break;
-			//case key::move_south:
-			//	do_scroll(1);
-			//	break;
-			//case key::move_north:
-			//	do_scroll(-1);
-			//	break;
+				//case key::move_south:
+				//	do_scroll(1);
+				//	break;
+				//case key::move_north:
+				//	do_scroll(-1);
+				//	break;
 			default:
 				result = false;
 				break;

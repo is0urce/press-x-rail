@@ -32,7 +32,7 @@ namespace px
 			virtual void unaquire(_I item, bool silent) {}
 
 		public:
-			void enumerate_items(std::function<void(_I)> fn) { std::for_each(m_items.begin(), m_items.end(), fn); }
+			void enumerate_items(std::function<void(_I)> fn) const { std::for_each(m_items.begin(), m_items.end(), fn); }
 			unsigned int item_count() const { return m_items.size(); }
 			void add_item(_I item, bool silent) { m_items.push_back(item); acquire(item, silent); }
 			void add_item(_I item) { add_item(item, false); }
