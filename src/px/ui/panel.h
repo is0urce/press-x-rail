@@ -36,6 +36,7 @@ namespace px
 			void disable();
 			bool toggle();
 			void draw();
+			canvas* ui();
 
 			canvas* operator->();
 		};

@@ -67,6 +67,7 @@ namespace px
 
 		void stack_panel::add(panel_id name_tag, panel_ptr panel, bool is_enabled)
 		{
+			remove(name_tag);
 			panel->visible(is_enabled);
 			m_stack.emplace(name_tag, panel);
 		}
@@ -74,8 +75,10 @@ namespace px
 		void stack_panel::remove(const panel_id &name_tag)
 		{
 			auto find = m_stack.find(name_tag);
-			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::remove(panel_id) panel not found");
-			m_stack.erase(find);
+			if (find != m_stack.end())
+			{
+				m_stack.erase(find);
+			}
 		}
 
 		stack_panel::panel_ptr stack_panel::at(const panel_id &name_tag)

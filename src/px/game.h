@@ -9,7 +9,7 @@
 #include <px/shell/perception.h>
 #include "px/scene.h"
 #include <px/ui/canvas.h>
-#include <px/ui/panel.h>
+#include <px/ui/main_panel.h>
 #include "px/broadcast.h"
 #include "px/projectile.h"
 
@@ -44,7 +44,7 @@ namespace px
 		std::list<broadcast> m_broadcasts;
 		std::list<projectile> m_projectiles;
 		ui::canvas m_canvas;
-		std::unique_ptr<ui::panel> m_ui;
+		std::shared_ptr<ui::main_panel> m_ui;
 		std::function<bool(const point &position)> m_fov_fn;
 
 	public:

@@ -3,7 +3,7 @@
 // desc: class declaration
 // auth: is0urce
 
-// main container for panels
+// generic container for panels
 
 #ifndef PX_UI_STACK_PANEL_H
 #define PX_UI_STACK_PANEL_H

@@ -48,6 +48,11 @@ bool panel::toggle()
 	return m_visible = !m_visible;
 }
 
+canvas* panel::ui()
+{
+	return m_canvas;
+}
+
 canvas* panel::operator->()
 {
 	return m_canvas;

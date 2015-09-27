@@ -23,11 +23,10 @@ namespace px
 		{
 		public:
 			typedef rl::container target_t;
-			typedef std::shared_ptr<target_t> target_ptr;
-			typedef std::shared_ptr<rl::person> user_ptr;
+			typedef std::shared_ptr<rl::actor> user_ptr;
 
 		private:
-			target_ptr m_target; // inventory container
+			target_t *m_target; // inventory container
 			user_ptr m_user;
 			point m_hover;
 			point m_panel_start;
@@ -38,7 +37,7 @@ namespace px
 			int m_count; // number of items shown
 
 		public:
-			container_panel(user_ptr user, target_ptr container, canvas *ui_canvas);
+			container_panel(user_ptr user, target_t *container, canvas *ui_canvas);
 			virtual ~container_panel();
 
 		private:

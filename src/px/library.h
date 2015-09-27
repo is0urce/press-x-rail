@@ -10,6 +10,7 @@
 #include <px/rl/unit.h>
 #include <px/rl/npc.h>
 #include <px/rl/door.h>
+#include <px/rl/container.h>
 #include <px/rl/status.h>
 
 #include <string>
@@ -23,6 +24,7 @@ namespace px
 		public resource<rl::npc>,
 		public resource<rl::item>,
 		public resource<rl::door>,
+		public resource<rl::container>,
 		public resource<rl::status<std::shared_ptr<rl::unit>>>
 	{
 	public:

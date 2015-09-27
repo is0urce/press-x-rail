@@ -133,6 +133,7 @@
     <ClInclude Include="src\px\serializer.h" />
     <ClInclude Include="src\px\ui\container_panel.h" />
     <ClInclude Include="src\px\ui\inventory_panel.h" />
+    <ClInclude Include="src\px\ui\main_panel.h" />
     <ClInclude Include="src\px\ui\stack_panel.h" />
     <ClInclude Include="src\px\user_ability.h" />
     <ClInclude Include="src\px\rl\inventory.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
     <ClCompile Include="src\px\ui\inventory_panel.cpp" />
+    <ClCompile Include="src\px\ui\main_panel.cpp" />
     <ClCompile Include="src\px\ui\panel.cpp" />
     <ClCompile Include="src\px\shell\perception.cpp" />
     <ClCompile Include="src\px\rl\player.cpp" />

@@ -8,7 +8,7 @@
 #include "game.h"
 
 #include <px/rl/player.h>
-#include <px/ui/stack_panel.h>
+#include <px/ui/main_panel.h>
 #include <px/ui/status_panel.h>
 #include <px/ui/inventory_panel.h>
 
@@ -48,6 +48,7 @@ namespace px
 		:
 		m_perception(perc_reach),
 		m_canvas({ 1, 1 }),
+		m_ui(std::make_shared<ui::main_panel>(&m_canvas)),
 		m_fov_fn([&](const point &position) { return m_scene.transparent(position); })
 	{
 		m_player.reset(new rl::player(this));
@@ -99,10 +100,8 @@ namespace px
 		m_scene.add(m_player, player_pos);
 
 		// ui
-		std::unique_ptr<ui::stack_panel> ui(new ui::stack_panel(&m_canvas));
-		ui->add("inventory", std::make_shared<ui::status_panel>(m_player, &m_canvas), true);
-		ui->add("status", std::make_shared<ui::inventory_panel>(m_player, &m_canvas), false);
-		m_ui = std::move(ui);
+		m_ui->add("inventory", std::make_shared<ui::status_panel>(m_player, &m_canvas), true);
+		m_ui->add("status", std::make_shared<ui::inventory_panel>(m_player, &m_canvas), false);
 
 		fill_perception();
 	}
