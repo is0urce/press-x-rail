@@ -235,6 +235,12 @@
     <ClInclude Include="src\px\rl\equipment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\rl\container.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\ui\container_panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

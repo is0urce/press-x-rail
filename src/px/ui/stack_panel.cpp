@@ -21,7 +21,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p->visible() && p->key(code)) return true;
+				if (p.second->visible() && p.second->key(code)) return true;
 			}
 			return false;
 		}
@@ -29,7 +29,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p->visible() && p->hover(position)) return true;
+				if (p.second->visible() && p.second->hover(position)) return true;
 			}
 			return false;
 		}
@@ -37,7 +37,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p->visible() && p->click(position, button)) return true;
+				if (p.second->visible() && p.second->click(position, button)) return true;
 			}
 			return false;
 		}
@@ -45,7 +45,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p->visible() && p->scroll(delta)) return true;
+				if (p.second->visible() && p.second->scroll(delta)) return true;
 			}
 			return false;
 		}
@@ -53,16 +53,36 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p->visible())
+				if (p.second->visible())
 				{
-					p->draw();
+					p.second->draw();
 				}
 			}
 		}
 
-		void stack_panel::add(panel_ptr panel)
+		void stack_panel::add(panel_id name_tag, panel_ptr panel)
 		{
-			m_stack.push_back(panel);
+			add(name_tag, panel, panel->visible());
+		}
+
+		void stack_panel::add(panel_id name_tag, panel_ptr panel, bool is_enabled)
+		{
+			panel->visible(is_enabled);
+			m_stack.emplace(name_tag, panel);
+		}
+
+		void stack_panel::remove(const panel_id &name_tag)
+		{
+			auto find = m_stack.find(name_tag);
+			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::remove(panel_id) panel not found");
+			m_stack.erase(find);
+		}
+
+		stack_panel::panel_ptr stack_panel::at(const panel_id &name_tag)
+		{
+			auto find = m_stack.find(name_tag);
+			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::at(panel_id) panel not found");
+			return find->second;
 		}
 	}
 }

@@ -113,6 +113,7 @@
     <ClInclude Include="src\px\light.h" />
     <ClInclude Include="src\px\rl\actor.h" />
     <ClInclude Include="src\px\rl\attribute.h" />
+    <ClInclude Include="src\px\rl\container.h" />
     <ClInclude Include="src\px\rl\equipment.h" />
     <ClInclude Include="src\px\shell\avatar.h" />
     <ClInclude Include="src\px\bar.h" />
@@ -130,6 +131,7 @@
     <ClInclude Include="src\px\appearance.h" />
     <ClInclude Include="src\px\projectile.h" />
     <ClInclude Include="src\px\serializer.h" />
+    <ClInclude Include="src\px\ui\container_panel.h" />
     <ClInclude Include="src\px\ui\inventory_panel.h" />
     <ClInclude Include="src\px\ui\stack_panel.h" />
     <ClInclude Include="src\px\user_ability.h" />

@@ -10,7 +10,7 @@
 #include <px/library.h>
 
 #include <px/rl/deposit.h>
-#include <px/rl/door.h>
+#include <px/rl/container.h>
 
 #include <px/fn/automata.h>
 
@@ -57,6 +57,11 @@ namespace px
 				while (walls.at(pos));
 				fetch_fn(vein, pos);
 			}
+			
+			auto chest = std::make_shared<rl::container>();
+			chest->add_item(m_library->make<rl::item>("ore_copper"));
+			chest->appearance({ 'c', 0xffff00 });
+			fetch_fn(chest, { 21, 21 });
 		}
 	}
 }

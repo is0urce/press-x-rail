@@ -100,8 +100,8 @@ namespace px
 
 		// ui
 		std::unique_ptr<ui::stack_panel> ui(new ui::stack_panel(&m_canvas));
-		ui->add(std::make_shared<ui::status_panel>(m_player, &m_canvas));
-		ui->add(std::make_shared<ui::inventory_panel>(m_player, &m_canvas));
+		ui->add("inventory", std::make_shared<ui::status_panel>(m_player, &m_canvas), true);
+		ui->add("status", std::make_shared<ui::inventory_panel>(m_player, &m_canvas), false);
 		m_ui = std::move(ui);
 
 		fill_perception();

@@ -11,7 +11,8 @@
 #include <px/ui/panel.h>
 
 #include <memory>
-#include <list>
+#include <map>
+#include <string>
 
 namespace px
 {
@@ -21,9 +22,11 @@ namespace px
 		{
 		public:
 			typedef std::shared_ptr<panel> panel_ptr;
+			typedef std::string panel_id;
+			typedef std::map<panel_id, panel_ptr> stack_t;
 
 		private:
-			std::list<panel_ptr> m_stack;
+			stack_t m_stack;
 
 		public:
 			stack_panel(canvas *ui_canvas);
@@ -37,7 +40,10 @@ namespace px
 			virtual void draw_panel() override;
 
 		public:
-			void add(panel_ptr panel);
+			void add(panel_id name_tag, panel_ptr panel);
+			void add(panel_id name_tag, panel_ptr panel, bool start_enabled);
+			void remove(const panel_id &name_tag);
+			panel_ptr at(const panel_id &name_tag);
 		};
 	}
 }

@@ -1,10 +1,10 @@
-// name: inventory_panel.h
+// name: container_panel.h
 // type: c++
 // desc: class declaration
 // auth: is0urce
 
-#ifndef PX_UI_INVENTORY_PANEL_H
-#define PX_UI_INVENTORY_PANEL_H
+#ifndef PX_UI_CONTAINER_PANEL_H
+#define PX_UI_CONTAINER_PANEL_H
 
 #include <px/ui/panel.h>
 
@@ -15,17 +15,20 @@ namespace px
 	namespace rl
 	{
 		class person;
+		class container;
 	}
 	namespace ui
 	{
-		class inventory_panel : public panel
+		class container_panel : public panel
 		{
 		public:
-			typedef rl::person target_t;
+			typedef rl::container target_t;
 			typedef std::shared_ptr<target_t> target_ptr;
+			typedef std::shared_ptr<rl::person> user_ptr;
 
 		private:
 			target_ptr m_target; // inventory container
+			user_ptr m_user;
 			point m_hover;
 			point m_panel_start;
 			point m_panel_range;
@@ -35,12 +38,13 @@ namespace px
 			int m_count; // number of items shown
 
 		public:
-			inventory_panel(target_ptr unit, canvas *ui_canvas);
-			virtual ~inventory_panel();
+			container_panel(user_ptr user, target_ptr container, canvas *ui_canvas);
+			virtual ~container_panel();
 
 		private:
 			void update();
-			void do_scroll(int delta);
+			void scroll_inventory(int delta);
+			void scroll_container(int delta);
 
 		protected:
 			virtual void draw_panel() override;

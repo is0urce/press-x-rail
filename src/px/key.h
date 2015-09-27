@@ -36,6 +36,12 @@ namespace px
 		action8,
 		action9,
 
+		panel_inventory,
+		panel_character,
+		panel_skills,
+		panel_craft,
+		panel_options,
+
 		command_ok,
 		command_cancel,
 
