@@ -58,10 +58,10 @@ namespace px
 				fetch_fn(vein, pos);
 			}
 			
-			//auto chest = std::make_shared<rl::container>(m_library->make<rl::item>("ore_copper"), nullptr);
-			//chest->add_item(m_library->make<rl::item>("ore_copper"));
-			//chest->appearance({ 'c', 0xffff00 });
-			//fetch_fn(chest, { 21, 21 });
+			auto chest = std::make_shared<rl::container>();
+			chest->add_item(m_library->make<rl::item>("ore_copper"));
+			chest->appearance({ 'c', 0xffff00 });
+			fetch_fn(chest, { 21, 21 });
 		}
 	}
 }

@@ -21,7 +21,6 @@ namespace px
 			public unit,
 			public inventory<std::shared_ptr<item>>
 		{
-
 			// ctor & dtor
 		public:
 			actor() {}
@@ -31,6 +30,10 @@ namespace px
 		protected:
 			virtual void use_unit(user_t user) override {}
 			virtual bool useable_unit(user_t user) const override { return true; }
+			virtual void access_container(container_t &container) {}
+
+		public:
+			void access(container_t &container) { access_container(container); }
 		};
 	}
 }

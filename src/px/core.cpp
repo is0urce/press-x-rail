@@ -64,7 +64,7 @@ namespace px
 
 		bool core::press(key vk)
 		{
-			bool result = m_game->panel().key(vk);
+			bool result = m_game->panel()->key(vk);
 			if (result)
 			{
 				return true;
@@ -142,15 +142,15 @@ namespace px
 		}
 		bool core::hover(const point &screen)
 		{
-			return m_game->panel().hover(m_graphics->ui(screen)) || m_game->hover(m_graphics->world(screen));
+			return m_game->panel()->hover(m_graphics->ui(screen)) || m_game->hover(m_graphics->world(screen));
 		}
 		bool core::click(const point &screen, unsigned int button)
 		{
-			return m_game->panel().click(m_graphics->ui(screen), button) || m_game->click(m_graphics->world(screen), button);
+			return m_game->panel()->click(m_graphics->ui(screen), button) || m_game->click(m_graphics->world(screen), button);
 		}
 		bool core::scroll(int delta)
 		{
-			if (!m_game->panel().scroll(delta))
+			if (!m_game->panel()->scroll(delta))
 			{
 				m_graphics->scale(delta);
 			}

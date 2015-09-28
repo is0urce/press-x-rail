@@ -71,7 +71,7 @@ namespace px
 
 		// ui
 		const ui::canvas& canvas() const;
-		ui::panel& panel() const;
+		std::shared_ptr<ui::main_panel> panel() const;
 		void draw_ui(int w, int h);
 
 		// receiver

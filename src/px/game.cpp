@@ -292,9 +292,9 @@ namespace px
 		return m_canvas;
 	}
 
-	ui::panel& game::panel() const
+	std::shared_ptr<ui::main_panel> game::panel() const
 	{
-		return *m_ui;
+		return m_ui;
 	}
 
 	void game::draw_ui(int width, int height)

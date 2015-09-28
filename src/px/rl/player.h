@@ -28,6 +28,7 @@ namespace px
 
 		protected:
 			virtual void acquire(player::item_t item, bool silent) override;
+			virtual void access_container(container_t &container) override;
 		};
 	}
 }

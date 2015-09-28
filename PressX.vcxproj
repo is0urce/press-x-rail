@@ -191,6 +191,7 @@
     <ClCompile Include="src\px\rl\entity.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
+    <ClCompile Include="src\px\ui\container_panel.cpp" />
     <ClCompile Include="src\px\ui\inventory_panel.cpp" />
     <ClCompile Include="src\px\ui\main_panel.cpp" />
     <ClCompile Include="src\px\ui\panel.cpp" />

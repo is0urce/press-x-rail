@@ -7,6 +7,7 @@
 #define PX_UI_CONTAINER_PANEL_H
 
 #include <px/ui/panel.h>
+#include <px/rl/actor.h>
 
 #include <memory>
 
@@ -14,7 +15,6 @@ namespace px
 {
 	namespace rl
 	{
-		class person;
 		class container;
 	}
 	namespace ui
@@ -22,22 +22,19 @@ namespace px
 		class container_panel : public panel
 		{
 		public:
-			typedef rl::container target_t;
-			typedef std::shared_ptr<rl::actor> user_ptr;
+			typedef rl::actor::container_t target_t;
+			typedef rl::actor user_t;
 
 		private:
 			target_t *m_target; // inventory container
-			user_ptr m_user;
+			user_t *m_user;
+
 			point m_hover;
-			point m_panel_start;
-			point m_panel_range;
-			point m_list_start;
-			point m_list_range;
-			int m_scroll; // first shown item offset in list
-			int m_count; // number of items shown
+			int m_scroll_inventory, m_scroll_container; // first shown item offset in list
+			int m_count_inventory, m_count_container; // number of items shown
 
 		public:
-			container_panel(user_ptr user, target_t *container, canvas *ui_canvas);
+			container_panel(user_t *user, target_t *container, canvas *ui_canvas);
 			virtual ~container_panel();
 
 		private:

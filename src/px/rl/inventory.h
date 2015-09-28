@@ -18,6 +18,7 @@ namespace px
 		class inventory
 		{
 		public:
+			typedef inventory<_I> container_t;
 			typedef _I item_t;
 
 		private:
