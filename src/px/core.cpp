@@ -10,6 +10,7 @@
 #include <px/game.h>
 #include <px/shell/renderer.h>
 #include <px/shell/perception.h>
+#include <px/ui/main_panel.h>
 #include <px/timer.h>
 
 #include <string>

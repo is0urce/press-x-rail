@@ -35,19 +35,19 @@ namespace px
 		}
 		bool container_panel::click_control(const point &position, unsigned int button)
 		{
-			return true;
+			return false;
 		}
 		bool container_panel::hover_control(const point &position)
 		{
-			return true;
+			return false;
 		}
 		bool container_panel::scroll_control(int delta)
 		{
-			return true;
+			return false;
 		}
 		bool container_panel::key_control(key_t code)
 		{
-			return true;
+			return false;
 		}
 	}
 }

@@ -86,6 +86,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 		g_bindings->bind(VK_RETURN, key::command_ok);
 		g_bindings->bind(VK_ESCAPE, key::command_cancel);
+		g_bindings->bind('I', key::panel_inventory);
 
 		for (bool run = true; run; run &= g_core->run())
 		{

@@ -87,5 +87,36 @@ namespace px
 			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::at(panel_id) panel not found");
 			return find->second;
 		}
+
+		void stack_panel::disable(const panel_id &name_tag)
+		{
+			auto find = m_stack.find(name_tag);
+			if (find != m_stack.end())
+			{
+				find->second->disable();
+			}
+		}
+
+		void stack_panel::enable(const panel_id &name_tag)
+		{
+			auto find = m_stack.find(name_tag);
+			if (find != m_stack.end())
+			{
+				find->second->enable();
+			}
+		}
+		void stack_panel::toggle(const panel_id &name_tag)
+		{
+			auto find = m_stack.find(name_tag);
+			if (find != m_stack.end())
+			{
+				find->second->toggle();
+			}
+		}
+		bool stack_panel::enabled(const panel_id &name_tag) const
+		{
+			auto find = m_stack.find(name_tag);
+			return find == m_stack.end() ? false : find->second->visible();
+		}
 	}
 }

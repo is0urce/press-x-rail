@@ -20,9 +20,6 @@ namespace px
 	{
 		class main_panel : public stack_panel
 		{
-		private:
-			stack_t m_stack;
-
 		public:
 			main_panel(canvas *ui_canvas);
 			virtual ~main_panel();
@@ -30,6 +27,9 @@ namespace px
 		protected:
 			virtual bool key_control(key_t code) override;
 			
+		private:
+			void close_panels();
+
 		public:
 			void open_container();
 		};

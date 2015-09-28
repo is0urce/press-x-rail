@@ -9,7 +9,6 @@
 #include <px/shell/perception.h>
 #include "px/scene.h"
 #include <px/ui/canvas.h>
-#include <px/ui/main_panel.h>
 #include "px/broadcast.h"
 #include "px/projectile.h"
 
@@ -22,6 +21,10 @@ namespace px
 	namespace rl
 	{
 		class player;
+	}
+	namespace ui
+	{
+		class main_panel;
 	}
 	class game
 	{

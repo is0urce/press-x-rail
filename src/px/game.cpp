@@ -100,8 +100,8 @@ namespace px
 		m_scene.add(m_player, player_pos);
 
 		// ui
-		m_ui->add("inventory", std::make_shared<ui::status_panel>(m_player, &m_canvas), true);
-		m_ui->add("status", std::make_shared<ui::inventory_panel>(m_player, &m_canvas), false);
+		m_ui->add("status", std::make_shared<ui::status_panel>(m_player, &m_canvas), true);
+		m_ui->add("inventory", std::make_shared<ui::inventory_panel>(m_player, &m_canvas), false);
 
 		fill_perception();
 	}

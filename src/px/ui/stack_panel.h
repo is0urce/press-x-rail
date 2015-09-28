@@ -43,6 +43,10 @@ namespace px
 			void add(panel_id name_tag, panel_ptr panel);
 			void add(panel_id name_tag, panel_ptr panel, bool start_enabled);
 			void remove(const panel_id &name_tag);
+			void disable(const panel_id &name_tag);
+			void enable(const panel_id &name_tag);
+			void toggle(const panel_id &name_tag);
+			bool enabled(const panel_id &name_tag) const;
 			panel_ptr at(const panel_id &name_tag);
 		};
 	}

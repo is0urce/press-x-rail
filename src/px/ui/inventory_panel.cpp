@@ -126,7 +126,8 @@ namespace px
 			}
 			else
 			{
-				return false;
+				disable();
+				return true;
 			}
 		}
 		bool inventory_panel::hover_control(const point &position)
