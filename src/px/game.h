@@ -70,12 +70,13 @@ namespace px
 		// accessors
 		const shell::perception& perception() const;
 		player_ptr player();
+		const player_ptr player() const;
 		target_ptr target();
 
 		// ui
 		const ui::canvas& canvas() const;
 		std::shared_ptr<ui::main_panel> panel() const;
-		void draw_ui(int w, int h);
+		void draw_ui(int width, int height);
 
 		// receiver
 		void broadcast(broadcast_t message);

@@ -1,12 +1,14 @@
-// name: panel.h
+// name: canvas.h
 // type: c++
 // desc: class declaration
 // auth: isource
 
-#pragma once
+#ifndef PX_UI_CANVAS_H
+#define PX_UI_CANVAS_H
 
 #include <px/point.h>
 #include <px/map.h>
+#include <px/rectangle.h>
 #include <px/ui/symbol.h>
 
 namespace px
@@ -30,7 +32,8 @@ namespace px
 			void cls();
 			void cls(const symbol &fill);
 			void rectangle(const point &start, const point &range);
-			void rectangle(const point &start, const point &range, const color& back);
+			void rectangle(const point &start, const point &range, const color &back);
+			void rectangle(px::rectangle bounds, const color &back);
 			void pset(const point &position);
 			void pset(const point &position, const color &point_color);
 
@@ -43,3 +46,5 @@ namespace px
 		};
 	}
 }
+
+#endif

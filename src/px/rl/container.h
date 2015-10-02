@@ -9,8 +9,6 @@
 #include <px/rl/unit.h>
 #include <px/rl/item.h>
 #include <px/rl/inventory.h>
-#include <px/ui/main_panel.h>
-#include <px/ui/container_panel.h>
 
 namespace px
 {
@@ -20,18 +18,13 @@ namespace px
 		{
 			// ctor & dtor
 		public:
-			container()
-			{
-			}
-			virtual ~container() {}
+			container();
+			virtual ~container();
 
 			// vitrual
 		protected:
-			virtual void use_unit(user_t user) override 
-			{
-				user->access(*this);
-			}
-			virtual bool useable_unit(user_t user) const override { return true; }
+			virtual void use_unit(environment&, user_t user) override;
+			virtual bool useable_unit(const environment&, user_t user) const override;
 		};
 	}
 }

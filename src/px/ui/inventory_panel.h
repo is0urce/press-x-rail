@@ -27,10 +27,11 @@ namespace px
 		private:
 			target_ptr m_target; // inventory container
 			point m_hover;
-			point m_panel_start;
-			point m_panel_range;
-			point m_list_start;
-			point m_list_range;
+			struct
+			{
+				point start;
+				point range;
+			} m_inventory, m_list;
 			int m_scroll; // first shown item offset in list
 			int m_count; // number of items shown
 

@@ -28,12 +28,8 @@ namespace px
 
 			// vitrual
 		protected:
-			virtual void use_unit(user_t user) override {}
-			virtual bool useable_unit(user_t user) const override { return true; }
-			virtual void access_container(container_t &container) {}
-
-		public:
-			void access(container_t &container) { access_container(container); }
+			virtual void use_unit(environment&, user_t user) override {}
+			virtual bool useable_unit(const environment&, user_t user) const override { return true; }
 		};
 	}
 }

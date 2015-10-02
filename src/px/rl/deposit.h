@@ -29,8 +29,8 @@ namespace px
 
 			// vitrual
 		protected:
-			virtual void use_unit(user_t user) override { user->add_item(m_item); m_depleted = true; m_item.reset(); m_appearance.color.shift_brightness(0.5); }
-			virtual bool useable_unit(user_t user) const override { return !depleted(); }
+			virtual bool useable_unit(const environment&, user_t user) const override { return !depleted(); }
+			virtual void use_unit(environment&, user_t user) override { user->add_item(m_item); m_depleted = true; m_item.reset(); m_appearance.color.shift_brightness(0.5); }
 
 		public:
 			bool depleted() const { return m_depleted; }

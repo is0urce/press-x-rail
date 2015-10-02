@@ -244,6 +244,9 @@
     <ClInclude Include="src\px\ui\main_panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\rectangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">
@@ -316,6 +319,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\ui\container_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\rl\container.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

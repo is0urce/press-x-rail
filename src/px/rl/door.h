@@ -29,8 +29,8 @@ namespace px
 		protected:
 			virtual bool traversable_unit() const override { return m_open; }
 			virtual bool transparent_unit() const override { return m_open; }
-			virtual bool useable_unit(user_t user) const override { return !m_open; }
-			virtual void use_unit(user_t user) override { if (!m_open) open(); }
+			virtual bool useable_unit(const environment&, user_t user) const override { return !m_open; }
+			virtual void use_unit(environment&, user_t user) override { if (!m_open) open(); }
 			virtual void serialize(writer::node_ptr node) const override
 			{
 				auto l = node->open("door");

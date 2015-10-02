@@ -8,9 +8,7 @@
 #ifndef PX_UI_MAIN_PANEL_H
 #define PX_UI_MAIN_PANEL_H
 
-#include <px/ui/panel.h>
 #include <px/ui/stack_panel.h>
-#include <px/rl/inventory.h>
 
 #include <memory>
 

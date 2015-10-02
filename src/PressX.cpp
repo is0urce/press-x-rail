@@ -87,6 +87,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		g_bindings->bind(VK_RETURN, key::command_ok);
 		g_bindings->bind(VK_ESCAPE, key::command_cancel);
 		g_bindings->bind('I', key::panel_inventory);
+		g_bindings->bind('P', key::panel_skills);
+		g_bindings->bind('K', key::panel_craft); // k is for kraft
 
 		for (bool run = true; run; run &= g_core->run())
 		{

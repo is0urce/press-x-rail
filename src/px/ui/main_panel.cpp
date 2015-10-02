@@ -9,7 +9,6 @@
 
 #include "main_panel.h"
 
-
 #include <px/key.h>
 
 namespace px

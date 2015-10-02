@@ -106,7 +106,9 @@ namespace px
 		fill_perception();
 	}
 
-	game::~game() {}
+	game::~game()
+	{
+	}
 
 	void game::fill_perception()
 	{
@@ -175,9 +177,9 @@ namespace px
 			auto blocking = m_scene.blocking(destination);
 			if (blocking)
 			{
-				if (blocking->useable(m_player))
+				if (blocking->useable(*this, m_player))
 				{
-					blocking->use(m_player);
+					blocking->use(*this, m_player);
 				}
 				else if (!blocking->invincible())
 				{
@@ -234,7 +236,7 @@ namespace px
 		auto target = aquire_target();
 		if (useable(target))
 		{
-			target->use(m_player);
+			target->use(*this, m_player);
 			fill_perception();
 		}
 		return true;
@@ -274,7 +276,7 @@ namespace px
 
 	bool game::useable(game::target_ptr target) const
 	{
-		return target && target->useable(m_player) && m_player->position().king_distance(target->position()) <= action_distance;
+		return target && target->useable(*this, m_player) && m_player->position().king_distance(target->position()) <= action_distance;
 	}
 
 	const shell::perception& game::perception() const
@@ -283,6 +285,10 @@ namespace px
 	}
 
 	game::player_ptr game::player()
+	{
+		return m_player;
+	}
+	const game::player_ptr game::player() const
 	{
 		return m_player;
 	}

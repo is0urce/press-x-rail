@@ -8,6 +8,7 @@
 
 #include <px/ui/panel.h>
 #include <px/rl/actor.h>
+#include <px/rectangle.h>
 
 #include <memory>
 
@@ -23,24 +24,29 @@ namespace px
 		{
 		public:
 			typedef rl::actor::container_t target_t;
-			typedef rl::actor user_t;
+			typedef rl::actor::user_t user_t;
 
 		private:
 			target_t *m_target; // inventory container
-			user_t *m_user;
+			user_t m_user;
 
 			point m_hover;
-			int m_scroll_inventory, m_scroll_container; // first shown item offset in list
-			int m_count_inventory, m_count_container; // number of items shown
+			struct widget
+			{
+				rectangle outline;
+				rectangle list;
+				int scroll;
+				int count;
+			} m_inventory, m_container;
 
 		public:
-			container_panel(user_t *user, target_t *container, canvas *ui_canvas);
+			container_panel(user_t user, target_t *container, canvas *ui_canvas);
 			virtual ~container_panel();
 
 		private:
 			void update();
-			void scroll_inventory(int delta);
-			void scroll_container(int delta);
+			void update(widget&, rectangle bounds);
+			void scroll(widget&, int delta);
 
 		protected:
 			virtual void draw_panel() override;

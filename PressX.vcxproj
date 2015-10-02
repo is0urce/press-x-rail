@@ -111,6 +111,7 @@
     <ClInclude Include="src\px\fn\delegate_builder.h" />
     <ClInclude Include="src\px\fn\station_builder.h" />
     <ClInclude Include="src\px\light.h" />
+    <ClInclude Include="src\px\rectangle.h" />
     <ClInclude Include="src\px\rl\actor.h" />
     <ClInclude Include="src\px\rl\attribute.h" />
     <ClInclude Include="src\px\rl\container.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="src\px\fn\station_builder.cpp" />
     <ClCompile Include="src\px\rl\character.cpp" />
     <ClCompile Include="src\px\game.cpp" />
+    <ClCompile Include="src\px\rl\container.cpp" />
     <ClCompile Include="src\px\ui\canvas.cpp" />
     <ClCompile Include="src\px\rl\entity.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
