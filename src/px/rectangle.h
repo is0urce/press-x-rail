@@ -24,7 +24,7 @@ namespace px
 		rectangle(point start_point, point range_value) : start(start_point), range(range_value) {}
 
 		bool border(const point &p) const { return p.X == start.X || p.Y == start.Y || p.X == start.X + range.X - 1 || p.Y == start.Y + range.Y - 1; }
-		bool contains(const point &p) const { return p.X >= start.X || p.Y >= start.Y || p.X < start.X + range.X || p.Y < start.Y + range.Y; }
+		bool contains(const point &p) const { return p.X >= start.X && p.Y >= start.Y && p.X < start.X + range.X && p.Y < start.Y + range.Y; }
 
 		// enumerate rectangle from start to start + range
 		void enumerate(std::function<void(const point&)> enum_fn) const

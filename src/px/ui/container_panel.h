@@ -7,30 +7,30 @@
 #define PX_UI_CONTAINER_PANEL_H
 
 #include <px/ui/panel.h>
-#include <px/rl/actor.h>
 #include <px/rectangle.h>
+
+#include <px/rl/actor.h>
+#include <px/rl/container.h>
 
 #include <memory>
 
 namespace px
 {
-	namespace rl
-	{
-		class container;
-	}
 	namespace ui
 	{
 		class container_panel : public panel
 		{
 		public:
-			typedef rl::actor::container_t target_t;
+			typedef rl::container target_t;
 			typedef rl::actor::user_t user_t;
 
 		private:
+			point m_hover;
 			target_t *m_target; // inventory container
 			user_t m_user;
 
-			point m_hover;
+			rectangle m_takeall; // 'take all' button bounds
+
 			struct widget
 			{
 				rectangle outline;
@@ -45,8 +45,11 @@ namespace px
 
 		private:
 			void update();
-			void update(widget&, rectangle bounds);
+			void update(widget&, const target_t::container_t &target, rectangle bounds);
 			void scroll(widget&, int delta);
+			void draw_widget(const widget&, const target_t::container_t &target, target_t::name_t name_text, color background_color, color title_color, color hover_color) const;
+			void draw_list(const rectangle &item_bounds, target_t::item_t item, unsigned int stack, color hover) const;
+			void take_all();
 
 		protected:
 			virtual void draw_panel() override;

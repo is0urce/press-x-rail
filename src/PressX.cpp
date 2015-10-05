@@ -34,6 +34,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPTSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
+
+	#ifdef _DEBUG
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	#endif
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -116,10 +121,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	g_core.reset();
 	g_bindings.reset();
-
-#ifdef _DEBUG
-	_CrtDumpMemoryLeaks();
-#endif
 
 	return (int)msg.wParam;
 }

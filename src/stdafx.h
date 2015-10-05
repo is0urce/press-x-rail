@@ -12,17 +12,29 @@
 // Windows Header Files:
 #include <windowsx.h>
 
+// crt memory leaks detection
+#ifdef _DEBUG
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
+	#include <crtdbg.h>    
+	#define DEBUG_NEW   new( _CLIENT_BLOCK, __FILE__, __LINE__)
+	#define new DEBUG_NEW
+#endif 
+
 // C RunTime Header Files
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
 
-#ifdef _DEBUG
-#define new new( _NORMAL_BLOCK, __FILE__, __LINE__)
-#endif 
-
-#endif
-
 
 // TODO: reference additional headers your program requires here
+#include <memory>
+#include <functional>
+#include <stdexcept>
+#include <list>
+#include <map>
+#include <string>
+
+#endif // MAIN_STDAFX_H
+

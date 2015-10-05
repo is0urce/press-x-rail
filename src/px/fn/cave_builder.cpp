@@ -49,6 +49,7 @@ namespace px
 			{
 				auto vein = std::make_shared<rl::deposit>(m_library->make<rl::item>("ore_copper"));
 				vein->appearance({ 'O', 0xffffff });
+				vein->name("copper ore vein");
 				point pos;
 				do
 				{
@@ -59,8 +60,9 @@ namespace px
 			}
 			
 			auto chest = std::make_shared<rl::container>();
-			chest->add_item(m_library->make<rl::item>("ore_copper"));
 			chest->appearance({ 'c', 0xffff00 });
+			chest->name("wooden chest");
+			chest->add_item(m_library->make<rl::item>("ore_copper"));
 			fetch_fn(chest, { 21, 21 });
 		}
 	}
