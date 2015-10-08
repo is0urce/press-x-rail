@@ -247,6 +247,9 @@
     <ClInclude Include="src\px\rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\astar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

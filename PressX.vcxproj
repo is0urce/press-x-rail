@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="src\px\ability.h" />
+    <ClInclude Include="src\px\astar.h" />
     <ClInclude Include="src\px\fn\cave_builder.h" />
     <ClInclude Include="src\px\fn\delegate_builder.h" />
     <ClInclude Include="src\px\fn\station_builder.h" />
