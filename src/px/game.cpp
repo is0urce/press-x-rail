@@ -131,7 +131,8 @@ namespace px
 				perc_reach.enumerate([&](const point &range_point)
 				{
 					point absolute = start + range_point;
-					if (light_fov.in_fov(absolute) && player_fov.in_fov(absolute) && m_scene.transparent(absolute))
+					// open spaces with both light and visible by player, exclude walls without objects (no doors or ore)
+					if (light_fov.in_fov(absolute) && player_fov.in_fov(absolute) && (m_scene.transparent(absolute) || m_scene.blocking(absolute)))
 					{
 						lightmap.at(range_point) += l.color() * fade(position.distance(absolute));
 					}

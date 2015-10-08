@@ -33,11 +33,13 @@ namespace px
 
 		public:
 			vao() : m_init(false), m_num(0), m_length(0) {}
+			vao(const std::vector<unsigned int> &depths) : m_init(false), m_num(0), m_length(0) { init(depths); }
+			vao(const vao&) = delete;
 
 		public:
 			// count - number of buffers
 			// depth - array of buffer element size
-			inline void init(unsigned int count, unsigned int* depths)
+			inline void init(unsigned int count, const unsigned int* depths)
 			{
 				if (count == 0) throw std::runtime_error("vao::init - count == 0");
 
@@ -73,7 +75,7 @@ namespace px
 				m_init = true;
 			}
 
-			inline void init(std::vector<unsigned int> depths)
+			inline void init(const std::vector<unsigned int> &depths)
 			{
 				if (depths.empty()) throw std::exception("void VAO::Init(std::vector<unsigned int> depths) depth is empty");
 				init(depths.size(), &depths[0]);

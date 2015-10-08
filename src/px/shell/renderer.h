@@ -11,6 +11,7 @@
 #include <px/shell/opengl.h>
 #include <px/shell/vao.h>
 #include <px/point.h>
+#include <px/vector.h>
 
 #include <memory>
 
@@ -43,6 +44,9 @@ namespace px
 			double m_aspect;
 			double m_scale;
 			timespan_t m_last;
+			timespan_t m_delta;
+			vector m_center;
+			double m_move_phase;
 
 			GLuint m_sampler;
 			struct s_font
@@ -51,10 +55,14 @@ namespace px
 				GLuint texture;
 			} m_ui, m_popup, m_glyph;
 
-			struct
+			struct drawcall
 			{
+			public:
 				vao vao;
 				GLuint program;
+
+			public:
+				drawcall(const std::vector<unsigned int> &depths, GLuint program_id) : vao(depths), program(program_id) {}
 			} m_background, m_tiles, m_units, m_notification, m_projectiles, m_light, m_lightmap, m_lightmap_prev, m_scene, m_lightdraw, m_uiback, m_uitext;
 
 			GLuint m_scene_frame, m_light_frame, m_lightmap_frame; // framebuffers
@@ -66,6 +74,7 @@ namespace px
 		private:
 			void update_textures();
 			void setup_scene();
+
 			void fill_bg(const perception_t&);
 			void fill_tiles(const perception_t&, font &tiles_font);
 			void fill_units(const perception_t&, font &units_font);
@@ -73,6 +82,10 @@ namespace px
 			void fill_projectiles(const perception_t &p, font &projectile_font, timespan_t span);
 			void fill_ui(const canvas_t &gui, font &ui_font);
 			void fill_lightmap(const perception_t &p);
+
+			void draw_geometry(const perception_t &perception, double phase);
+			void draw_light(const perception_t &perception, double phase);
+			void draw_overlay(const perception_t &perception, const canvas_t &gui, double phase);
 
 		public:
 			renderer(opengl_handle opengl);

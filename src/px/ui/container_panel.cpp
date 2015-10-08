@@ -77,6 +77,7 @@ namespace px
 		void container_panel::take_all()
 		{
 			m_target->move_all(*m_user);
+			disable();
 		}
 		void container_panel::update()
 		{

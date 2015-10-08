@@ -95,7 +95,24 @@ namespace px
 			}
 		}
 
-		renderer::renderer(renderer::opengl_handle opengl) : m_aspect(1), m_scale(camera_default), m_scene_size(0)
+		renderer::renderer(renderer::opengl_handle opengl)
+			:
+			m_aspect(1), m_scale(camera_default),
+			m_scene_size(0),
+
+			// drawcalls
+			m_background({ vertice_depth, color_depth }, glsl::program("shaders\\ground")),
+			m_tiles({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\units")),
+			m_units({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\units")),
+			m_light({ vertice_depth }, glsl::program("shaders\\light")),
+			m_lightmap({ vertice_depth, color_depth }, glsl::program("shaders\\lightmap")),
+			m_lightmap_prev({ vertice_depth, color_depth }, glsl::program("shaders\\lightmap")),
+			m_lightdraw({ vertice_depth, texcoord_depth }, glsl::program("shaders\\lightdraw")),
+			m_scene({ vertice_depth, texcoord_depth }, glsl::program("shaders\\scene")),
+			m_projectiles({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\units")),
+			m_notification({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\notify")),
+			m_uiback({ vertice_depth, color_depth }, glsl::program("shaders\\uiback")),
+			m_uitext({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\uitext"))
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
 
@@ -107,39 +124,6 @@ namespace px
 			glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
-
-			m_background.vao.init({ vertice_depth, color_depth });
-			m_background.program = glsl::program("shaders\\ground");
-
-			m_tiles.vao.init({ vertice_depth, texcoord_depth, color_depth });
-			m_tiles.program = glsl::program("shaders\\units");
-
-			m_units.vao.init({ vertice_depth, texcoord_depth, color_depth });
-			m_units.program = glsl::program("shaders\\units");
-
-			m_scene.vao.init({ vertice_depth, texcoord_depth });
-			m_scene.program = glsl::program("shaders\\scene");
-
-			m_light.vao.init({ vertice_depth });
-			m_light.program = glsl::program("shaders\\light");
-
-			m_lightmap.vao.init({ vertice_depth, color_depth });
-			m_lightmap_prev.vao.init({ vertice_depth, color_depth });
-			m_lightmap.program = glsl::program("shaders\\lightmap");
-
-			m_lightdraw.vao.init({ vertice_depth, texcoord_depth });
-			m_lightdraw.program = glsl::program("shaders\\lightdraw");
-
-			m_projectiles.vao.init({ vertice_depth, texcoord_depth, color_depth });
-			m_projectiles.program = glsl::program("shaders\\units");
-
-			m_notification.vao.init({ vertice_depth, texcoord_depth, color_depth });
-			m_notification.program = glsl::program("shaders\\notify");
-
-			m_uiback.vao.init({ vertice_depth, color_depth });
-			m_uiback.program = glsl::program("shaders\\uiback");
-			m_uitext.vao.init({ vertice_depth, texcoord_depth, color_depth });
-			m_uitext.program = glsl::program("shaders\\uitext");
 
 			glGenFramebuffers(1, &m_scene_frame);
 			glGenFramebuffers(1, &m_light_frame);
@@ -578,43 +562,8 @@ namespace px
 			m_lightmap_prev.vao.fill(range_size, { &vertices, &colors_prev }, indices);
 		}
 
-		void renderer::draw(const perception_t &perception, const canvas_t &gui, timespan_t timespan)
+		void renderer::draw_geometry(const perception_t &perception, timespan_t timespan)
 		{
-			if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
-
-			// time
-			timespan_t delta = (std::max)(timespan - m_last, 0.0);
-			m_last = timespan;
-
-			// screen size
-			m_opengl->update(m_width, m_height);
-			if (m_width <= 0 || m_height <= 0) return;
-			m_aspect = m_width;
-			m_aspect /= m_height;
-
-			// calculate uniforms
-			double movement_phase = std::min(timespan * 5.0, 1.0);
-			vector center = perception.range() / 2 - (vector)perception.movement() * (1.0 - movement_phase);
-			vector lightmap_center = -(vector)perception.movement() * (1.0 - movement_phase) / range_width * 2;
-			GLfloat aspect = (GLfloat)m_aspect;
-			GLfloat scale = (GLfloat)m_scale;
-			GLfloat x_center = (GLfloat)center.X;
-			GLfloat y_center = (GLfloat)center.Y;
-			GLfloat span = (GLfloat)timespan;
-
-			setup_scene(); // update framebuffers & their textures
-
-			// fill buffers
-			fill_bg(perception);
-			fill_tiles(perception, *m_glyph.font);
-			fill_units(perception, *m_glyph.font);
-			fill_projectiles(perception, *m_glyph.font, movement_phase);
-			fill_notifications(perception, *m_popup.font);
-			fill_ui(gui, *m_ui.font);
-			fill_lightmap(perception);
-
-			update_textures(); // update textures
-
 			// g-eometry
 			glBindFramebuffer(GL_FRAMEBUFFER, m_scene_frame);
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
@@ -624,22 +573,38 @@ namespace px
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			glUseProgram(m_background.program);
-			glUniform1f(glGetUniformLocation(m_background.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_background.program, "scale"), scale);
-			glUniform2f(glGetUniformLocation(m_background.program, "center"), x_center, y_center);
+			glUniform1f(glGetUniformLocation(m_background.program, "aspect"), (GLfloat)m_aspect);
+			glUniform1f(glGetUniformLocation(m_background.program, "scale"), (GLfloat)m_scale);
+			glUniform2f(glGetUniformLocation(m_background.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
 			m_background.vao.draw();
 
 			glUseProgram(m_tiles.program);
-			glUniform1f(glGetUniformLocation(m_tiles.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), scale);
-			glUniform2f(glGetUniformLocation(m_tiles.program, "center"), x_center, y_center);
+			glUniform1f(glGetUniformLocation(m_tiles.program, "aspect"), (GLfloat)m_aspect);
+			glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), (GLfloat)m_scale);
+			glUniform2f(glGetUniformLocation(m_tiles.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
 			glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
 			glBindSampler(0, m_sampler);
 			m_tiles.vao.draw();
 
-			// lights (static)
+			// units
+			glUseProgram(m_units.program);
+			glUniform1f(glGetUniformLocation(m_units.program, "aspect"), (GLfloat)m_aspect);
+			glUniform1f(glGetUniformLocation(m_units.program, "scale"), (GLfloat)m_scale);
+			glUniform2f(glGetUniformLocation(m_units.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
+			glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
+			glActiveTexture(GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
+			glBindSampler(0, m_sampler);
+			m_units.vao.draw();
+		}
+
+		void renderer::draw_light(const perception_t &perception, timespan_t timespan)
+		{
+			// calculate uniform
+			vector lightmap_center = -(vector)perception.movement() * (1.0 - m_move_phase) / range_width * 2;
+
 			glDisable(GL_BLEND);
 			glBindFramebuffer(GL_FRAMEBUFFER, m_lightmap_frame);
 			glUseProgram(m_lightmap.program);
@@ -651,7 +616,7 @@ namespace px
 			glViewport(0, 0, (GLsizei)m_lightmap_size, (GLsizei)m_lightmap_size);
 			m_lightmap.vao.draw(GL_POINTS);
 			// prev
-			glBindTexture(GL_TEXTURE_2D, m_lightmap_prev_texture); 
+			glBindTexture(GL_TEXTURE_2D, m_lightmap_prev_texture);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_lightmap_prev_texture, 0);
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("lightmap framebuffer not complete");
 			glViewport(0, 0, (GLsizei)m_lightmap_size, (GLsizei)m_lightmap_size);
@@ -666,15 +631,15 @@ namespace px
 			glBlendFunc(GL_ONE, GL_ONE); // additive
 
 			// copy static lightmapmap
-			glUseProgram(m_lightdraw.program); 
+			glUseProgram(m_lightdraw.program);
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_lightmap_texture);
 			glActiveTexture(GL_TEXTURE0 + 1);
 			glBindTexture(GL_TEXTURE_2D, m_lightmap_prev_texture);
-			glUniform1f(glGetUniformLocation(m_lightdraw.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_lightdraw.program, "scale"), scale * range_width / 2);
+			glUniform1f(glGetUniformLocation(m_lightdraw.program, "aspect"), (GLfloat)m_aspect);
+			glUniform1f(glGetUniformLocation(m_lightdraw.program, "scale"), (GLfloat)m_scale * range_width / 2);
 			glUniform2f(glGetUniformLocation(m_lightdraw.program, "center"), GLfloat(lightmap_center.X), GLfloat(lightmap_center.Y));
-			glUniform1f(glGetUniformLocation(m_lightdraw.program, "phase"), GLfloat(movement_phase));
+			glUniform1f(glGetUniformLocation(m_lightdraw.program, "phase"), GLfloat(m_move_phase));
 			glUniform1i(glGetUniformLocation(m_lightdraw.program, "lmtexture"), 0);
 			glUniform1i(glGetUniformLocation(m_lightdraw.program, "lmprevtexture"), 1);
 			glBindSampler(0, m_sampler);
@@ -682,9 +647,9 @@ namespace px
 			m_lightdraw.vao.draw();
 
 			glUseProgram(m_light.program);
-			glUniform1f(glGetUniformLocation(m_light.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_light.program, "scale"), scale);
-			glUniform2f(glGetUniformLocation(m_light.program, "center"), x_center, y_center);
+			glUniform1f(glGetUniformLocation(m_light.program, "aspect"), (GLfloat)m_aspect);
+			glUniform1f(glGetUniformLocation(m_light.program, "scale"), (GLfloat)m_scale);
+			glUniform2f(glGetUniformLocation(m_light.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
 
 			perception.enumerate_avatars([&](perception::avatar_t a)
 			{
@@ -711,7 +676,7 @@ namespace px
 			});
 			perception.enumerate_projectiles([&](const projectile &projectile)
 			{
-				vector p = projectile.position(movement_phase) - perception.start();
+				vector p = projectile.position(m_move_phase) - perception.start();
 				GLfloat outer = 10.0;
 				GLfloat inner = 0.0;
 				GLfloat elevation = 2.0;
@@ -729,44 +694,18 @@ namespace px
 				m_light.vao.fill(points_quad, { &vertices }, indices);
 				m_light.vao.draw();
 			});
-
-			// mix
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glViewport(0, 0, m_scene_size, m_scene_size);
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			glDisable(GL_BLEND);
-
-			glUseProgram(m_scene.program);
-			glActiveTexture(GL_TEXTURE0 + 0);
-			glBindTexture(GL_TEXTURE_2D, m_scene_texture);
-			glActiveTexture(GL_TEXTURE0 + 1);
-			glBindTexture(GL_TEXTURE_2D, m_light_texture);
-			glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
-			glUniform1i(glGetUniformLocation(m_scene.program, "light"), 1);
-			glUniform3f(glGetUniformLocation(m_scene.program, "rng"), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100));
-			m_scene.vao.draw();
-
+		}
+		void renderer::draw_overlay(const perception_t &perception, const canvas_t &gui, timespan_t timespan)
+		{
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			// units
-			glUseProgram(m_units.program);
-			glUniform1f(glGetUniformLocation(m_units.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_units.program, "scale"), scale);
-			glUniform2f(glGetUniformLocation(m_units.program, "center"), x_center, y_center);
-			glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
-			glActiveTexture(GL_TEXTURE0 + 0);
-			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
-			glBindSampler(0, m_sampler);
-			m_units.vao.draw();
-
 			// particles
 			glUseProgram(m_projectiles.program);
-			glUniform1f(glGetUniformLocation(m_projectiles.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_projectiles.program, "scale"), scale);
-			glUniform2f(glGetUniformLocation(m_projectiles.program, "center"), x_center, y_center);
+			glUniform1f(glGetUniformLocation(m_projectiles.program, "aspect"), (GLfloat)m_aspect);
+			glUniform1f(glGetUniformLocation(m_projectiles.program, "scale"), (GLfloat)m_scale);
+			glUniform2f(glGetUniformLocation(m_projectiles.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
 			glUniform1i(glGetUniformLocation(m_projectiles.program, "img"), 0);
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
@@ -775,10 +714,10 @@ namespace px
 
 			// notifications
 			glUseProgram(m_notification.program);
-			glUniform1f(glGetUniformLocation(m_notification.program, "aspect"), aspect);
-			glUniform1f(glGetUniformLocation(m_notification.program, "scale"), scale);
-			glUniform2f(glGetUniformLocation(m_notification.program, "center"), x_center, y_center);
-			glUniform1f(glGetUniformLocation(m_notification.program, "phase"), span);
+			glUniform1f(glGetUniformLocation(m_notification.program, "aspect"), (GLfloat)m_aspect);
+			glUniform1f(glGetUniformLocation(m_notification.program, "scale"), (GLfloat)m_scale);
+			glUniform2f(glGetUniformLocation(m_notification.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
+			glUniform1f(glGetUniformLocation(m_notification.program, "phase"), (GLfloat)timespan);
 			glUniform1i(glGetUniformLocation(m_notification.program, "img"), 0);
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_popup.texture);
@@ -796,6 +735,57 @@ namespace px
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_ui.texture);
 			m_uitext.vao.draw();
+		}
+		void renderer::draw(const perception_t &perception, const canvas_t &gui, timespan_t timespan)
+		{
+			if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
+
+			// 
+			m_opengl->update(m_width, m_height);
+			if (m_width <= 0 || m_height <= 0) return;
+
+			// screen size, time & uniforms
+			m_delta = (std::max)(timespan - m_last, 0.0);
+			m_last = timespan;
+			m_aspect = m_width;
+			m_aspect /= m_height;
+			m_move_phase = std::min(timespan * 5.0, 1.0);
+			m_center = perception.range() / 2 - (vector)perception.movement() * (1.0 - m_move_phase);
+
+			// fill buffers
+			fill_bg(perception);
+			fill_tiles(perception, *m_glyph.font);
+			fill_units(perception, *m_glyph.font);
+			fill_projectiles(perception, *m_glyph.font, m_move_phase);
+			fill_notifications(perception, *m_popup.font);
+			fill_ui(gui, *m_ui.font);
+			fill_lightmap(perception);
+			update_textures(); // update textures with new glyphs
+
+			setup_scene(); // update framebuffer sizes & their textures
+
+			// fill geometry and light framebuffers
+			draw_geometry(perception, timespan);
+			draw_light(perception, timespan);
+
+			// mix geometry and light
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport(0, 0, m_scene_size, m_scene_size);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glDisable(GL_BLEND);
+			glUseProgram(m_scene.program);
+			glActiveTexture(GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, m_scene_texture);
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, m_light_texture);
+			glUniform1i(glGetUniformLocation(m_scene.program, "img"), 0);
+			glUniform1i(glGetUniformLocation(m_scene.program, "light"), 1);
+			glUniform3f(glGetUniformLocation(m_scene.program, "rng"), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100), (GLfloat)(std::rand() % 100));
+			m_scene.vao.draw();
+
+			// draw projectiles, notifications and ui
+			draw_overlay(perception, gui, timespan);
 
 			m_opengl->swap();
 
