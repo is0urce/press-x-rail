@@ -5,7 +5,8 @@
 
 // forms visitor pattern with conjunction with unit.apply virtual method
 
-#pragma once
+#ifndef PX_RL_EFFECT_H
+#define PX_RL_EFFECT_H
 
 namespace px
 {
@@ -28,3 +29,5 @@ namespace px
 		};
 	}
 }
+
+#endif

@@ -38,7 +38,20 @@ namespace px
 		vector multiplied(component w, component h) const { return multiplied({ w, h }); }
 		vector multiplied(component c) const { return multiplied({ c, c }); }
 		vector clamped(const vector &min, const vector &max) const { return vector((std::min)((std::max)(min.X, X), max.X), (std::min)((std::max)(min.Y, Y), max.Y)); }
-		void normalize() { auto len = magnitude(); X /= len; Y /= len; }
+		void normalize()
+		{
+			auto len = magnitude();
+			if (len > 0) 
+			{
+				X /= len;
+				Y /= len;
+			}
+			else
+			{
+				X = 0;
+				Y = 0;
+			}
+		}
 		vector normalized() { vector result = *this; result.normalize(); return result; }
 		vector lerp(const vector &b, component t) const { return multiplied(1 - t).moved(b.multiplied(t)); }
 

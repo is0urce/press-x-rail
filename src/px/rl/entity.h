@@ -3,7 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_ENTITY_H
+#define PX_RL_ENTITY_H
 
 #include <px/appearance.h>
 #include <px/light.h>
@@ -61,3 +62,5 @@ namespace px
 		};
 	}
 }
+
+#endif

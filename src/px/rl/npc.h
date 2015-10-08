@@ -3,9 +3,10 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_RL_NPC_H
+#define PX_RL_NPC_H
 
-#include "person.h"
+#include <px/rl/person.h>
 
 namespace px
 {
@@ -20,3 +21,5 @@ namespace px
 		};
 	}
 }
+
+#endif

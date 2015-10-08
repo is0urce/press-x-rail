@@ -3,7 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
-#pragma once
+#ifndef PX_PERSON_H
+#define PX_PERSON_H
 
 #include <px/rl/actor.h>
 #include <px/rl/character.h>
@@ -70,3 +71,5 @@ namespace px
 		};
 	}
 }
+
+#endif

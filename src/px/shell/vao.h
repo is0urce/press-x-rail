@@ -77,13 +77,13 @@ namespace px
 
 			inline void init(const std::vector<unsigned int> &depths)
 			{
-				if (depths.empty()) throw std::exception("void VAO::Init(std::vector<unsigned int> depths) depth is empty");
+				if (depths.empty()) throw std::exception("px::shell::vao::init(std::vector<unsigned int> &depths) - depth is empty");
 				init(depths.size(), &depths[0]);
 			}
 
 			inline unsigned int depth(unsigned int attribute) const
 			{
-				if (attribute >= m_num) throw std::runtime_error("VAO::GetDepth(int attribute) const - attribute out of range");
+				if (attribute >= m_num) throw std::runtime_error("px::shell::vao::depth(unsigned int attribute) const - attribute out of range");
 				return m_depth[attribute];
 			}
 
@@ -106,7 +106,7 @@ namespace px
 			// length - number of indices in index_values
 			inline void fill(unsigned int points, unsigned int length, const GLfloat* const* attribute_values, const GLuint* index_values)
 			{
-				if (!m_init) throw std::runtime_error("vao::fill - not initialized");
+				if (!m_init) throw std::runtime_error("px::shell::vao::fill - not initialized");
 
 				m_length = length;
 				glBindVertexArray(m_vao);
@@ -128,8 +128,8 @@ namespace px
 			inline void fill(unsigned int points, const std::vector<std::vector<GLfloat>*> &attribute_values, const std::vector<GLuint> &index_values)
 			{
 				int av_size = attribute_values.size();
-				if (av_size == 0) throw std::runtime_error("vao::fill - attribute values size = 0");
-				if (av_size != m_num)  throw std::runtime_error("vao::fill - attribute num missmatch");
+				if (av_size == 0) throw std::runtime_error("px::shell::vao::fill - attribute values size = 0");
+				if (av_size != m_num)  throw std::runtime_error("px::shell::vao::fill - attribute num missmatch");
 
 				std::vector<GLfloat*> av(av_size);
 				unsigned int c = 0;
@@ -144,7 +144,7 @@ namespace px
 
 			inline void draw(GLuint element_type) const
 			{
-				if (!m_init) throw std::runtime_error("vao::draw - not initialized");
+				if (!m_init) throw std::runtime_error("px::shell::vao::draw - not initialized");
 
 				if (m_length > 0)
 				{

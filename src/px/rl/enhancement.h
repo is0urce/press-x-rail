@@ -5,7 +5,8 @@
 
 // buffs and debuffs
 
-#pragma once
+#ifndef PX_RL_ENHANCEMENT_H
+#define PX_RL_ENHANCEMENT_H
 
 namespace px
 {
@@ -28,3 +29,5 @@ namespace px
 		};
 	}
 }
+
+#endif
