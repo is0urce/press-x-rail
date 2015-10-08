@@ -30,6 +30,7 @@ namespace px
 
 		namespace
 		{
+			const double move_speed = 5.0;
 			const double camera_default = 0.1;
 			const unsigned int range_width = game::perc_width;
 			const unsigned int range_height = game::perc_height;
@@ -102,14 +103,14 @@ namespace px
 
 			// drawcalls
 			m_background({ vertice_depth, color_depth }, glsl::program("shaders\\ground")),
-			m_tiles({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\units")),
-			m_units({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\units")),
+			m_tiles({ vertice_depth, texcoord_depth, color_depth, color_depth }, glsl::program("shaders\\tiles")),
+			m_units({ vertice_depth, vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\units")),
 			m_light({ vertice_depth }, glsl::program("shaders\\light")),
 			m_lightmap({ vertice_depth, color_depth }, glsl::program("shaders\\lightmap")),
 			m_lightmap_prev({ vertice_depth, color_depth }, glsl::program("shaders\\lightmap")),
 			m_lightdraw({ vertice_depth, texcoord_depth }, glsl::program("shaders\\lightdraw")),
 			m_scene({ vertice_depth, texcoord_depth }, glsl::program("shaders\\scene")),
-			m_projectiles({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\units")),
+			m_projectiles({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\projectile")),
 			m_notification({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\notify")),
 			m_uiback({ vertice_depth, color_depth }, glsl::program("shaders\\uiback")),
 			m_uitext({ vertice_depth, texcoord_depth, color_depth }, glsl::program("shaders\\uitext"))
@@ -316,6 +317,7 @@ namespace px
 			std::vector<GLfloat> vertices(range_size * points_quad * vertice_depth);
 			std::vector<GLfloat> textures(range_size * points_quad * texcoord_depth);
 			std::vector<GLfloat> colors(range_size * points_quad * color_depth);
+			std::vector<GLfloat> colors_prev(range_size * points_quad * color_depth);
 			std::vector<GLuint> indices(range_size * index_quad);
 
 			// vertex attributes
@@ -326,12 +328,15 @@ namespace px
 			{
 				auto &tile = perception.appearance(position);
 				auto g = fnt[tile.image];
-				color tile_color = tile.color;
-				tile_color.A = (perception.hide(position)) ? 0 : 1;
+				color color_curr = tile.color;
+				color color_prev = tile.color;
+				color_curr.A = perception.hide(position) ? 0.0 : 1.0;
+				color_prev.A = perception.hide_prev(position) ? 0.0 : 1.0;
 
 				fill_vertex(position, { g.width * tile.size, g.height * tile.size }, &vertices[vertex_offset]);
 				fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
-				fill_color(tile_color, &colors[color_offset]);
+				fill_color(color_curr, &colors[color_offset]);
+				fill_color(color_prev, &colors_prev[color_offset]);
 
 				vertex_offset += vertice_depth * points_quad;
 				color_offset += color_depth * points_quad;
@@ -342,7 +347,7 @@ namespace px
 			fill_index(range_size, indices);
 
 			// bind
-			m_tiles.vao.fill(range_size * points_quad, { &vertices, &textures, &colors }, indices);
+			m_tiles.vao.fill(range_size * points_quad, { &vertices, &textures, &colors, &colors_prev }, indices);
 		}
 
 		void renderer::fill_units(const perception_t &perception, font &fnt)
@@ -350,6 +355,7 @@ namespace px
 			unsigned int unit_num = perception.avatar_count();
 
 			std::vector<GLfloat> vertices(unit_num * points_quad * vertice_depth);
+			std::vector<GLfloat> vertices_prev(unit_num * points_quad * vertice_depth);
 			std::vector<GLfloat> textures(unit_num * points_quad * texcoord_depth);
 			std::vector<GLfloat> colors(unit_num * points_quad * color_depth);
 			std::vector<GLuint> indices(unit_num * index_quad);
@@ -357,13 +363,14 @@ namespace px
 			// vertex attributes
 			unsigned int vertex_offset = 0;
 			unsigned int color_offset = 0;
-			unsigned int texture_offset = 0;
+			unsigned int texture_offset = 0; 
 			perception.enumerate_avatars([&](const perception::avatar_t &unit)
 			{
 				auto &appear = unit.appearance();
 				auto g = fnt[appear.image];
 
 				fill_vertex(unit.position(), { g.width * appear.size, g.height * appear.size }, &vertices[vertex_offset]);
+				fill_vertex(unit.position_previous(), { g.width * appear.size, g.height * appear.size }, &vertices_prev[vertex_offset]);
 				fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
 				fill_color(unit.appearance().color, &colors[color_offset]);
 
@@ -375,7 +382,7 @@ namespace px
 			fill_index(unit_num, indices);
 
 			// bind
-			m_units.vao.fill(unit_num * points_quad, { &vertices, &textures, &colors }, indices);
+			m_units.vao.fill(unit_num * points_quad, { &vertices, &vertices_prev, &textures, &colors }, indices);
 		}
 
 		void renderer::fill_notifications(const perception_t &perception, font &fnt)
@@ -572,17 +579,20 @@ namespace px
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+			// background
 			glUseProgram(m_background.program);
 			glUniform1f(glGetUniformLocation(m_background.program, "aspect"), (GLfloat)m_aspect);
 			glUniform1f(glGetUniformLocation(m_background.program, "scale"), (GLfloat)m_scale);
 			glUniform2f(glGetUniformLocation(m_background.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
 			m_background.vao.draw();
 
+			// tiles
 			glUseProgram(m_tiles.program);
 			glUniform1f(glGetUniformLocation(m_tiles.program, "aspect"), (GLfloat)m_aspect);
 			glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), (GLfloat)m_scale);
 			glUniform2f(glGetUniformLocation(m_tiles.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
-			glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
+			glUniform1f(glGetUniformLocation(m_tiles.program, "phase"), (GLfloat)m_move_phase);
+			glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0); 
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
 			glBindSampler(0, m_sampler);
@@ -592,7 +602,8 @@ namespace px
 			glUseProgram(m_units.program);
 			glUniform1f(glGetUniformLocation(m_units.program, "aspect"), (GLfloat)m_aspect);
 			glUniform1f(glGetUniformLocation(m_units.program, "scale"), (GLfloat)m_scale);
-			glUniform2f(glGetUniformLocation(m_units.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
+			glUniform2f(glGetUniformLocation(m_units.program, "center"), (GLfloat)(perception.range().X / 2), (GLfloat)(perception.range().Y / 2));
+			glUniform1f(glGetUniformLocation(m_units.program, "phase"), (GLfloat)m_move_phase);
 			glUniform1i(glGetUniformLocation(m_units.program, "img"), 0);
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
@@ -639,7 +650,7 @@ namespace px
 			glUniform1f(glGetUniformLocation(m_lightdraw.program, "aspect"), (GLfloat)m_aspect);
 			glUniform1f(glGetUniformLocation(m_lightdraw.program, "scale"), (GLfloat)m_scale * range_width / 2);
 			glUniform2f(glGetUniformLocation(m_lightdraw.program, "center"), GLfloat(lightmap_center.X), GLfloat(lightmap_center.Y));
-			glUniform1f(glGetUniformLocation(m_lightdraw.program, "phase"), GLfloat(m_move_phase));
+			glUniform1f(glGetUniformLocation(m_lightdraw.program, "phase"), (GLfloat)m_move_phase); 
 			glUniform1i(glGetUniformLocation(m_lightdraw.program, "lmtexture"), 0);
 			glUniform1i(glGetUniformLocation(m_lightdraw.program, "lmprevtexture"), 1);
 			glBindSampler(0, m_sampler);
@@ -740,7 +751,7 @@ namespace px
 		{
 			if (perception.range() != range) throw std::logic_error("renderer::draw(..) - perception != range");
 
-			// 
+			// update clent window bounds
 			m_opengl->update(m_width, m_height);
 			if (m_width <= 0 || m_height <= 0) return;
 
@@ -749,7 +760,7 @@ namespace px
 			m_last = timespan;
 			m_aspect = m_width;
 			m_aspect /= m_height;
-			m_move_phase = std::min(timespan * 5.0, 1.0);
+			m_move_phase = std::max(std::min(timespan * move_speed, 1.0), 0.0);
 			m_center = perception.range() / 2 - (vector)perception.movement() * (1.0 - m_move_phase);
 
 			// fill buffers
@@ -760,9 +771,12 @@ namespace px
 			fill_notifications(perception, *m_popup.font);
 			fill_ui(gui, *m_ui.font);
 			fill_lightmap(perception);
-			update_textures(); // update textures with new glyphs
 
-			setup_scene(); // update framebuffer sizes & their textures
+			// update textures with new glyphs
+			update_textures();
+
+			// update framebuffer sizes & their textures
+			setup_scene();
 
 			// fill geometry and light framebuffers
 			draw_geometry(perception, timespan);

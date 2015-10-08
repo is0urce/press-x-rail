@@ -180,6 +180,7 @@ namespace px
 				m_maps.at(range_point).swap(m_world.generate(cell, [&](unit_ptr unit, point position)
 				{
 					add(unit, position);
+					unit->store_position();
 				}));
 			});
 

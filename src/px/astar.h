@@ -64,15 +64,15 @@ namespace px
 				return std::tie(a->X, a->Y) < std::tie(b->X, b->Y);
 			}
 		};
-		static double heuristic(coord a, coord b)
+		static double heuristic(const coord &a, const coord &b)
 		{
-			return std::sqrt(std::pow(a.X - b.X, 2.0) + std::pow(a.Y - b.Y, 2.0));
+			return a.distance(b);
 		}
-		static double distance(coord a, coord b)
+		static double distance(const coord &a, const coord &b)
 		{
 			return a.king_distance(b);
 		}
-		static std::unique_ptr<std::list<std::shared_ptr<coord>>> neighbours(coord c)
+		static std::unique_ptr<std::list<std::shared_ptr<coord>>> neighbours(const coord &c)
 		{
 			std::unique_ptr<std::list<std::shared_ptr<coord>>> result(new std::list<std::shared_ptr<coord>>);
 			result->emplace_back(new coord(c.X + 1, c.Y));
@@ -87,18 +87,22 @@ namespace px
 
 			return result;
 		}
+
+		// reconstruct path and return it
 		static std::unique_ptr<std::list<coord>> construct_path(coord* step)
 		{
 			std::unique_ptr<std::list<coord>> path(new std::list<coord>);
 
-			if (!step) throw std::runtime_error("px::path::construct_path() - step is null");
-
-			while (true)
+			if (step)
 			{
-				if (!step->prev) return path; // not count current position as part of path
-				path->push_front(coord(step->X, step->Y));
-				step = step->prev;
+				while (true)
+				{
+					if (!step->prev) break; // not count current position as part of path
+					path->push_front(coord(step->X, step->Y));
+					step = step->prev;
+				}
 			}
+			return path;
 		}
 
 	public:
@@ -107,10 +111,6 @@ namespace px
 			return find(coord(sx, sy), coord(dx, dy), steps, traversable);
 		}
 		static std::unique_ptr<std::list<coord>> find(point start, point finish, unsigned int steps, std::function<bool(const point& p)> traversable)
-		{
-			return find(coord(start), coord(finish), steps, traversable);
-		}
-		static std::unique_ptr<std::list<coord>> find(coord start, coord finish, unsigned int steps, std::function<bool(const point& p)> traversable)
 		{
 			if (!traversable) throw std::logic_error("px::path::find() - traversable is null");
 
@@ -127,8 +127,7 @@ namespace px
 				// terminal
 				if (*x == finish)
 				{
-					auto path = construct_path(x.get());
-					return path;
+					return construct_path(x.get());
 				}
 
 				open.erase(*xi);
@@ -183,7 +182,7 @@ namespace px
 			}
 
 			// we're in closed space, stay calm @ don't make mistake
-			return nullptr;
+			return construct_path(nullptr);
 		}
 	};
 }

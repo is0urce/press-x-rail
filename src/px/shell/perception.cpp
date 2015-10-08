@@ -107,7 +107,14 @@ const perception::ground_t& perception::ground_previous(const point &position) c
 
 bool perception::hide(const point &position) const
 {
-	return m_hide->at(position);
+	return m_hide->at(position, true);
+}
+
+bool perception::hide_prev(const point &position) const
+{
+	//point prev = position + m_move;
+	//return m_hide_prev->in_range(prev) ? m_hide_prev->at(position + m_move, false) : false;
+	return m_hide_prev->at(position + m_move, true);
 }
 
 void perception::appearance(const point &position, const perception::appearance_t &tile)

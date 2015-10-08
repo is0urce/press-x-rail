@@ -73,6 +73,7 @@ namespace px
 			const ground_t& ground(const point &position) const;
 			const ground_t& ground_previous(const point &position) const;
 			bool hide(const point &position) const;
+			bool hide_prev(const point &position) const;
 
 			void appearance(const point &position, const tile_t &tile);
 			void light(const point &position, const color &color_value);

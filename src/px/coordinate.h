@@ -56,7 +56,7 @@ namespace px
 			component dy = Y - p.Y;
 			return dx * dx + dy * dy;
 		}
-		auto distance(const coordinate &another) -> decltype(std::sqrt(distance2(another))) const
+		auto distance(const coordinate &another) const -> decltype(std::sqrt(distance2(another)))
 		{
 			return std::sqrt(distance2(another));
 		}

@@ -362,5 +362,7 @@
     <None Include="config\shaders\lightmap.vert" />
     <None Include="config\shaders\lightdraw.frag" />
     <None Include="config\shaders\lightdraw.vert" />
+    <None Include="config\shaders\projectile.frag" />
+    <None Include="config\shaders\projectile.vert" />
   </ItemGroup>
 </Project>

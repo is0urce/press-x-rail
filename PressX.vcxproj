@@ -231,6 +231,8 @@
     <None Include="config\shaders\lightmap.vert" />
     <None Include="config\shaders\notify.frag" />
     <None Include="config\shaders\notify.vert" />
+    <None Include="config\shaders\projectile.frag" />
+    <None Include="config\shaders\projectile.vert" />
     <None Include="config\shaders\scene.frag" />
     <None Include="config\shaders\scene.vert" />
     <None Include="config\shaders\tiles.frag" />

@@ -16,6 +16,7 @@
 #include "px/reader.h"
 
 #include <px/shadowcasting.h>
+#include <px/astar.h>
 
 #include <algorithm>
 
@@ -117,6 +118,30 @@ namespace px
 		point start = m_player->position() - perc_center;
 		m_perception.swap(start);
 
+		//m_scene.enumerate_units([&](scene::unit_ptr unit)
+		//{
+		//	unit->store_position();
+		//});
+		//auto units = m_scene.units();
+		//for (auto &u : units)
+		//{
+		//	auto path = path::find(u.first, m_player->position(), 50, [&](const point &p)
+		//	{
+		//		return m_scene.traversable(p);
+		//	});
+		//	if (path)
+		//	{
+		//		auto it = path->begin();
+		//		if (it != path->end())
+		//		{
+		//			if (m_scene.traversable(*it))
+		//			{
+		//				m_scene.move(u.second, *it);
+		//			}
+		//		}
+		//	}
+		//}
+
 		// units
 		shadowcasting player_fov(m_fov_fn, m_player->position(), perc_range);
 		map<color> lightmap(perc_reach, color(0, 0, 0));
@@ -180,23 +205,28 @@ namespace px
 			{
 				if (blocking->useable(*this, m_player))
 				{
+					m_player->store_position();
 					blocking->use(*this, m_player);
+					fill_perception();
 				}
 				else if (!blocking->invincible())
 				{
+					m_player->store_position();
 					// attack
+					fill_perception();
 				}
 			}
 			else
 			{
 				if (m_scene.traversable(destination))
 				{
+					// move
+					m_player->store_position();
 					m_scene.focus(destination);
 					m_scene.move(m_player, destination);
+					fill_perception();
 				}
 			}
-
-			fill_perception();
 		}
 		return true;
 	}
@@ -213,6 +243,7 @@ namespace px
 					auto target = aquire_target();
 					if (target && !target->invincible() && skill->useable(target))
 					{
+						m_player->store_position();
 						skill->use(target);
 						fill_perception();
 					}
@@ -222,6 +253,7 @@ namespace px
 					auto position = m_player->position() + m_hover;
 					if (skill->useable(position))
 					{
+						m_player->store_position();
 						skill->use(position);
 						fill_perception();
 					}
@@ -237,6 +269,7 @@ namespace px
 		auto target = aquire_target();
 		if (useable(target))
 		{
+			m_player->store_position();
 			target->use(*this, m_player);
 			fill_perception();
 		}
