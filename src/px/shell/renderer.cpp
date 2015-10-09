@@ -592,7 +592,7 @@ namespace px
 			glUniform1f(glGetUniformLocation(m_tiles.program, "scale"), (GLfloat)m_scale);
 			glUniform2f(glGetUniformLocation(m_tiles.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
 			glUniform1f(glGetUniformLocation(m_tiles.program, "phase"), (GLfloat)m_move_phase);
-			glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0); 
+			glUniform1i(glGetUniformLocation(m_tiles.program, "img"), 0);
 			glActiveTexture(GL_TEXTURE0 + 0);
 			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
 			glBindSampler(0, m_sampler);

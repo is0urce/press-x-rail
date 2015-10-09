@@ -5,6 +5,8 @@
 #include <px/writer.h>
 #include <px/reader.h>
 
+#include <px/writer.cpp>
+
 using namespace px;
 
 TEST_CASE("io", "[io]")

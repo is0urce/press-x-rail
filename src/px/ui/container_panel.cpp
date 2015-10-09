@@ -129,9 +129,12 @@ namespace px
 		}
 		bool container_panel::click_control(const point &position, unsigned int button)
 		{
+			bool inside = false;
+
 			// deposit
 			if (m_inventory.outline.contains(m_hover))
 			{
+				inside = true;
 				target_t::item_t found;
 				enumerate_inventory<target_t::item_t>(m_inventory.list, m_inventory.scroll, *m_user, [&](const rectangle &item_bounds, target_t::item_t item, unsigned int stack)
 				{
@@ -149,6 +152,7 @@ namespace px
 			// pick up
 			if (m_container.outline.contains(m_hover))
 			{
+				inside = true;
 				target_t::item_t found;
 				enumerate_inventory<target_t::item_t>(m_container.list, m_container.scroll, *m_target, [&](const rectangle &item_bounds, target_t::item_t item, unsigned int stack)
 				{
@@ -166,8 +170,15 @@ namespace px
 			// 'take all' button
 			if (m_takeall.contains(m_hover))
 			{
+				inside = true;
 				take_all();
 			}
+
+			if (!inside)
+			{
+				disable();
+			}
+
 			return true;
 		}
 		bool container_panel::hover_control(const point &position)

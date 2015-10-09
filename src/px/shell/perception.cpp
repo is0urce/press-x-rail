@@ -112,8 +112,6 @@ bool perception::hide(const point &position) const
 
 bool perception::hide_prev(const point &position) const
 {
-	//point prev = position + m_move;
-	//return m_hide_prev->in_range(prev) ? m_hide_prev->at(position + m_move, false) : false;
 	return m_hide_prev->at(position + m_move, true);
 }
 
@@ -148,7 +146,7 @@ void perception::add_avatar(appearance_t appearance, point position, point posit
 
 void perception::enumerate_avatars(perception::enum_fn fn) const
 {
-	if (!fn) throw std::logic_error("perception::enumerate_units - fn is null");
+	if (!fn) throw std::logic_error("px::shell::perception::enumerate_units - fn is null");
 
 	std::for_each(m_units.begin(), m_units.end(), fn);
 }
