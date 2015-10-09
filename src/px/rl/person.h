@@ -41,19 +41,21 @@ namespace px
 			person() {}
 			virtual ~person() {}
 
+		public:
+			static std::string signature() { return "person.h"; }
 
 		protected:
 			virtual void apply_effect(effect &e) override { e.apply(*this); }
+			virtual std::string sign_unit() const override { return signature(); }
 			virtual void serialize(writer::node_ptr node) const override
 			{
-				auto l = node->open("person");
-				unit::serialize(l);
-				character::store(l->open("char"));
+				unit::serialize(node);
+				character::store(node);
 			}
 			virtual void deserialize(const reader::node &node) override
 			{
-				unit::deserialize(node["unit"]);
-				character::restore(node["char"]);
+				unit::deserialize(node);
+				character::restore(node);
 			}
 
 		public:

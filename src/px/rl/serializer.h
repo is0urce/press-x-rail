@@ -29,14 +29,14 @@ namespace px
 			typedef writer::node_ptr out_node;
 			typedef std::shared_ptr<unit> element_ptr;
 			typedef std::string signature;
-			typedef std::function<element_ptr(const reader::node&)> method;
+			typedef std::function<element_ptr(const in_node&)> method;
 
 		private:
-			std::map<std::string, std::function<element_ptr(const in_node&)>> m_registered;
+			std::map<std::string, method> m_registered;
 
 		public:
-			serializer();
-			~serializer();
+			serializer() {}
+			virtual ~serializer() {}
 
 		public:
 			void register_method(signature sign, method creation_method)
@@ -54,29 +54,19 @@ namespace px
 				});
 			}
 
-			static void save(std::shared_ptr<unit> unit, writer::node_ptr node)
+			void save(element_ptr unit, out_node node)
 			{
-				if (!node) throw std::logic_error("px::rl::serializer::save(player, node) - node is null");
-				unit->save(node);
+				if (!unit) throw std::logic_error("px::rl::serializer::save(unit, node) - unit is null");
+				if (!node) throw std::logic_error("px::rl::serializer::save(unit, node) - node is null");
+
+				unit->save(node->open(unit->sign()));
 			}
-			static std::shared_ptr<unit> load(reader::node &node)
+			element_ptr load(const in_node& node)
 			{
-				std::shared_ptr<unit> u;
-				auto name = node.name();
-				if (name == "unit")
-				{
-					u.reset(new unit());
-				}
-				else if (name == "door")
-				{
-					u.reset(new door());
-				}
-				else
-				{
-					throw std::runtime_error("px::scene::load(..) unexpected element");
-				}
-				u->load(node);
-				return u;
+				signature name = io::to_string(node.name());
+				auto find = m_registered.find(name);
+				if (find == m_registered.end()) throw std::logic_error("px::rl::serializer::load(node) - node object not registered, signature=" + name);
+				return find->second(node);
 			}
 		};
 	}

@@ -39,6 +39,10 @@ namespace px
 			unit(const point& position);
 			virtual ~unit();
 
+			// static
+		public:
+			static std::string signature();
+
 			// vitrual
 		protected:
 			virtual bool traversable_unit() const;
@@ -48,8 +52,10 @@ namespace px
 			virtual void apply_effect(effect &e);
 			virtual void serialize(writer::node_ptr node) const;
 			virtual void deserialize(const reader::node &node);
+			virtual std::string sign_unit() const;
 
 		public:
+			std::string sign() const;
 			void save(writer::node_ptr node) const;
 			void load(const reader::node &node);
 

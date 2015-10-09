@@ -160,7 +160,6 @@ namespace px
 	public:
 		writer(const std::string &path);
 		virtual ~writer();
-	private:
 		writer(const writer &w) = delete;
 
 	public:

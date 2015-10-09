@@ -9,8 +9,10 @@
 #include <px/tile.h>
 #include <px/world.h>
 
-#include "px/reader.h"
-#include "px/writer.h"
+#include <px/reader.h>
+#include <px/writer.h>
+
+#include <px/rl/serializer.h>
 
 #include <memory>
 #include <map>
@@ -39,6 +41,7 @@ namespace px
 		tile_t m_default;
 		point m_focus;
 		unit_list m_units;
+		std::shared_ptr<rl::serializer> m_serializer;
 
 		// ctor & dtor
 	public:

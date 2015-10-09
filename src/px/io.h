@@ -8,6 +8,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <array>
 
 namespace px
 {
@@ -17,10 +18,7 @@ namespace px
 		static const unsigned int key_size = 8;
 
 	public:
-		typedef struct key_t
-		{
-			char letter[key_size];
-		} key_t;
+		typedef std::array<char, key_size> key_t;
 		typedef unsigned long chunk_size;
 
 	public:
@@ -31,47 +29,43 @@ namespace px
 		static key_t to_key(const std::string &str)
 		{
 			auto len = str.length();
-			if (str.length() > key_size) throw std::logic_error("px::io::to_key(str) - length > key size, str=" + str);
+			if (str.length() > key_size) throw std::logic_error("px::io::to_key(string) - length > key size, str=" + str);
 			key_t result = {};
 			for (unsigned int i = 0; i < len; ++i)
 			{
-				result.letter[i] = str[i];
+				result[i] = str[i];
 			}
 			return result;
 		}
 		static key_t to_key(const char *c_str)
 		{
-			unsigned int len;
-			for (unsigned int i = 0; i < key_size; ++i)
-			{
-				if (c_str[i] == 0)
-				{
-					len = i;
-					break;
-				}
-			}
-			key_t result = {};
-			for (unsigned int i = 0; i < len; ++i)
-			{
-				result.letter[i] = c_str[i];
-			}
-			return result;
+			return to_key(std::string(c_str));
 		}
 		static key_t to_key(unsigned int key_value)
 		{
-			if (sizeof(key_value) > sizeof(key_t)) throw std::logic_error("not supported - int type size > key type size");
+			if (sizeof(key_value) > sizeof(key_t)) throw std::logic_error("px::io::to_key(uint) - not supported - int type size > key type size");
 
-			key_t result = to_key("_____key");
+			key_t result;
+			result.fill('_');
 			memcpy((char*)&result, &key_value, sizeof(key_value));
 			return result;
 		}
+		static std::string to_string(key_t key)
+		{
+			unsigned int len = 0;
+			while (len < key_size && key[len]) ++len;
+			return std::string(&key[0], len);
+		}
 	};
-	inline bool operator==(const io::key_t &a, const io::key_t &b) { return std::equal(a.letter, a.letter + sizeof(a.letter) / sizeof (*a.letter), b.letter); }
-	inline bool operator!=(const io::key_t &a, const io::key_t &b) { return !operator==(a,b); }
 	inline bool operator==(const std::string &a, const io::key_t &b) { return operator==(io::to_key(a), b); }
 	inline bool operator==(const io::key_t &a, const std::string &b) { return operator==(a, io::to_key(b)); }
+
 	inline bool operator!=(const std::string &a, const io::key_t &b) { return !operator==(io::to_key(a), b); }
 	inline bool operator!=(const io::key_t &a, const std::string &b) { return !operator==(a, io::to_key(b)); }
+
+	inline bool operator==(const char *a, const io::key_t &b) { return operator==(io::to_key(a), b); }
+	inline bool operator==(const io::key_t &a, const char *b) { return operator==(a, io::to_key(b)); }
+
 	inline bool operator!=(const char *a, const io::key_t &b) { return !operator==(io::to_key(a), b); }
 	inline bool operator!=(const io::key_t &a, const char *b) { return !operator==(a, io::to_key(b)); }
 }

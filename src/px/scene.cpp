@@ -7,8 +7,6 @@
 
 #include "scene.h"
 
-#include <px/serializer.h>
-
 namespace px
 {
 	namespace
@@ -21,8 +19,11 @@ namespace px
 	scene::scene()
 		:
 		m_maps(sight_range),
-		m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
+		m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); }),
+		m_serializer(std::make_shared<rl::serializer>())
 	{
+		m_serializer->register_method<rl::unit>(rl::unit::signature());
+		m_serializer->register_method<rl::door>(rl::door::signature());
 		focus({ 0, 0 }, true);
 	}
 
@@ -217,7 +218,7 @@ namespace px
 		auto units_node = node->open("units");
 		enumerate_units([&](unit_ptr u_ptr)
 		{
-			rl::serializer::save(u_ptr, units_node);
+			m_serializer->save(u_ptr, units_node);
 		});
 	}
 
@@ -227,7 +228,9 @@ namespace px
 
 		node["units"].enumerate([this](reader::node n)
 		{
-			add(rl::serializer::load(n));
+			auto u = m_serializer->load(n);
+			u->store_position();
+			add(u);
 		});
 	}
 }

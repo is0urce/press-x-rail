@@ -25,26 +25,33 @@ namespace px
 			door() : m_open(false) {}
 			virtual ~door() {}
 
+			// static
+		public:
+			static std::string signature()
+			{
+				return "door";
+			}
+
 			// vitrual
 		protected:
 			virtual bool traversable_unit() const override { return m_open; }
 			virtual bool transparent_unit() const override { return m_open; }
 			virtual bool useable_unit(const environment&, user_t user) const override { return !m_open; }
 			virtual void use_unit(environment&, user_t user) override { if (!m_open) open(); }
+			virtual std::string sign_unit() const override { return signature(); }
 			virtual void serialize(writer::node_ptr node) const override
 			{
-				auto l = node->open("door");
-				l->write("open", m_open);
-				l->write("opn_app", m_opened_appearance);
-				l->write("cls_app", m_closed_appearance);
-				unit::serialize(l);
+				node->write("open", m_open);
+				node->write("opn_app", m_opened_appearance);
+				node->write("cls_app", m_closed_appearance);
+				unit::serialize(node);
 			}
 			virtual void deserialize(const reader::node &node) override
 			{
 				node["open"] >> m_open;
 				node["opn_app"] >> m_opened_appearance;
 				node["cls_app"] >> m_closed_appearance;
-				unit::deserialize(node["unit"]);
+				unit::deserialize(node);
 			}
 
 		public:
