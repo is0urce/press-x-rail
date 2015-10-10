@@ -21,6 +21,7 @@ namespace px
 	namespace rl
 	{
 		class unit;
+		class serializer;
 	}
 
 	class library;
@@ -28,6 +29,7 @@ namespace px
 	class world
 	{
 	public:
+		// object types
 		typedef appearance<unsigned int> appearance_t;
 		typedef tile<appearance_t> tile_t;
 		typedef map<tile_t> map_t;
@@ -37,11 +39,19 @@ namespace px
 		typedef fn::builder<map_t, unit_ptr> builder_t;
 		typedef std::unique_ptr<builder_t> builder_ptr;
 
+		// contained types
+		typedef library library_t;
+		typedef std::shared_ptr<library_t> library_ptr;
+		typedef rl::serializer serializer_t;
+		typedef std::shared_ptr<serializer_t> serializer_ptr;
+
 	public:
 		static const point cell_range;
 
 	private:
-		std::shared_ptr<library> m_library;
+		library_ptr m_library;
+		serializer_ptr m_serializer;
+
 		map<bool> m_created;
 
 		map<builder_ptr> m_landmarks;
@@ -60,12 +70,20 @@ namespace px
 	private:
 		void generate_wall(map_t &cell_map, builder_t::fetch_op fetch);
 
+	private:
+		void fill_library();
+
 	public:
 		point cell(const point &absolute) const;
 
+		library_ptr library();
+		serializer_ptr serializer();
+
+		// management
 		map_ptr generate(const point &cell, builder_t::fetch_op fetch);
 		void store(unit_ptr unit);
 
+		// serialization
 		void save(writer::node_ptr node) const;
 		void load(reader::node &node);
 	};

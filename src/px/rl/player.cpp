@@ -21,6 +21,16 @@ namespace px
 		player::player(receiver_t *receiver) : m_receiver(receiver) {}
 		player::~player() {}
 
+		std::string player::signature()
+		{
+			return "player";
+		}
+
+		std::string player::sign_unit() const
+		{
+			return signature();
+		}
+
 		void player::acquire(item_t item, bool silent)
 		{
 			if (!silent && m_receiver)

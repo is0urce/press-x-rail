@@ -375,7 +375,7 @@ namespace px
 
 		m_scene.remove(m_player);
 
-		m_player->load(file["player"]["person"]);
+		m_player->load(file["player"]);
 		m_scene.load(file["scene"]);
 
 		m_scene.focus(m_player->position());

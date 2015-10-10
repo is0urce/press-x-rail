@@ -21,6 +21,9 @@ namespace px
 		private:
 			receiver_t *m_receiver;
 
+		public:
+			static std::string signature();
+
 			// ctor & dtor
 		public:
 			player(receiver_t *receiver);
@@ -28,6 +31,7 @@ namespace px
 
 		protected:
 			virtual void acquire(player::item_t item, bool silent) override;
+			virtual std::string sign_unit() const override;
 		};
 	}
 }

@@ -7,6 +7,9 @@
 
 #include "scene.h"
 
+#include <px/rl/unit.h>
+#include <px/rl/serializer.h>
+
 namespace px
 {
 	namespace
@@ -19,11 +22,8 @@ namespace px
 	scene::scene()
 		:
 		m_maps(sight_range),
-		m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); }),
-		m_serializer(std::make_shared<rl::serializer>())
+		m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 	{
-		m_serializer->register_method<rl::unit>(rl::unit::signature());
-		m_serializer->register_method<rl::door>(rl::door::signature());
 		focus({ 0, 0 }, true);
 	}
 
@@ -213,22 +213,29 @@ namespace px
 
 	void scene::save(writer::node_ptr node)
 	{
+		auto serializer = m_world.serializer();
+
 		if (!node) throw std::logic_error("px:scene::save(..) - node is null");
+		if (!serializer) throw std::logic_error("px::scene::save() - serializer is null");
 
 		auto units_node = node->open("units");
 		enumerate_units([&](unit_ptr u_ptr)
 		{
-			m_serializer->save(u_ptr, units_node);
+			serializer->save(u_ptr, units_node);
 		});
 	}
 
 	void scene::load(const reader::node &node)
 	{
+		auto serializer = m_world.serializer();
+
+		if (!serializer) throw std::logic_error("px::scene::save() - serializer is null");
+
 		clear();
 
-		node["units"].enumerate([this](reader::node n)
+		node["units"].enumerate([&](reader::node n)
 		{
-			auto u = m_serializer->load(n);
+			auto u = serializer->load(n);
 			u->store_position();
 			add(u);
 		});

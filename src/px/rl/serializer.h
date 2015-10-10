@@ -54,19 +54,29 @@ namespace px
 				});
 			}
 
-			void save(element_ptr unit, out_node node)
+			static void save(element_ptr unit, out_node node)
+			{
+				if (!unit) throw std::logic_error("px::rl::serializer::save(unit, node) - unit is null");
+
+				save(unit, node, unit->sign());
+			}
+			static void save(element_ptr unit, out_node node, signature sign)
 			{
 				if (!unit) throw std::logic_error("px::rl::serializer::save(unit, node) - unit is null");
 				if (!node) throw std::logic_error("px::rl::serializer::save(unit, node) - node is null");
 
-				unit->save(node->open(unit->sign()));
+				unit->save(node->open(sign));
 			}
 			element_ptr load(const in_node& node)
 			{
 				signature name = io::to_string(node.name());
 				auto find = m_registered.find(name);
 				if (find == m_registered.end()) throw std::logic_error("px::rl::serializer::load(node) - node object not registered, signature=" + name);
-				return find->second(node);
+				return load(node, find->second);
+			}
+			static element_ptr load(const in_node& node, method create_method)
+			{
+				return create_method(node);
 			}
 		};
 	}

@@ -42,7 +42,7 @@ namespace px
 			virtual ~person() {}
 
 		public:
-			static std::string signature() { return "person.h"; }
+			static std::string signature() { return "person"; }
 
 		protected:
 			virtual void apply_effect(effect &e) override { e.apply(*this); }
