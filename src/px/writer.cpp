@@ -22,7 +22,10 @@ namespace px
 		}
 		m_top.reset(new node(&m_stream));
 	}
-	writer::~writer() { end(); }
+	writer::~writer()
+	{
+		end();
+	}
 
 	writer::node_ptr writer::top() { return m_top; }
 	void writer::end() { m_top->close(); m_stream.flush(); }

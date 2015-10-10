@@ -23,6 +23,25 @@ namespace px
 		{
 		}
 
+		unit::sign_t container::signature()
+		{
+			return "cont";
+		}
+
+		unit::sign_t container::sign_unit() const
+		{
+			return signature();
+		}
+		void container::serialize(writer::node_ptr node) const
+		{
+			unit::serialize(node);
+		}
+
+		void container::deserialize(const reader::node &node)
+		{
+			unit::deserialize(node);
+		}
+
 		bool container::useable_unit(const environment& environment, user_t user) const
 		{
 			return user.get() == (actor*)environment.player().get();

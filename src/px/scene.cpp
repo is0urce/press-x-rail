@@ -19,11 +19,14 @@ namespace px
 		static const point sight_center(sight_reach, sight_reach);
 	}
 
-	scene::scene()
+	scene::scene(std::shared_ptr<world> world)
 		:
+		m_world(world),
 		m_maps(sight_range),
 		m_units([](const point &a, const point &b) { return std::tie(a.X, a.Y) < std::tie(b.X, b.Y); })
 	{
+		if (!world) throw std::logic_error("px::scene::ctor(world) world is null");
+
 		focus({ 0, 0 }, true);
 	}
 
@@ -33,14 +36,14 @@ namespace px
 
 	scene::tile_t& scene::tile(const point &position)
 	{
-		point c = m_world.cell(position);
+		point c = m_world->cell(position);
 		auto *map = select_map(c);
 		return map ? map->at(position - c * world::cell_range) : m_default;
 	}
 
 	const scene::tile_t& scene::tile(const point &position) const
 	{
-		point c = m_world.cell(position);
+		point c = m_world->cell(position);
 		auto *map = select_map(c);
 		return map ? map->at(position - c * world::cell_range) : m_default;
 	}
@@ -169,7 +172,7 @@ namespace px
 
 	void scene::focus(point absolute, bool force)
 	{
-		point focus = m_world.cell(absolute);
+		point focus = m_world->cell(absolute);
 		if (force || m_focus != focus)
 		{
 			m_focus = focus;
@@ -178,7 +181,7 @@ namespace px
 			sight_range.enumerate([&](const point &range_point)
 			{
 				point cell = m_focus + range_point - sight_center;
-				m_maps.at(range_point).swap(m_world.generate(cell, [&](unit_ptr unit, point position)
+				m_maps.at(range_point).swap(m_world->generate(cell, [&](unit_ptr unit, point position)
 				{
 					add(unit, position);
 					unit->store_position();
@@ -188,9 +191,9 @@ namespace px
 			// store out-of-range units back in world
 			for (auto i = m_units.begin(), end = m_units.end(); i != end;)
 			{
-				if (!select_map(m_world.cell(i->first)))
+				if (!select_map(m_world->cell(i->first)))
 				{
-					m_world.store(i->second);
+					m_world->store(i->second);
 					i = m_units.erase(i);
 				}
 				else
@@ -213,7 +216,7 @@ namespace px
 
 	void scene::save(writer::node_ptr node)
 	{
-		auto serializer = m_world.serializer();
+		auto serializer = m_world->serializer();
 
 		if (!node) throw std::logic_error("px:scene::save(..) - node is null");
 		if (!serializer) throw std::logic_error("px::scene::save() - serializer is null");
@@ -227,7 +230,7 @@ namespace px
 
 	void scene::load(const reader::node &node)
 	{
-		auto serializer = m_world.serializer();
+		auto serializer = m_world->serializer();
 
 		if (!serializer) throw std::logic_error("px::scene::save() - serializer is null");
 

@@ -20,7 +20,7 @@ namespace px
 	namespace ui
 	{
 		class canvas;
-	}
+	} 
 	namespace shell
 	{
 		class font;

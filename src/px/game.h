@@ -7,7 +7,6 @@
 #define PX_GAME_H
 
 #include <px/shell/perception.h>
-#include "px/scene.h"
 #include <px/ui/canvas.h>
 #include "px/broadcast.h"
 #include "px/projectile.h"
@@ -18,8 +17,11 @@
 
 namespace px
 {
+	class scene;
+	class world;
 	namespace rl
 	{
+		class unit;
 		class player;
 	}
 	namespace ui
@@ -40,7 +42,8 @@ namespace px
 
 	private:
 		shell::perception m_perception;
-		scene m_scene;
+		std::shared_ptr<scene> m_scene;
+		std::shared_ptr<world> m_world;
 		player_ptr m_player;
 		target_ptr m_target;
 		point m_hover;

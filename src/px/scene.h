@@ -29,7 +29,7 @@ namespace px
 
 		// attributes
 	private:
-		world m_world;
+		std::shared_ptr<world> m_world;
 		map<map_ptr> m_maps;
 		tile_t m_default;
 		point m_focus;
@@ -37,7 +37,7 @@ namespace px
 
 		// ctor & dtor
 	public:
-		scene();
+		scene(std::shared_ptr<world> m_world);
 		virtual ~scene();
 	private:
 		scene(const scene&) = delete; // disable copy

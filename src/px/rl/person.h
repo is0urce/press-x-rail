@@ -47,12 +47,12 @@ namespace px
 		protected:
 			virtual void apply_effect(effect &e) override { e.apply(*this); }
 			virtual std::string sign_unit() const override { return signature(); }
-			virtual void serialize(writer::node_ptr node) const override
+			virtual void serialize(o_node node) const override
 			{
 				unit::serialize(node);
 				character::store(node);
 			}
-			virtual void deserialize(const reader::node &node) override
+			virtual void deserialize(const i_node &node) override
 			{
 				unit::deserialize(node);
 				character::restore(node);

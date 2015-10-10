@@ -9,10 +9,6 @@
 #include "px/reader.h"
 #include "px/writer.h"
 
-#include <px/rl/player.h>
-#include <px/rl/unit.h>
-#include <px/rl/door.h>
-
 #include <stdexcept>
 #include <functional>
 #include <string>
@@ -29,17 +25,17 @@ namespace px
 			typedef writer::node_ptr out_node;
 			typedef std::shared_ptr<unit> element_ptr;
 			typedef std::string signature;
-			typedef std::function<element_ptr(const in_node&)> method;
+			typedef std::function<element_ptr(const in_node&)> method_fn;
 
 		private:
-			std::map<std::string, method> m_registered;
+			std::map<std::string, method_fn> m_registered;
 
 		public:
 			serializer() {}
 			virtual ~serializer() {}
 
 		public:
-			void register_method(signature sign, method creation_method)
+			void register_method(signature sign, method_fn creation_method)
 			{
 				m_registered[sign] = creation_method;
 			}
@@ -52,6 +48,11 @@ namespace px
 					u->load(node);
 					return u;
 				});
+			}
+			template <typename _U>
+			void register_method()
+			{
+				register_method<_U>(_U::signature());
 			}
 
 			static void save(element_ptr unit, out_node node)
@@ -74,7 +75,7 @@ namespace px
 				if (find == m_registered.end()) throw std::logic_error("px::rl::serializer::load(node) - node object not registered, signature=" + name);
 				return load(node, find->second);
 			}
-			static element_ptr load(const in_node& node, method create_method)
+			static element_ptr load(const in_node& node, method_fn create_method)
 			{
 				return create_method(node);
 			}

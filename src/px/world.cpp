@@ -38,8 +38,9 @@ namespace px
 		m_units(world_range)
 	{
 		// serializer
-		m_serializer->register_method<rl::unit>(rl::unit::signature());
-		m_serializer->register_method<rl::door>(rl::door::signature());
+		m_serializer->register_method<rl::unit>();
+		m_serializer->register_method<rl::door>();
+		m_serializer->register_method<rl::container>();
 
 		// library
 		fill_library();
@@ -131,12 +132,12 @@ namespace px
 		auto outher = node->open("outher");
 		for (auto unit : m_units_outher)
 		{
-			auto u = node->open("unit");
-			u->write("tag", unit->tag());
-			u->write("img", unit->appearance().image);
-			u->write("color", unit->appearance().color);
-			u->write("size", unit->appearance().size);
+			m_serializer->save(unit, outher);
 		}
+	}
+	void world::load(reader::node &node)
+	{
+
 	}
 
 	point world::cell(const point &absolute) const

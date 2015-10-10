@@ -21,10 +21,16 @@ namespace px
 			container();
 			virtual ~container();
 
+		public:
+			static sign_t signature();
+
 			// vitrual
 		protected:
 			virtual void use_unit(environment&, user_t user) override;
 			virtual bool useable_unit(const environment&, user_t user) const override;
+			virtual unit::sign_t sign_unit() const override;
+			virtual void serialize(o_node node) const override;
+			virtual void deserialize(const i_node &node) override;
 		};
 	}
 }

@@ -7,6 +7,9 @@
 
 #include "game.h"
 
+#include <px/world.h>
+#include <px/scene.h>
+
 #include <px/rl/player.h>
 #include <px/ui/main_panel.h>
 #include <px/ui/status_panel.h>
@@ -50,9 +53,13 @@ namespace px
 		m_perception(perc_reach),
 		m_canvas({ 1, 1 }),
 		m_ui(std::make_shared<ui::main_panel>(&m_canvas)),
-		m_fov_fn([&](const point &position) { return m_scene.transparent(position); })
+		m_fov_fn([&](const point &position) { return m_scene->transparent(position); })
 	{
-		m_player.reset(new rl::player(this));
+		m_world = std::make_shared<world>();
+		m_scene = std::make_shared<scene>(m_world);
+		m_player = std::make_shared<rl::player>(this);
+
+		// setup player
 		m_player->appearance({ '@', 0xffffff });
 		m_player->health() = 100;
 		m_player->light({ color(24.0f, 19.5f, 11.9f), true });
@@ -76,8 +83,8 @@ namespace px
 		m_player->add_skill({ tf, tfc });
 		rl::person::action_t::ground_fn ttf([&](rl::person::caster_t *user, const point &position)
 		{
-			m_scene.focus(position);
-			m_scene.move(m_player, position);
+			m_scene->focus(position);
+			m_scene->move(m_player, position);
 		});
 		rl::person::action_t::ground_check_fn ttfc([&](rl::person::caster_t *user, const point &position)
 		{
@@ -97,8 +104,8 @@ namespace px
 
 		// add player
 		point player_pos(20, 20);
-		m_scene.focus(player_pos);
-		m_scene.add(m_player, player_pos);
+		m_scene->focus(player_pos);
+		m_scene->add(m_player, player_pos);
 
 		// ui
 		m_ui->add("status", std::make_shared<ui::status_panel>(m_player, &m_canvas), true);
@@ -145,7 +152,7 @@ namespace px
 		// units
 		shadowcasting player_fov(m_fov_fn, m_player->position(), perc_range);
 		map<color> lightmap(perc_reach, color(0, 0, 0));
-		m_scene.enumerate_units([&](scene::unit_ptr unit)
+		m_scene->enumerate_units([&](scene::unit_ptr unit)
 		{
 			// lightmap casting
 			auto l = unit->light();
@@ -157,7 +164,7 @@ namespace px
 				{
 					point absolute = start + range_point;
 					// open spaces with both light and visible by player, exclude walls without objects (no doors or ore)
-					if (light_fov.in_fov(absolute) && player_fov.in_fov(absolute) && (m_scene.transparent(absolute) || m_scene.blocking(absolute)))
+					if (light_fov.in_fov(absolute) && player_fov.in_fov(absolute) && (m_scene->transparent(absolute) || m_scene->blocking(absolute)))
 					{
 						lightmap.at(range_point) += l.color() * fade(position.distance(absolute));
 					}
@@ -174,7 +181,7 @@ namespace px
 		// tiles
 		m_perception.range().enumerate([&](const point &range_point)
 		{
-			auto &tile = m_scene.tile(start + range_point).appearance();
+			auto &tile = m_scene->tile(start + range_point).appearance();
 			m_perception.appearance(range_point, tile.image);
 			m_perception.ground(range_point, tile.color);
 			m_perception.light(range_point, lightmap.at(range_point));
@@ -200,7 +207,7 @@ namespace px
 		if (m_player)
 		{
 			point destination = m_player->position() + move;
-			auto blocking = m_scene.blocking(destination);
+			auto blocking = m_scene->blocking(destination);
 			if (blocking)
 			{
 				if (blocking->useable(*this, m_player))
@@ -218,12 +225,12 @@ namespace px
 			}
 			else
 			{
-				if (m_scene.traversable(destination))
+				if (m_scene->traversable(destination))
 				{
 					// move
 					m_player->store_position();
-					m_scene.focus(destination);
-					m_scene.move(m_player, destination);
+					m_scene->focus(destination);
+					m_scene->move(m_player, destination);
 					fill_perception();
 				}
 			}
@@ -305,7 +312,7 @@ namespace px
 
 	game::target_ptr game::aquire_target()
 	{
-		return m_target = m_player ? m_scene.blocking(m_player->position() + m_hover) : nullptr;
+		return m_target = m_player ? m_scene->blocking(m_player->position() + m_hover) : nullptr;
 	}
 
 	bool game::useable(game::target_ptr target) const
@@ -356,13 +363,14 @@ namespace px
 	{
 		if (m_player)
 		{
-			m_scene.remove(m_player);
+			m_scene->remove(m_player);
 
 			writer save(path);
 			m_player->save(save->open("player"));
-			m_scene.save(save->open("scene"));
+			m_world->save(save->open("world"));
+			m_scene->save(save->open("scene"));
 
-			m_scene.add(m_player);
+			m_scene->add(m_player);
 
 			broadcast(broadcast_t("autosaving...", 0xffffff, m_player->position()));
 			fill_perception();
@@ -373,14 +381,14 @@ namespace px
 	{
 		reader file(path);
 
-		m_scene.remove(m_player);
+		m_scene->remove(m_player);
 
 		m_player->load(file["player"]);
-		m_scene.load(file["scene"]);
+		m_world->load(file["world"]);
+		m_scene->load(file["scene"]);
 
-		m_scene.focus(m_player->position());
-
-		m_scene.add(m_player);
+		m_scene->focus(m_player->position());
+		m_scene->add(m_player);
 
 		broadcast(broadcast_t("loaded autosave", 0xffffff, m_player->position()));
 		fill_perception();

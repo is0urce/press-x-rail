@@ -13,6 +13,7 @@
 #include "px/writer.h"
 
 #include <memory>
+#include <string>
 
 namespace px
 {
@@ -26,6 +27,9 @@ namespace px
 		public:
 			typedef std::shared_ptr<actor> user_t; // std::shared_ptr<actor>
 			typedef game environment;
+			typedef std::string sign_t;
+			typedef writer::node_ptr o_node;
+			typedef reader::node i_node;
 
 		private:	
 			point m_position;
@@ -41,7 +45,7 @@ namespace px
 
 			// static
 		public:
-			static std::string signature();
+			static sign_t signature();
 
 			// vitrual
 		protected:
@@ -50,12 +54,12 @@ namespace px
 			virtual bool useable_unit(const environment &current_environment, user_t user) const;
 			virtual void use_unit(environment &current_environment, user_t user);
 			virtual void apply_effect(effect &e);
-			virtual void serialize(writer::node_ptr node) const;
-			virtual void deserialize(const reader::node &node);
-			virtual std::string sign_unit() const;
+			virtual void serialize(o_node node) const;
+			virtual void deserialize(const i_node &node);
+			virtual sign_t sign_unit() const;
 
 		public:
-			std::string sign() const;
+			sign_t sign() const;
 			void save(writer::node_ptr node) const;
 			void load(const reader::node &node);
 

@@ -27,7 +27,7 @@ namespace px
 
 			// static
 		public:
-			static std::string signature()
+			static sign_t signature()
 			{
 				return "door";
 			}
@@ -38,15 +38,15 @@ namespace px
 			virtual bool transparent_unit() const override { return m_open; }
 			virtual bool useable_unit(const environment&, user_t user) const override { return !m_open; }
 			virtual void use_unit(environment&, user_t user) override { if (!m_open) open(); }
-			virtual std::string sign_unit() const override { return signature(); }
-			virtual void serialize(writer::node_ptr node) const override
+			virtual sign_t sign_unit() const override { return signature(); }
+			virtual void serialize(o_node node) const override
 			{
 				node->write("open", m_open);
 				node->write("opn_app", m_opened_appearance);
 				node->write("cls_app", m_closed_appearance);
 				unit::serialize(node);
 			}
-			virtual void deserialize(const reader::node &node) override
+			virtual void deserialize(const i_node &node) override
 			{
 				node["open"] >> m_open;
 				node["opn_app"] >> m_opened_appearance;
