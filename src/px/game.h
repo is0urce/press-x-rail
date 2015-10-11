@@ -19,10 +19,12 @@ namespace px
 {
 	class scene;
 	class world;
+	class library;
 	namespace rl
 	{
 		class unit;
 		class player;
+		class serializer;
 	}
 	namespace ui
 	{
@@ -44,6 +46,8 @@ namespace px
 		shell::perception m_perception;
 		std::shared_ptr<scene> m_scene;
 		std::shared_ptr<world> m_world;
+		std::shared_ptr<library> m_library;
+		std::shared_ptr<rl::serializer> m_serializer;
 		player_ptr m_player;
 		target_ptr m_target;
 		point m_hover;

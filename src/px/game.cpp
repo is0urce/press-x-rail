@@ -9,8 +9,10 @@
 
 #include <px/world.h>
 #include <px/scene.h>
+#include <px/library.h>
 
 #include <px/rl/player.h>
+#include <px/rl/serializer.h>
 
 #include <px/ui/main_panel.h>
 #include <px/ui/status_panel.h>
@@ -56,9 +58,18 @@ namespace px
 		m_ui(std::make_shared<ui::main_panel>(&m_canvas)),
 		m_fov_fn([&](const point &position) { return m_scene->transparent(position); })
 	{
-		m_world = std::make_shared<world>();
+		m_library = std::make_shared<library>();
+		m_serializer = std::make_shared<rl::serializer>(m_library);
+		m_world = std::make_shared<world>(m_library);
 		m_scene = std::make_shared<scene>(m_world);
 		m_player = std::make_shared<rl::player>(this);
+
+		// register serializer objects
+		m_serializer->register_method<rl::unit>();
+		m_serializer->register_method<rl::door>();
+		m_serializer->register_method<rl::container>();
+		m_serializer->register_method<rl::item>();
+		m_serializer->register_method<rl::npc>();
 
 		// setup player
 		m_player->appearance({ '@', 0xffffff });
@@ -362,17 +373,14 @@ namespace px
 
 	void game::save(file_path path)
 	{
-		auto serializer = m_world->serializer();
-		if (!serializer) throw std::logic_error("px::game::load(path) serializer is null");
-
 		if (m_player)
 		{
 			m_scene->remove(m_player);
 
 			writer save(path);
-			m_player->save(save->open("player"), *serializer);
-			m_world->save(save->open("world"));
-			m_scene->save(save->open("scene"));
+			m_player->save(save->open("player"), *m_serializer);
+			m_world->save(save->open("world"), *m_serializer);
+			m_scene->save(save->open("scene"), *m_serializer);
 
 			m_scene->add(m_player);
 
@@ -384,16 +392,13 @@ namespace px
 
 	void game::load(file_path path)
 	{
-		auto serializer = m_world->serializer();
-		if (!serializer) throw std::logic_error("px::game::load(path) serializer is null");
-
 		reader file(path);
 
 		m_scene->remove(m_player);
 
-		m_player->load(file["player"], *serializer);
-		m_world->load(file["world"]);
-		m_scene->load(file["scene"]);
+		m_player->load(file["player"], *m_serializer);
+		m_world->load(file["world"], *m_serializer);
+		m_scene->load(file["scene"], *m_serializer);
 
 		m_scene->focus(m_player->position());
 		m_scene->add(m_player);

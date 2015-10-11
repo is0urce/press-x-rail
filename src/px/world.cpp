@@ -29,19 +29,14 @@ namespace px
 
 	const point world::cell_range(cell_length, cell_length);
 
-	world::world()
+	world::world(library_ptr lib)
 		:
-		m_library(std::make_shared<library_t>()),
-		m_serializer(std::make_shared<serializer_t>()),
+		m_library(lib),
 		m_created(world_range, false),
 		m_landmarks(world_range),
 		m_units(world_range)
 	{
-		// serializer
-		m_serializer->register_method<rl::unit>();
-		m_serializer->register_method<rl::door>();
-		m_serializer->register_method<rl::container>();
-		m_serializer->register_method<rl::item>();
+		if (!lib) throw std::logic_error("px::world::ctor(library) library is null");
 
 		// library
 		fill_library();
@@ -128,15 +123,15 @@ namespace px
 		m_units.at(cell(unit->position()), m_units_outher).emplace_back(unit);
 	}
 
-	void world::save(writer::node_ptr node) const
+	void world::save(writer::node_ptr node, const rl::serializer& s) const
 	{
 		auto outher = node->open("outher");
 		for (auto unit : m_units_outher)
 		{
-			m_serializer->save(unit, outher);
+			s.save(unit, outher);
 		}
 	}
-	void world::load(reader::node &node)
+	void world::load(const reader::node &node, const rl::serializer& s)
 	{
 
 	}
@@ -156,14 +151,5 @@ namespace px
 			t.transparent(false);
 			t.traversable(false);
 		});
-	}
-
-	world::library_ptr world::library()
-	{
-		return m_library;
-	}
-	world::serializer_ptr world::serializer()
-	{
-		return m_serializer;
 	}
 }

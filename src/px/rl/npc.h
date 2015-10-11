@@ -18,6 +18,9 @@ namespace px
 		public:
 			npc() {}
 			virtual ~npc() {}
+
+		public:
+			static sign_t signature() { return "npc"; }
 		};
 	}
 }

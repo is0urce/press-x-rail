@@ -7,6 +7,8 @@
 
 #include "scene.h"
 
+#include <px/writer_node.h>
+#include <px/reader.h>
 #include <px/rl/unit.h>
 #include <px/rl/serializer.h>
 
@@ -214,31 +216,24 @@ namespace px
 		return m_maps.at(cell - m_focus + sight_center, nullptr).get();
 	}
 
-	void scene::save(writer::node_ptr node)
+	void scene::save(writer::node_ptr node, const rl::serializer& s)
 	{
-		auto serializer = m_world->serializer();
-
 		if (!node) throw std::logic_error("px:scene::save(..) - node is null");
-		if (!serializer) throw std::logic_error("px::scene::save() - serializer is null");
 
 		auto units_node = node->open("units");
 		enumerate_units([&](unit_ptr u_ptr)
 		{
-			serializer->save(u_ptr, units_node);
+			s.save(u_ptr, units_node);
 		});
 	}
 
-	void scene::load(const reader::node &node)
+	void scene::load(const reader::node &node, const rl::serializer& s)
 	{
-		auto serializer = m_world->serializer();
-
-		if (!serializer) throw std::logic_error("px::scene::save() - serializer is null");
-
 		clear();
 
 		node["units"].enumerate([&](reader::node n)
 		{
-			auto u = serializer->load(n);
+			auto u = s.load(n);
 			u->store_position();
 			add(u);
 		});

@@ -10,13 +10,13 @@
 #include <px/world.h>
 
 #include <px/reader.h>
-#include <px/writer.h>
 
 #include <memory>
 #include <map>
 
 namespace px
 {
+	class writer_node;
 	class scene
 	{
 	public:
@@ -68,8 +68,8 @@ namespace px
 		void focus(point absolute);
 		void focus(point absolute, bool force);
 
-		void save(writer::node_ptr node);
-		void load(const reader::node &node);
+		void save(std::shared_ptr<writer_node> node, const rl::serializer& serializer_ref);
+		void load(const reader::node &node, const rl::serializer& serializer_ref);
 	};
 }
 

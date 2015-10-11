@@ -6,11 +6,11 @@
 #ifndef PX_WORLD_H
 #define PX_WORLD_H
 
+#include <px/reader.h>
+
 #include <px/appearance.h>
 #include <px/tile.h>
 #include <px/map.h>
-#include <px/writer.h>
-#include <px/reader.h>
 #include <px/fn/builder.h>
 
 #include <memory>
@@ -24,12 +24,15 @@ namespace px
 		class serializer;
 	}
 
+	class writer_node;
 	class library;
 
 	class world
 	{
 	public:
-		// object types
+		typedef std::shared_ptr<writer_node> o_node;
+		typedef reader::node i_node;
+		typedef std::shared_ptr<library> library_ptr;
 		typedef appearance<unsigned int> appearance_t;
 		typedef tile<appearance_t> tile_t;
 		typedef map<tile_t> map_t;
@@ -39,18 +42,11 @@ namespace px
 		typedef fn::builder<map_t, unit_ptr> builder_t;
 		typedef std::unique_ptr<builder_t> builder_ptr;
 
-		// contained types
-		typedef library library_t;
-		typedef std::shared_ptr<library_t> library_ptr;
-		typedef rl::serializer serializer_t;
-		typedef std::shared_ptr<serializer_t> serializer_ptr;
-
 	public:
 		static const point cell_range;
 
 	private:
 		library_ptr m_library;
-		serializer_ptr m_serializer;
 
 		map<bool> m_created;
 
@@ -61,10 +57,8 @@ namespace px
 		unit_list m_units_outher;
 
 	public:
-		world();
-		world(reader::node &node);
-		~world();
-	private:
+		world(library_ptr lib);
+		virtual ~world();
 		world(const world&) = delete;
 
 	private:
@@ -77,15 +71,14 @@ namespace px
 		point cell(const point &absolute) const;
 
 		library_ptr library();
-		serializer_ptr serializer();
 
 		// management
 		map_ptr generate(const point &cell, builder_t::fetch_op fetch);
 		void store(unit_ptr unit);
 
 		// serialization
-		void save(writer::node_ptr node) const;
-		void load(reader::node &node);
+		void save(o_node node, const rl::serializer& serializer_ref) const;
+		void load(const i_node &nodec, const rl::serializer& serializer_ref);
 	};
 }
 

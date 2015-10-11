@@ -24,18 +24,29 @@ namespace px
 		public:
 			typedef reader::node in_node;
 			typedef writer::node_ptr out_node;
+			typedef std::shared_ptr<library> library_ptr;
 			typedef std::shared_ptr<unit> element_ptr;
 			typedef std::string signature;
 			typedef std::function<element_ptr(const in_node&)> method_fn;
 
 		private:
 			std::map<std::string, method_fn> m_registered;
+			library_ptr m_library;
 
 		public:
-			serializer() {}
-			virtual ~serializer() {}
+			serializer(library_ptr lib) : m_library(lib)
+			{
+				if (!lib) throw std::logic_error("px::rl::serializer::ctor(library) - library is null");
+			}
+			virtual ~serializer()
+			{
+			}
 
 		public:
+			library_ptr library()
+			{
+				return m_library;
+			}
 			void register_method(signature sign, method_fn creation_method)
 			{
 				m_registered[sign] = creation_method;
