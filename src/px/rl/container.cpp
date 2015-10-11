@@ -9,6 +9,8 @@
 
 #include <px/game.h>
 
+#include <px/rl/serializer.h>
+
 #include <px/ui/main_panel.h>
 #include <px/ui/container_panel.h>
 
@@ -32,14 +34,27 @@ namespace px
 		{
 			return signature();
 		}
-		void container::serialize(writer::node_ptr node) const
+		void container::serialize(o_node node, const serializer &s) const
 		{
-			unit::serialize(node);
+			unit::serialize(node, s);
+			auto items = node->open("items");
+			enumerate_items([&](item_t item)
+			{
+				s.save(item, items);
+			});
+
 		}
 
-		void container::deserialize(const reader::node &node)
+		void container::deserialize(const i_node &node, const serializer &s)
 		{
-			unit::deserialize(node);
+			unit::deserialize(node, s);
+			node["items"].enumerate([&](i_node item_node)
+			{
+				auto item = std::dynamic_pointer_cast<rl::item, rl::unit>(s.load(item_node));
+				if (!item) throw std::runtime_error("px::container::deserialize(node, serializer) - container item cast failed");
+
+				add_item(item, true);
+			});
 		}
 
 		bool container::useable_unit(const environment& environment, user_t user) const

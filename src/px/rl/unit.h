@@ -10,26 +10,29 @@
 #include <px/point.h>
 
 #include "px/reader.h"
-#include "px/writer.h"
 
 #include <memory>
 #include <string>
 
 namespace px
 {
+	class writer_node;
 	class game;
+
 	namespace rl
 	{
+		class serializer;
 		class effect;
 		class actor;
 		class unit : public entity
 		{
 		public:
+			typedef std::string sign_t;
+			typedef std::shared_ptr<writer_node> o_node;
+			typedef reader::node i_node;
+
 			typedef std::shared_ptr<actor> user_t; // std::shared_ptr<actor>
 			typedef game environment;
-			typedef std::string sign_t;
-			typedef writer::node_ptr o_node;
-			typedef reader::node i_node;
 
 		private:	
 			point m_position;
@@ -54,14 +57,14 @@ namespace px
 			virtual bool useable_unit(const environment &current_environment, user_t user) const;
 			virtual void use_unit(environment &current_environment, user_t user);
 			virtual void apply_effect(effect &e);
-			virtual void serialize(o_node node) const;
-			virtual void deserialize(const i_node &node);
+			virtual void serialize(o_node node, const serializer&) const;
+			virtual void deserialize(const i_node &node, const serializer&);
 			virtual sign_t sign_unit() const;
 
 		public:
 			sign_t sign() const;
-			void save(writer::node_ptr node) const;
-			void load(const reader::node &node);
+			void save(o_node node, const serializer &s) const;
+			void load(const i_node &node, const serializer &s);
 
 			bool traversable() const;
 			bool transparent() const;

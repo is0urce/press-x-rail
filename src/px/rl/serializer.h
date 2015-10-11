@@ -18,6 +18,7 @@ namespace px
 {
 	namespace rl
 	{
+		class unit;
 		class serializer
 		{
 		public:
@@ -42,10 +43,10 @@ namespace px
 			template <typename _U>
 			void register_method(signature sign)
 			{
-				register_method(sign, [](const in_node& node)
+				register_method(sign, [this](const in_node& node)
 				{
 					element_ptr u = std::make_shared<_U>();
-					u->load(node);
+					u->load(node, *this);
 					return u;
 				});
 			}
@@ -55,20 +56,20 @@ namespace px
 				register_method<_U>(_U::signature());
 			}
 
-			static void save(element_ptr unit, out_node node)
+			void save(element_ptr unit, out_node node) const
 			{
 				if (!unit) throw std::logic_error("px::rl::serializer::save(unit, node) - unit is null");
 
 				save(unit, node, unit->sign());
 			}
-			static void save(element_ptr unit, out_node node, signature sign)
+			void save(element_ptr unit, out_node node, const signature &sign) const
 			{
 				if (!unit) throw std::logic_error("px::rl::serializer::save(unit, node) - unit is null");
 				if (!node) throw std::logic_error("px::rl::serializer::save(unit, node) - node is null");
 
-				unit->save(node->open(sign));
+				unit->save(node->open(sign), *this);
 			}
-			element_ptr load(const in_node& node)
+			element_ptr load(const in_node &node) const
 			{
 				signature name = io::to_string(node.name());
 				auto find = m_registered.find(name);

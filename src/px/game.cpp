@@ -11,6 +11,7 @@
 #include <px/scene.h>
 
 #include <px/rl/player.h>
+
 #include <px/ui/main_panel.h>
 #include <px/ui/status_panel.h>
 #include <px/ui/inventory_panel.h>
@@ -361,29 +362,36 @@ namespace px
 
 	void game::save(file_path path)
 	{
+		auto serializer = m_world->serializer();
+		if (!serializer) throw std::logic_error("px::game::load(path) serializer is null");
+
 		if (m_player)
 		{
 			m_scene->remove(m_player);
 
 			writer save(path);
-			m_player->save(save->open("player"));
+			m_player->save(save->open("player"), *serializer);
 			m_world->save(save->open("world"));
 			m_scene->save(save->open("scene"));
 
 			m_scene->add(m_player);
 
 			broadcast(broadcast_t("autosaving...", 0xffffff, m_player->position()));
+			m_player->store_position();
 			fill_perception();
 		}
 	}
 
 	void game::load(file_path path)
 	{
+		auto serializer = m_world->serializer();
+		if (!serializer) throw std::logic_error("px::game::load(path) serializer is null");
+
 		reader file(path);
 
 		m_scene->remove(m_player);
 
-		m_player->load(file["player"]);
+		m_player->load(file["player"], *serializer);
 		m_world->load(file["world"]);
 		m_scene->load(file["scene"]);
 

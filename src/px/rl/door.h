@@ -39,19 +39,19 @@ namespace px
 			virtual bool useable_unit(const environment&, user_t user) const override { return !m_open; }
 			virtual void use_unit(environment&, user_t user) override { if (!m_open) open(); }
 			virtual sign_t sign_unit() const override { return signature(); }
-			virtual void serialize(o_node node) const override
+			virtual void serialize(o_node node, const serializer &s) const override
 			{
 				node->write("open", m_open);
 				node->write("opn_app", m_opened_appearance);
 				node->write("cls_app", m_closed_appearance);
-				unit::serialize(node);
+				unit::serialize(node, s);
 			}
-			virtual void deserialize(const i_node &node) override
+			virtual void deserialize(const i_node &node, const serializer &s) override
 			{
 				node["open"] >> m_open;
 				node["opn_app"] >> m_opened_appearance;
 				node["cls_app"] >> m_closed_appearance;
-				unit::deserialize(node);
+				unit::deserialize(node, s);
 			}
 
 		public:

@@ -62,7 +62,7 @@ namespace px
 		{
 			return "unit";
 		}
-		void unit::serialize(writer::node_ptr node) const
+		void unit::serialize(writer::node_ptr node, const serializer &s) const
 		{
 			node->write("x", m_position.X);
 			node->write("y", m_position.Y);
@@ -71,7 +71,7 @@ namespace px
 			entity::store(node);
 		}
 
-		void unit::deserialize(const reader::node &node)
+		void unit::deserialize(const reader::node &node, const serializer &s)
 		{
 			node["x"] >> m_position.X;
 			node["y"] >> m_position.Y;
@@ -82,13 +82,13 @@ namespace px
 
 		// methods
 
-		void unit::save(writer::node_ptr node) const
+		void unit::save(writer::node_ptr node, const serializer &s) const
 		{
-			serialize(node);
+			serialize(node, s);
 		}
-		void unit::load(const reader::node &node)
+		void unit::load(const reader::node &node, const serializer &s)
 		{
-			deserialize(node);
+			deserialize(node, s);
 		}
 
 		bool unit::traversable() const

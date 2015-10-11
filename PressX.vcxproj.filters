@@ -250,6 +250,9 @@
     <ClInclude Include="src\px\rl\serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\writer_node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PressX.cpp">

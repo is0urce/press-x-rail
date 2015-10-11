@@ -175,6 +175,7 @@
     <ClInclude Include="src\px\point.h" />
     <ClInclude Include="src\PressX.h" />
     <ClInclude Include="src\px\shell\renderer.h" />
+    <ClInclude Include="src\px\writer_node.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\targetver.h" />
     <ClInclude Include="src\px\rl\unit.h" />

@@ -28,8 +28,12 @@ namespace px
 			item() : m_stackable(false), m_weight{} {}
 			virtual ~item() {}
 
+		public:
+			static sign_t signature() { return "item"; }
+
 		protected:
 			virtual void activate_item(activator_ptr activator) {}
+			virtual sign_t sign_unit() const override { return signature(); }
 
 		public:
 			void activate(activator_ptr activator) { activate_item(activator); }

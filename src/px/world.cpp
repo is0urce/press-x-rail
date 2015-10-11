@@ -41,6 +41,7 @@ namespace px
 		m_serializer->register_method<rl::unit>();
 		m_serializer->register_method<rl::door>();
 		m_serializer->register_method<rl::container>();
+		m_serializer->register_method<rl::item>();
 
 		// library
 		fill_library();
