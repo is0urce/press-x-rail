@@ -191,6 +191,7 @@
     <ClCompile Include="src\px\rl\character.cpp" />
     <ClCompile Include="src\px\game.cpp" />
     <ClCompile Include="src\px\rl\container.cpp" />
+    <ClCompile Include="src\px\rl\item.cpp" />
     <ClCompile Include="src\px\ui\canvas.cpp" />
     <ClCompile Include="src\px\rl\entity.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />

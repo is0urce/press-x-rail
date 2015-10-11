@@ -25,22 +25,24 @@ namespace px
 			weight_t m_weight;
 
 		public:
-			item() : m_stackable(false), m_weight{} {}
-			virtual ~item() {}
+			item();
+			virtual ~item();
 
 		public:
-			static sign_t signature() { return "item"; }
+			static sign_t signature();
 
 		protected:
-			virtual void activate_item(activator_ptr activator) {}
-			virtual sign_t sign_unit() const override { return signature(); }
+			virtual void activate_item(activator_ptr activator);
+			virtual sign_t sign_unit() const override;
+			virtual void serialize(o_node node, const serializer& s) const override;
+			virtual void deserialize(const i_node &node, const serializer& s) override;
 
 		public:
-			void activate(activator_ptr activator) { activate_item(activator); }
-			bool stackable() const { return m_stackable; }
-			void stackable(bool is_stackable) { m_stackable = is_stackable; }
-			weight_t weight() const { return m_weight; }
-			void weight(weight_t weight_value) { m_weight = weight_value; }
+			void activate(activator_ptr activator);
+			bool stackable() const;
+			void stackable(bool is_stackable);
+			weight_t weight() const;
+			void weight(weight_t weight_value);
 		};
 	}
 }
