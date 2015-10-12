@@ -38,38 +38,21 @@ namespace px
 
 			// ctor & dtor
 		public:
-			person() {}
-			virtual ~person() {}
+			person();
+			virtual ~person();
 
 		public:
-			static std::string signature() { return "person"; }
+			static std::string signature();
 
 		protected:
-			virtual void apply_effect(effect &e) override { e.apply(*this); }
-			virtual std::string sign_unit() const override { return signature(); }
-			virtual void serialize(o_node node, const serializer &s) const override
-			{
-				unit::serialize(node, s);
-				character::store(node);
-			}
-			virtual void deserialize(const i_node &node, const serializer &s) override
-			{
-				unit::deserialize(node, s);
-				character::restore(node);
-			}
+			virtual void apply_effect(effect &e) override;
+			virtual std::string sign_unit() const override;
+			virtual void serialize(o_node node, const serializer &s) const override;
+			virtual void deserialize(const i_node &node, const serializer &s) override;
 
 		public:
-			ability_ptr skill(unsigned int slot)
-			{
-				return slot < m_skills.size() ?
-					ability_ptr(new user_ability<caster_t*, target_t>(this, &m_skills.at(slot)))
-					:
-					nullptr;
-			}
-			void add_skill(action_t skill)
-			{
-				m_skills.push_back(skill);
-			}
+			ability_ptr skill(unsigned int slot);
+			void add_skill(action_t skill);
 		};
 	}
 }

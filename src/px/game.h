@@ -62,6 +62,7 @@ namespace px
 		virtual ~game();
 
 	private:
+		void generate_library();
 		void fill_perception();
 		target_ptr aquire_target(); // select target from hovering position
 		bool useable(target_ptr target) const;

@@ -58,51 +58,30 @@ namespace px
 		m_ui(std::make_shared<ui::main_panel>(&m_canvas)),
 		m_fov_fn([&](const point &position) { return m_scene->transparent(position); })
 	{
+		// library
 		m_library = std::make_shared<library>();
-		m_serializer = std::make_shared<rl::serializer>(m_library);
-		m_world = std::make_shared<world>(m_library);
-		m_scene = std::make_shared<scene>(m_world);
-		m_player = std::make_shared<rl::player>(this);
+		generate_library();
 
 		// register serializer objects
+		m_serializer = std::make_shared<rl::serializer>(m_library);
 		m_serializer->register_method<rl::unit>();
 		m_serializer->register_method<rl::door>();
 		m_serializer->register_method<rl::container>();
 		m_serializer->register_method<rl::item>();
 		m_serializer->register_method<rl::npc>();
 
+		// scene, world and player
+		m_world = std::make_shared<world>(m_library);
+		m_scene = std::make_shared<scene>(m_world);
+		m_player = std::make_shared<rl::player>(this);
+
 		// setup player
 		m_player->appearance({ '@', 0xffffff });
 		m_player->health() = 100;
 		m_player->light({ color(24.0f, 19.5f, 11.9f), true });
-		rl::person::action_t::target_fn tf([&](rl::person::caster_t *user, rl::person::target_t unit)
-		{
-			if (user)
-			{
-				//broadcast({ "puff!", 0xffffff, user->position() });
-			}
-			if (user && unit)
-			{
-				vector start = user->position();
-				vector fin = unit->position();
-				m_projectiles.push_back(projectile('*', 0xff0000, [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
-			}
-		});
-		rl::person::action_t::target_check_fn tfc([&](rl::person::caster_t *user, rl::person::target_t unit)
-		{
-			return true;
-		});
-		m_player->add_skill({ tf, tfc });
-		rl::person::action_t::ground_fn ttf([&](rl::person::caster_t *user, const point &position)
-		{
-			m_scene->focus(position);
-			m_scene->move(m_player, position);
-		});
-		rl::person::action_t::ground_check_fn ttfc([&](rl::person::caster_t *user, const point &position)
-		{
-			return true;// m_scene.traversable(position);
-		});
-		m_player->add_skill({ ttf, ttfc });
+
+		m_player->add_skill(m_library->prototype<px::rl::person::action_t>("teleport"));
+		m_player->add_skill(m_library->prototype<px::rl::person::action_t>("heal"));
 
 		// starting inventory
 		for (int i = 0; i < 50; ++i)
@@ -128,6 +107,84 @@ namespace px
 
 	game::~game()
 	{
+	}
+
+	void game::generate_library()
+	{
+		if (!m_library) throw std::logic_error("px::game::generate_library() - library is null");
+
+		// skills
+
+		// pyroblast
+		rl::person::action_t::target_fn tf([&](rl::person::caster_t *user, rl::person::target_t unit)
+		{
+			if (user)
+			{
+				//broadcast({ "puff!", 0xffffff, user->position() });
+			}
+			if (user && unit)
+			{
+				vector start = user->position();
+				vector fin = unit->position();
+				m_projectiles.push_back(projectile('*', 0xff0000, [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
+			}
+		});
+		rl::person::action_t::target_check_fn tfc([&](rl::person::caster_t *user, rl::person::target_t unit)
+		{
+			return true;
+		});
+		m_library->push<rl::person::action_t>("pyroblast", { tf, tfc });
+
+		// heal
+		rl::person::action_t::ground_fn h([&](rl::person::caster_t *user, const point &position)
+		{
+			user->health() = user->health() + 1;
+		});
+		rl::person::action_t::ground_check_fn hc([&](rl::person::caster_t *user, const point &position)
+		{
+			return true;
+		});
+		rl::person::action_t heal(h, hc);
+		heal.tag("heal");
+		m_library->push<rl::person::action_t>(heal);
+
+		// teleport
+		rl::person::action_t::ground_fn teleport_fn([&](rl::person::caster_t *user, const point &position)
+		{
+			m_scene->focus(position);
+			m_scene->move(m_player, position);
+		});
+		rl::person::action_t::ground_check_fn teleport_check_fn([&](rl::person::caster_t *user, const point &position)
+		{
+			return true;
+		});
+		rl::person::action_t teleport(teleport_fn, teleport_check_fn);
+		teleport.tag("teleport");
+		m_library->push<rl::person::action_t>(teleport);
+
+		// npc
+
+		rl::npc rat;
+		rat.appearance({ 'r', 0x330000, 0.95f });
+		rat.health() = 100;
+		rat.tag("mob_r");
+		m_library->push("mob_r", rat);
+
+		rl::item ore;
+		ore.appearance('o');
+		ore.name("copper ore");
+		ore.tag("ore_copper");
+		ore.stackable(true);
+		m_library->push("ore_copper", ore);
+
+		rl::unit lantern;
+		lantern.appearance({ ' ', color(1, 1, 1) });
+		lantern.light({ { 3, 3, 3 }, true });
+		m_library->push("lantern", lantern);
+
+		rl::door door;
+		door.appearance({ ' ', 0x333333 }, { '+', 0x333333 });
+		m_library->push("door", door);
 	}
 
 	void game::fill_perception()

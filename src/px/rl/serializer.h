@@ -16,6 +16,7 @@
 
 namespace px
 {
+	class library;
 	namespace rl
 	{
 		class unit;
@@ -43,7 +44,7 @@ namespace px
 			}
 
 		public:
-			library_ptr library()
+			library_ptr library() const
 			{
 				return m_library;
 			}

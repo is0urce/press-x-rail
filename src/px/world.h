@@ -64,9 +64,6 @@ namespace px
 	private:
 		void generate_wall(map_t &cell_map, builder_t::fetch_op fetch);
 
-	private:
-		void fill_library();
-
 	public:
 		point cell(const point &absolute) const;
 

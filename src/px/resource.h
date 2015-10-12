@@ -21,7 +21,7 @@ namespace px
 		{
 			m_resources.emplace(tag, resource);
 		}
-		_R prototype(std::string &tag)
+		_R prototype(const std::string &tag) const
 		{
 			return m_resources.at(tag);
 		}

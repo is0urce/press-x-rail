@@ -38,9 +38,6 @@ namespace px
 	{
 		if (!lib) throw std::logic_error("px::world::ctor(library) library is null");
 
-		// library
-		fill_library();
-
 		// landmarks
 		m_landmarks.range().enumerate([this](const point &cell)
 		{
@@ -57,31 +54,6 @@ namespace px
 		m_landmark_outer.reset(new fn::delegate_builder<map_t, unit_ptr>([this](map_t &m, builder_t::fetch_op f) { generate_wall(m, f); }));
 	}
 	world::~world() {}
-
-	void world::fill_library()
-	{
-		rl::npc rat;
-		rat.appearance({ 'r', 0x330000, 0.95f });
-		rat.health() = 100;
-		rat.tag("mob_r");
-		m_library->push("mob_r", rat);
-
-		rl::item ore;
-		ore.appearance('o');
-		ore.name("copper ore");
-		ore.tag("ore_copper");
-		ore.stackable(true);
-		m_library->push("ore_copper", ore);
-
-		rl::unit lantern;
-		lantern.appearance({ ' ', color(1, 1, 1) });
-		lantern.light({ { 3, 3, 3 }, true });
-		m_library->push("lantern", lantern);
-
-		rl::door door;
-		door.appearance({ ' ', 0x333333 }, { '+', 0x333333 });
-		m_library->push("door", door);
-	}
 
 	world::map_ptr world::generate(const point &cell, builder_t::fetch_op fetch_fn)
 	{
