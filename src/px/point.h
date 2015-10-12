@@ -39,6 +39,12 @@ namespace px
 		point multiplied(component w, component h) const { return multiplied({ w, h }); }
 		point multiplied(component c) const { return multiplied({ c, c }); }
 		point clamped(const point &min, const point &max) const { return { (std::min)((std::max)(min.X, X), max.X), (std::min)((std::max)(min.Y, Y), max.Y) }; }
+		point normalized() const
+		{
+			return{ (0 < X) - (X < 0), (0 < Y) - (Y < 0) };
+		}
+
+		void normalize() { *this = normalized(); }
 
 		bool on_border(const point &p) const { return p.X == 0 || p.Y == 0 || p.X == X - 1 || p.Y == Y - 1; }
 

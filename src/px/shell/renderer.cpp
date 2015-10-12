@@ -50,12 +50,25 @@ namespace px
 			const unsigned int font_size_notify = 32;
 			const unsigned int font_size_unit = 64;
 
-			inline void fill_vertex(const vector &position, const vector &range, GLfloat *dest)
+			inline vector transform(const vector &v, double cos, double sin)
 			{
-				(position + vector(-0.5, -0.5) * range).write(dest + 0 * vertice_depth);
-				(position + vector(-0.5, 0.5) * range).write(dest + 1 * vertice_depth);
-				(position + vector(0.5, 0.5) * range).write(dest + 2 * vertice_depth);
-				(position + vector(0.5, -0.5) * range).write(dest + 3 * vertice_depth);
+				return vector(cos * v.X - sin * v.Y, sin * v.X + cos * v.Y);
+			}
+			inline void fill_vertex(const vector &position, const vector &quad_range, GLfloat *dest)
+			{
+				(position + vector(-0.5, -0.5) * quad_range).write(dest + 0 * vertice_depth);
+				(position + vector(-0.5, 0.5) * quad_range).write(dest + 1 * vertice_depth);
+				(position + vector(0.5, 0.5) * quad_range).write(dest + 2 * vertice_depth);
+				(position + vector(0.5, -0.5) * quad_range).write(dest + 3 * vertice_depth);
+			}
+			inline void fill_vertex(const vector &position, const vector &quad_range, double rotation, double scale, GLfloat *dest)
+			{
+				double cos = std::cos(rotation) * scale;
+				double sin = std::sin(rotation) * scale;
+				(position + transform(vector(-0.5, -0.5) * quad_range, cos, sin)).write(dest + 0 * vertice_depth);
+				(position + transform(vector(-0.5, 0.5) * quad_range, cos, sin)).write(dest + 1 * vertice_depth);
+				(position + transform(vector(0.5, 0.5) * quad_range, cos, sin)).write(dest + 2 * vertice_depth);
+				(position + transform(vector(0.5, -0.5) * quad_range, cos, sin)).write(dest + 3 * vertice_depth);
 			}
 			inline void fill_vertex(const vector &position, GLfloat range, GLfloat *dest)
 			{
@@ -466,10 +479,14 @@ namespace px
 			unsigned int texture_offset = 0;
 			perception.enumerate_projectiles([&](const projectile &particle)
 			{
-				auto g = fnt[particle.image];
-				fill_vertex(particle.position(time) - perception.start(), { g.width, g.height }, &vertices[vertex_offset]);
-				fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &textures[texture_offset]);
-				fill_color(particle.color, &colors[color_offset]);
+				auto &appear = particle.appearance();
+				auto &glyph = fnt[appear.image];
+				auto particle_color = appear.color;
+				particle_color.A *= particle.magnitude(time);
+				fill_vertex(particle.position(time) - perception.start(), { glyph.width, glyph.height }, particle.rotation(time), particle.scale(time), &vertices[vertex_offset]);
+				//fill_vertex(particle.position(time) - perception.start(), { glyph.width, glyph.height }, &vertices[vertex_offset]);
+				fill_texture((GLfloat)glyph.left, (GLfloat)glyph.bottom, (GLfloat)glyph.right, (GLfloat)glyph.top, &textures[texture_offset]);
+				fill_color(particle_color, &colors[color_offset]);
 
 				vertex_offset += vertice_depth * points_quad;
 				color_offset += color_depth * points_quad;
@@ -691,19 +708,25 @@ namespace px
 				GLfloat outer = 10.0;
 				GLfloat inner = 0.0;
 				GLfloat elevation = 2.0;
-				color light(30.0f, 0.5f, 0.9f, 1.0f);
+				const auto &l = projectile.light();
+				auto magnitude = projectile.magnitude(timespan);
+				if (l.enabled() && magnitude > 0)
+				{
+					color light = l.color() * magnitude;
+					light.A = 1.0;
 
-				glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
-				glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
-				glUniform4f(glGetUniformLocation(m_light.program, "pos"), (GLfloat)p.X, (GLfloat)p.Y, elevation, 1.0f);
-				glUniform4d(glGetUniformLocation(m_light.program, "col"), light.R, light.G, light.B, light.A);
+					glUniform1f(glGetUniformLocation(m_light.program, "outerinv"), 1.0f / outer);
+					glUniform1f(glGetUniformLocation(m_light.program, "inner"), inner);
+					glUniform4f(glGetUniformLocation(m_light.program, "pos"), (GLfloat)p.X, (GLfloat)p.Y, elevation, 1.0f);
+					glUniform4d(glGetUniformLocation(m_light.program, "col"), light.R, light.G, light.B, light.A);
 
-				std::vector<GLfloat> vertices(points_quad * vertice_depth);
-				std::vector<GLuint> indices(index_quad);
-				fill_vertex(p, outer * 2, &vertices[0]);
-				fill_index(1, &indices[0]);
-				m_light.vao.fill(points_quad, { &vertices }, indices);
-				m_light.vao.draw();
+					std::vector<GLfloat> vertices(points_quad * vertice_depth);
+					std::vector<GLuint> indices(index_quad);
+					fill_vertex(p, outer * 2, &vertices[0]);
+					fill_index(1, &indices[0]);
+					m_light.vao.fill(points_quad, { &vertices }, indices);
+					m_light.vao.draw();
+				}
 			});
 		}
 		void renderer::draw_overlay(const perception_t &perception, const canvas_t &gui, timespan_t timespan)
@@ -780,7 +803,7 @@ namespace px
 
 			// fill geometry and light framebuffers
 			draw_geometry(perception, timespan);
-			draw_light(perception, timespan);
+			draw_light(perception, m_move_phase);
 
 			// mix geometry and light
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);

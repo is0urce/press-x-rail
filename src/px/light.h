@@ -25,8 +25,8 @@ namespace px
 			: m_enabled(false), m_shadowcast(false) {}
 		light(color_t color_value)
 			: m_enabled(true), m_shadowcast(false), m_color(color_value) {}
-		light(color_t color_value, bool casts_shadows)
-			: m_enabled(true), m_shadowcast(casts_shadows), m_color(color_value) {}
+		light(color_t color_value, bool is_enabled, bool casts_shadows)
+			: m_enabled(is_enabled), m_shadowcast(casts_shadows), m_color(color_value) {}
 
 		void enable() { m_enabled = false; }
 		void disable() { m_enabled = false; }

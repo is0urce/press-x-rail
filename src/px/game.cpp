@@ -83,7 +83,7 @@ namespace px
 		// setup player
 		m_player->appearance({ '@', 0xffffff });
 		m_player->health() = 100;
-		m_player->light({ color(24.0f, 19.5f, 11.9f), true });
+		m_player->light({ color(24.0f, 19.5f, 11.9f), true, true });
 
 		m_player->add_skill(m_library->prototype<px::rl::person::action_t>("bite"));
 		m_player->add_skill(m_library->prototype<px::rl::person::action_t>("teleport"));
@@ -126,12 +126,114 @@ namespace px
 		{
 			if (user && unit)
 			{
-				vector start = user->position();
-				vector fin = unit->position();
-				m_projectiles.push_back(projectile('>', 0xff0000,
-					[start, fin](projectile::timespan_t phase)
+				point start = user->position();
+				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
+					[start, unit](projectile::timespan_t phase)
 					{
-						return start.lerp(fin, (std::min)(phase, 1.0));
+						point fin = unit->position();
+						point dir = (fin - start).normalized();
+						vector pos = fin + vector(dir) * -0.25;
+						vector up = pos + vector(0, 0.25);
+						vector down = pos;
+						return up.lerp(down, (std::min)(phase, 1.0));
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 3.14 * -0.5;
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 0.25;
+					}));
+				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
+					[start, unit](projectile::timespan_t phase)
+					{
+						point fin = unit->position();
+						point dir = (fin - start).normalized();
+						vector pos = fin + vector(dir) * -0.25 + vector(0.15, 0);
+						vector up = pos + vector(0, 0.25);
+						vector down = pos;
+						return up.lerp(down, (std::min)(phase, 1.0));
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 3.14 * -0.5;
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 0.25;
+					}));
+				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
+					[start, unit](projectile::timespan_t phase)
+					{
+						point fin = unit->position();
+						point dir = (fin - start).normalized();
+						vector pos = fin + vector(dir) * -0.25 - vector(0.15, 0);
+						vector up = pos + vector(0, 0.25);
+						vector down = pos;
+						return up.lerp(down, (std::min)(phase, 1.0));
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 3.14 * -0.5;
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 0.25;
+					}));
+				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
+					[start, unit](projectile::timespan_t phase)
+					{
+						point fin = unit->position();
+						point dir = (fin - start).normalized();
+						vector pos = fin + vector(dir) * -0.25;
+						vector up = pos;
+						vector down = pos - vector(0, 0.25);
+						return down.lerp(up, (std::min)(phase, 1.0));
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 3.14 * 0.5;
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 0.25;
+					}));
+				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
+					[start, unit](projectile::timespan_t phase)
+					{
+						point fin = unit->position();
+						point dir = (fin - start).normalized();
+						vector pos = fin + vector(dir) * -0.25 + vector(0.15, 0);
+						vector up = pos;
+						vector down = pos - vector(0, 0.25);
+						return down.lerp(up, (std::min)(phase, 1.0));
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 3.14 * 0.5;
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 0.25;
+					}));
+				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
+					[start, unit](projectile::timespan_t phase)
+					{
+						point fin = unit->position();
+						point dir = (fin - start).normalized();
+						vector pos = fin + vector(dir) * -0.25 - vector(0.15, 0);
+						vector up = pos;
+						vector down = pos - vector(0, 0.25);
+						return down.lerp(up, (std::min)(phase, 1.0));
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 3.14 * 0.5;
+					},
+						[](projectile::timespan_t phase)
+					{
+						return 0.25;
 					}));
 			}
 		}), rl::person::action_t::target_check_fn([&, bite_range](rl::person::caster_t *user, rl::person::target_t unit)
@@ -153,7 +255,7 @@ namespace px
 				{
 					vector start = user->position();
 					vector fin = unit->position();
-					m_projectiles.push_back(projectile('*', 0xff0000, [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
+					//m_projectiles.push_back(projectile('*', 0xff0000, color(30, 10, 10), [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
 				}
 			}), rl::person::action_t::target_check_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
 			{
@@ -206,7 +308,7 @@ namespace px
 
 		rl::unit lantern;
 		lantern.appearance({ ' ', color(1, 1, 1) });
-		lantern.light({ { 3, 3, 3 }, true });
+		lantern.light({ { 3, 3, 3 }, true, true });
 		m_library->push("lantern", lantern);
 
 		rl::door door;
