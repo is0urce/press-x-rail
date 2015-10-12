@@ -31,6 +31,12 @@ namespace px
 			virtual ~skill() {}
 
 		public:
+			static bool in_range(range_t range_value, range_component distance)
+			{
+				return distance >= range_value.first && distance <= range_value.second;
+			}
+
+		public:
 			resource_t cost() const { return m_cost; }
 			void cost(resource_t cost_value) { m_cost = cost_value; }
 

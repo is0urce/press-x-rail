@@ -37,6 +37,11 @@ namespace px
 		const unsigned int light_range = 10;
 		const double light_range_inverted = 1.0 / light_range;
 
+		unsigned int distance(const point &a, const point &b)
+		{
+			return a.king_distance(b);
+		}
+
 		double saturate(double x)
 		{
 			return std::min(1.0, std::max(0.0, x));
@@ -80,6 +85,7 @@ namespace px
 		m_player->health() = 100;
 		m_player->light({ color(24.0f, 19.5f, 11.9f), true });
 
+		m_player->add_skill(m_library->prototype<px::rl::person::action_t>("bite"));
 		m_player->add_skill(m_library->prototype<px::rl::person::action_t>("teleport"));
 		m_player->add_skill(m_library->prototype<px::rl::person::action_t>("heal"));
 
@@ -115,25 +121,46 @@ namespace px
 
 		// skills
 
-		// pyroblast
-		rl::person::action_t::target_fn tf([&](rl::person::caster_t *user, rl::person::target_t unit)
+		rl::person::action_t::range_t bite_range(0, 1);
+		rl::person::action_t bite(rl::person::action_t::target_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
 		{
-			if (user)
-			{
-				//broadcast({ "puff!", 0xffffff, user->position() });
-			}
 			if (user && unit)
 			{
 				vector start = user->position();
 				vector fin = unit->position();
-				m_projectiles.push_back(projectile('*', 0xff0000, [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
+				m_projectiles.push_back(projectile('>', 0xff0000,
+					[start, fin](projectile::timespan_t phase)
+					{
+						return start.lerp(fin, (std::min)(phase, 1.0));
+					}));
 			}
-		});
-		rl::person::action_t::target_check_fn tfc([&](rl::person::caster_t *user, rl::person::target_t unit)
+		}), rl::person::action_t::target_check_fn([&, bite_range](rl::person::caster_t *user, rl::person::target_t unit)
 		{
-			return true;
-		});
-		m_library->push<rl::person::action_t>("pyroblast", { tf, tfc });
+			return user && unit && rl::person::action_t::in_range(bite_range, distance(user->position(), unit->position()));
+		}));
+		bite.name("Bite");
+		bite.range(bite_range);
+		bite.tag("bite");
+		m_library->push(bite);
+
+		rl::person::action_t pyroblast(rl::person::action_t::target_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
+			{
+				if (user)
+				{
+					//broadcast({ "puff!", 0xffffff, user->position() });
+				}
+				if (user && unit)
+				{
+					vector start = user->position();
+					vector fin = unit->position();
+					m_projectiles.push_back(projectile('*', 0xff0000, [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
+				}
+			}), rl::person::action_t::target_check_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
+			{
+				return true;
+			}));
+		pyroblast.tag("pyroblast");
+		m_library->push(pyroblast);
 
 		// heal
 		rl::person::action_t::ground_fn h([&](rl::person::caster_t *user, const point &position)
@@ -386,7 +413,7 @@ namespace px
 
 	bool game::useable(game::target_ptr target) const
 	{
-		return target && target->useable(*this, m_player) && m_player->position().king_distance(target->position()) <= action_distance;
+		return target && target->useable(*this, m_player) && distance(m_player->position(), target->position()) <= action_distance;
 	}
 
 	const shell::perception& game::perception() const
