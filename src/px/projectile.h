@@ -53,6 +53,15 @@ namespace px
 		{
 			if (!pos_fn) throw std::logic_error("px::projectile::ctor() pos_fn is null");
 		}
+		projectile(appearance_t appearance, light_t light, position_fn pos_fn, double radians_angle, double scale_value) :
+			m_appearance(appearance),
+			m_light(light),
+			m_position(pos_fn),
+			m_rotation([radians_angle](timespan_t) { return radians_angle; }),
+			m_scale([scale_value](timespan_t t) { return scale_value; })
+		{
+			if (!pos_fn) throw std::logic_error("px::projectile::ctor() pos_fn is null");
+		}
 
 		const appearance_t& appearance() const
 		{

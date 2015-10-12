@@ -136,15 +136,7 @@ namespace px
 						vector up = pos + vector(0, 0.25);
 						vector down = pos;
 						return up.lerp(down, (std::min)(phase, 1.0));
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 3.14 * -0.5;
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 0.25;
-					}));
+					}, 3.14 * -0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
 					{
@@ -154,15 +146,7 @@ namespace px
 						vector up = pos + vector(0, 0.25);
 						vector down = pos;
 						return up.lerp(down, (std::min)(phase, 1.0));
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 3.14 * -0.5;
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 0.25;
-					}));
+					}, 3.14 * -0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
 					{
@@ -172,15 +156,7 @@ namespace px
 						vector up = pos + vector(0, 0.25);
 						vector down = pos;
 						return up.lerp(down, (std::min)(phase, 1.0));
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 3.14 * -0.5;
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 0.25;
-					}));
+					}, 3.14 * -0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
 					{
@@ -190,15 +166,7 @@ namespace px
 						vector up = pos;
 						vector down = pos - vector(0, 0.25);
 						return down.lerp(up, (std::min)(phase, 1.0));
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 3.14 * 0.5;
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 0.25;
-					}));
+					}, 3.14 * 0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
 					{
@@ -208,15 +176,7 @@ namespace px
 						vector up = pos;
 						vector down = pos - vector(0, 0.25);
 						return down.lerp(up, (std::min)(phase, 1.0));
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 3.14 * 0.5;
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 0.25;
-					}));
+					}, 3.14 * 0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
 					{
@@ -226,15 +186,7 @@ namespace px
 						vector up = pos;
 						vector down = pos - vector(0, 0.25);
 						return down.lerp(up, (std::min)(phase, 1.0));
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 3.14 * 0.5;
-					},
-						[](projectile::timespan_t phase)
-					{
-						return 0.25;
-					}));
+					}, 3.14 * 0.5, 0.25));
 			}
 		}), rl::person::action_t::target_check_fn([&, bite_range](rl::person::caster_t *user, rl::person::target_t unit)
 		{
