@@ -21,6 +21,9 @@ namespace px
 
 		public:
 			static sign_t signature() { return "npc"; }
+
+		private:
+			virtual sign_t sign_unit() const override { return signature(); }
 		};
 	}
 }

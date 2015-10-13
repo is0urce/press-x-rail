@@ -183,7 +183,7 @@ namespace px
 		bite.name("Bite");
 		bite.range(bite_range);
 		bite.tag("bite");
-		m_library->push(bite);
+		m_library->push(bite); 
 
 		rl::person::action_t pyroblast(rl::person::action_t::target_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
 			{
@@ -234,10 +234,12 @@ namespace px
 		// npc
 
 		rl::npc rat;
-		rat.appearance({ 'r', 0x330000, 0.95f });
+		rat.appearance({ 'r', 0xff0000, 0.85f });
 		rat.health() = 100;
-		rat.tag("mob_r");
-		m_library->push("mob_r", rat);
+		rat.tag("mob_rat");
+		rat.name("Rat");
+		rat.add_skill(bite);
+		m_library->push(rat);
 
 		rl::item ore;
 		ore.appearance('o');

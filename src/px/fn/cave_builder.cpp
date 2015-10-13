@@ -64,6 +64,8 @@ namespace px
 			chest->name("wooden chest");
 			chest->add_item(m_library->make<rl::item>("ore_copper"));
 			fetch_fn(chest, { 21, 21 });
+
+			fetch_fn(m_library->make<rl::npc>("mob_rat"), { 22, 21 });
 		}
 	}
 }
