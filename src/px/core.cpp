@@ -109,22 +109,22 @@ namespace px
 					result = m_game->use();
 					break;
 				case key::action0:
-					result = m_game->action(0);
+					result = m_game->cast(0);
 					break;
 				case key::action1:
-					result = m_game->action(1);
+					result = m_game->cast(1);
 					break;
 				case key::action2:
-					result = m_game->action(2);
+					result = m_game->cast(2);
 					break;
 				case key::action3:
-					result = m_game->action(3);
+					result = m_game->cast(3);
 					break;
 				case key::action4:
-					result = m_game->action(4);
+					result = m_game->cast(4);
 					break;
 				case key::action5:
-					result = m_game->action(5);
+					result = m_game->cast(5);
 					break;
 				case key::quick_save:
 					m_game->save(autosave_path);

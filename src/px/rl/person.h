@@ -49,6 +49,7 @@ namespace px
 			virtual std::string sign_unit() const override;
 			virtual void serialize(o_node node, const serializer &s) const override;
 			virtual void deserialize(const i_node &node, const serializer &s) override;
+			virtual bool useable_unit(const environment&, user_t user) const override;
 
 		public:
 			ability_ptr skill(unsigned int slot);

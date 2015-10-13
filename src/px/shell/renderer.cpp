@@ -30,7 +30,7 @@ namespace px
 
 		namespace
 		{
-			const double move_speed = 5.0;
+			const double move_speed = 3.33;
 			const double camera_default = 0.1;
 			const unsigned int range_width = game::perc_width;
 			const unsigned int range_height = game::perc_height;

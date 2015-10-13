@@ -105,6 +105,16 @@ namespace px
 		add(unit, position);
 	}
 
+	void scene::move(unit_ptr::element_type &unit, const point &position)
+	{
+		//if (!element_this) throw std::runtime_error("px::scehe::select(unit*) - unit ptr is null");
+
+		auto find = m_units.find(unit.position());
+		if (find == m_units.end()) throw std::logic_error("px::scene::select(unit*) - unit not found");
+		auto u = find->second;
+		move(u, position);
+	}
+
 	void scene::remove(unit_ptr unit)
 	{
 		if (!unit) throw new std::logic_error("px::scene::remove(unit) - unit is null");

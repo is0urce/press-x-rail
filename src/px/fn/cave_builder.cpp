@@ -62,6 +62,7 @@ namespace px
 			auto chest = std::make_shared<rl::container>();
 			chest->appearance({ 'c', 0xffff00 });
 			chest->name("wooden chest");
+			chest->invincible(true);
 			chest->add_item(m_library->make<rl::item>("ore_copper"));
 			fetch_fn(chest, { 21, 21 });
 

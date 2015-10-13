@@ -54,6 +54,7 @@ namespace px
 		protected:
 			virtual bool traversable_unit() const;
 			virtual bool transparent_unit() const;
+			virtual void action_unit(environment &current);
 			virtual bool useable_unit(const environment &current_environment, user_t user) const;
 			virtual void use_unit(environment &current_environment, user_t user);
 			virtual void apply_effect(effect &e);
@@ -68,6 +69,7 @@ namespace px
 
 			bool traversable() const;
 			bool transparent() const;
+			void act(environment &current);
 			bool useable(const environment &current_environment, user_t user) const;
 			void use(environment &current_environment, user_t user);
 			bool invincible() const;

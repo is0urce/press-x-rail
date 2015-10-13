@@ -24,14 +24,14 @@ namespace px
 			typedef appearance<unsigned int> appearance_t;
 			typedef std::string name_t;
 			typedef std::string tag_t;
-			typedef unsigned int faction_t;
+			typedef unsigned int fraction_t;
 			typedef light light_t;
 
 		protected:
 			name_t m_name;
 			tag_t m_tag;
 			appearance_t m_appearance;
-			faction_t m_faction;
+			fraction_t m_fraction;
 			light_t m_light;
 
 			// ctor & dtor
@@ -56,8 +56,8 @@ namespace px
 			void light(light_t light_source);
 
 			// faction
-			void faction(faction_t handle);
-			int reputation(faction_t handle) const;
+			void fraction(fraction_t handle);
+			int reputation(fraction_t handle) const;
 			int reputation(const entity &member) const;
 		};
 	}

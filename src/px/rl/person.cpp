@@ -45,6 +45,11 @@ namespace px
 			character::restore(node);
 		}
 
+		bool person::useable_unit(const environment&, user_t user) const
+		{
+			return false;// reputation(*user) < 0;
+		}
+
 		person::ability_ptr person::skill(unsigned int slot)
 		{
 			return slot < m_skills.size() ?

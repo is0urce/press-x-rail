@@ -17,7 +17,7 @@ namespace px
 		std::map<std::string, _R> m_resources;
 
 	public:
-		void push(std::string tag, _R resource)
+		void insert(std::string tag, _R resource)
 		{
 			m_resources.emplace(tag, resource);
 		}

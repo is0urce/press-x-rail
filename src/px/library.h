@@ -45,17 +45,17 @@ namespace px
 			}
 		}
 		template <typename _T>
-		void push(std::string tag, _T res)
+		void insert(std::string tag, _T res)
 		{
 			try
 			{
 				resource<_T> *rt = this;
-				if (!rt) throw std::logic_error("px::library::push<T>(string key, T) - can't contain this type (i.e. not having T subtype)");
-				rt->push(tag, res);
+				if (!rt) throw std::logic_error("px::library::insert<T>(string key, T) - can't contain this type (i.e. not having T subtype)");
+				rt->insert(tag, res);
 			}
 			catch (std::exception &e)
 			{
-				throw std::runtime_error(std::string("px::library::push<T>(string key, T) - ") + e.what() + " key=" + tag);
+				throw std::runtime_error(std::string("px::library::insert<T>(string key, T) - ") + e.what() + " key=" + tag);
 			}
 		}
 
@@ -65,14 +65,14 @@ namespace px
 			return prototype<_T>(std::string(key));
 		}
 		template <typename _T>
-		void push(const char *ctag, _T res)
+		void insert(const char *ctag, _T res)
 		{
-			push<_T>(std::string(ctag), res);
+			insert<_T>(std::string(ctag), res);
 		}
 		template <typename _T>
-		void push(_T res)
+		void insert(_T res)
 		{
-			push<_T>(res.tag(), res);
+			insert<_T>(res.tag(), res);
 		}
 		template <typename _T>
 		std::shared_ptr<_T> make(const std::string &key) const

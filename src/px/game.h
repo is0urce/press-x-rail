@@ -36,6 +36,7 @@ namespace px
 		typedef std::shared_ptr<rl::player> player_ptr;
 		typedef std::shared_ptr<rl::unit> target_ptr;
 		typedef broadcast broadcast_t;
+		typedef scene scene_t;
 		typedef std::string file_path;
 
 	public:
@@ -66,11 +67,13 @@ namespace px
 		void fill_perception();
 		target_ptr aquire_target(); // select target from hovering position
 		bool useable(target_ptr target) const;
+		void act(std::function<void()> action, bool turn);
 
 	public:
 		// controls
 		bool step(const point &move);
-		bool action(unsigned int cmd);
+		bool cast(unsigned int cmd);
+		bool cast(unsigned int cmd, target_ptr target);
 		bool use();
 		bool hover(point position);
 		bool click(point position, unsigned int button);
@@ -80,6 +83,7 @@ namespace px
 		player_ptr player();
 		const player_ptr player() const;
 		target_ptr target();
+		std::shared_ptr<scene> scene();
 
 		// ui
 		const ui::canvas& canvas() const;

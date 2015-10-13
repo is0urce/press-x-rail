@@ -13,7 +13,7 @@ namespace px
 {
 	namespace rl
 	{
-		entity::entity() : m_faction(0)
+		entity::entity() : m_fraction(0)
 		{
 		}
 
@@ -51,19 +51,19 @@ namespace px
 			return m_tag;
 		}
 
-		void entity::faction(entity::faction_t faction_id)
+		void entity::fraction(entity::fraction_t faction_id)
 		{
-			m_faction = faction_id;
+			m_fraction = faction_id;
 		}
 
-		int entity::reputation(entity::faction_t faction_id) const
+		int entity::reputation(entity::fraction_t faction_id) const
 		{
-			return m_faction == faction_id ? 100 : -100;
+			return m_fraction == faction_id ? 100 : -100;
 		}
 
 		int entity::reputation(const entity &member) const
 		{
-			return reputation(member.m_faction);
+			return reputation(member.m_fraction);
 		}
 
 		void entity::store(writer::node_ptr node) const
@@ -71,7 +71,7 @@ namespace px
 			node->write("name", m_name);
 			node->write("tag", m_tag);
 			node->write("appear", m_appearance);
-			node->write("faction", m_faction);
+			node->write("faction", m_fraction);
 			node->write("light", m_light);
 		}
 
@@ -80,7 +80,7 @@ namespace px
 			node["name"] >> m_name;
 			node["tag"] >> m_tag;
 			node["appear"] >> m_appearance;
-			node["faction"] >> m_faction;
+			node["faction"] >> m_fraction;
 			node["light"] >> m_light;
 		}
 

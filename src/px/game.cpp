@@ -22,7 +22,6 @@
 #include "px/reader.h"
 
 #include <px/shadowcasting.h>
-#include <px/astar.h>
 
 #include <algorithm>
 
@@ -77,11 +76,12 @@ namespace px
 
 		// scene, world and player
 		m_world = std::make_shared<world>(m_library);
-		m_scene = std::make_shared<scene>(m_world);
+		m_scene = std::make_shared<scene_t>(m_world);
 		m_player = std::make_shared<rl::player>(this);
 
 		// setup player
 		m_player->appearance({ '@', 0xffffff });
+		m_player->fraction(1);
 		m_player->health() = 100;
 		m_player->light({ color(24.0f, 19.5f, 11.9f), true, true });
 
@@ -127,82 +127,84 @@ namespace px
 			if (user && unit)
 			{
 				point start = user->position();
+				m_broadcasts.emplace_back("* nom *", color(1, 0, 0), user->position(), 0.5);
+				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.5);
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
-					{
-						point fin = unit->position();
-						vector pos = fin + vector((fin - start).normalized()) * -0.25;
-						vector up = pos + vector(0, 0.25);
-						return up.lerp(pos, (std::min)(phase, 1.0));
-					}, 3.14 * -0.5, 0.25));
+				{
+					point fin = unit->position();
+					vector pos = fin + vector((fin - start).normalized()) * -0.25;
+					vector up = pos + vector(0, 0.25);
+					return up.lerp(pos, (std::min)(phase, 1.0));
+				}, 3.14 * -0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
-					{
-						point fin = unit->position();
-						vector pos = fin + vector((fin - start).normalized()) * -0.25 + vector(0.15, 0);
-						vector up = pos + vector(0, 0.25);
-						return up.lerp(pos, (std::min)(phase, 1.0));
-					}, 3.14 * -0.5, 0.25));
+				{
+					point fin = unit->position();
+					vector pos = fin + vector((fin - start).normalized()) * -0.25 + vector(0.15, 0);
+					vector up = pos + vector(0, 0.25);
+					return up.lerp(pos, (std::min)(phase, 1.0));
+				}, 3.14 * -0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
-					{
-						point fin = unit->position();
-						vector pos = fin + vector((fin - start).normalized()) * -0.25 - vector(0.15, 0);
-						vector up = pos + vector(0, 0.25);
-						return up.lerp(pos, (std::min)(phase, 1.0));
-					}, 3.14 * -0.5, 0.25));
+				{
+					point fin = unit->position();
+					vector pos = fin + vector((fin - start).normalized()) * -0.25 - vector(0.15, 0);
+					vector up = pos + vector(0, 0.25);
+					return up.lerp(pos, (std::min)(phase, 1.0));
+				}, 3.14 * -0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
-					{
-						point fin = unit->position();
-						vector pos = fin + vector((fin - start).normalized()) * -0.25;
-						vector down = pos - vector(0, 0.25);
-						return down.lerp(pos, (std::min)(phase, 1.0));
-					}, 3.14 * 0.5, 0.25));
+				{
+					point fin = unit->position();
+					vector pos = fin + vector((fin - start).normalized()) * -0.25;
+					vector down = pos - vector(0, 0.25);
+					return down.lerp(pos, (std::min)(phase, 1.0));
+				}, 3.14 * 0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
-					{
-						point fin = unit->position();
-						vector pos = fin + vector((fin - start).normalized()) * -0.25 + vector(0.15, 0);
-						vector down = pos - vector(0, 0.25);
-						return down.lerp(pos, (std::min)(phase, 1.0));
-					}, 3.14 * 0.5, 0.25));
+				{
+					point fin = unit->position();
+					vector pos = fin + vector((fin - start).normalized()) * -0.25 + vector(0.15, 0);
+					vector down = pos - vector(0, 0.25);
+					return down.lerp(pos, (std::min)(phase, 1.0));
+				}, 3.14 * 0.5, 0.25));
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
-					{
-						point fin = unit->position();
-						vector pos = fin + vector((fin - start).normalized()) * -0.25 - vector(0.15, 0);
-						vector down = pos - vector(0, 0.25);
-						return down.lerp(pos, (std::min)(phase, 1.0));
-					}, 3.14 * 0.5, 0.25));
+				{
+					point fin = unit->position();
+					vector pos = fin + vector((fin - start).normalized()) * -0.25 - vector(0.15, 0);
+					vector down = pos - vector(0, 0.25);
+					return down.lerp(pos, (std::min)(phase, 1.0));
+				}, 3.14 * 0.5, 0.25));
 			}
 		}), rl::person::action_t::target_check_fn([&, bite_range](rl::person::caster_t *user, rl::person::target_t unit)
 		{
-			return user && unit && rl::person::action_t::in_range(bite_range, distance(user->position(), unit->position()));
+			return user && unit && user != unit.get() && rl::person::action_t::in_range(bite_range, distance(user->position(), unit->position()));
 		}));
 		bite.name("Bite");
 		bite.range(bite_range);
 		bite.tag("bite");
-		m_library->push(bite); 
+		m_library->insert(bite);
 
 		rl::person::action_t pyroblast(rl::person::action_t::target_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
+		{
+			if (user)
 			{
-				if (user)
-				{
-					//broadcast({ "puff!", 0xffffff, user->position() });
-				}
-				if (user && unit)
-				{
-					vector start = user->position();
-					vector fin = unit->position();
-					//m_projectiles.push_back(projectile('*', 0xff0000, color(30, 10, 10), [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
-				}
-			}), rl::person::action_t::target_check_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
+				//broadcast({ "puff!", 0xffffff, user->position() });
+			}
+			if (user && unit)
 			{
-				return true;
-			}));
+				vector start = user->position();
+				vector fin = unit->position();
+				//m_projectiles.push_back(projectile('*', 0xff0000, color(30, 10, 10), [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
+			}
+		}), rl::person::action_t::target_check_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
+		{
+			return true;
+		}));
 		pyroblast.tag("pyroblast");
-		m_library->push(pyroblast);
+		m_library->insert(pyroblast);
 
 		// heal
 		rl::person::action_t::ground_fn h([&](rl::person::caster_t *user, const point &position)
@@ -215,7 +217,7 @@ namespace px
 		});
 		rl::person::action_t heal(h, hc);
 		heal.tag("heal");
-		m_library->push<rl::person::action_t>(heal);
+		m_library->insert(heal);
 
 		// teleport
 		rl::person::action_t::ground_fn teleport_fn([&](rl::person::caster_t *user, const point &position)
@@ -229,33 +231,53 @@ namespace px
 		});
 		rl::person::action_t teleport(teleport_fn, teleport_check_fn);
 		teleport.tag("teleport");
-		m_library->push<rl::person::action_t>(teleport);
+		m_library->insert(teleport);
 
 		// npc
 
 		rl::npc rat;
-		rat.appearance({ 'r', 0xff0000, 0.85f });
+		rat.fraction(0);
+		rat.appearance({ 'r', 0xff0000, 0.62f });
 		rat.health() = 100;
 		rat.tag("mob_rat");
 		rat.name("Rat");
 		rat.add_skill(bite);
-		m_library->push(rat);
+		m_library->insert(rat);
 
 		rl::item ore;
 		ore.appearance('o');
 		ore.name("copper ore");
 		ore.tag("ore_copper");
 		ore.stackable(true);
-		m_library->push("ore_copper", ore);
+		m_library->insert("ore_copper", ore);
 
 		rl::unit lantern;
 		lantern.appearance({ ' ', color(1, 1, 1) });
 		lantern.light({ { 3, 3, 3 }, true, true });
-		m_library->push("lantern", lantern);
+		m_library->insert("lantern", lantern);
 
 		rl::door door;
 		door.appearance({ ' ', 0x333333 }, { '+', 0x333333 });
-		m_library->push("door", door);
+		m_library->insert("door", door);
+	}
+
+	void game::act(std::function<void()> action, bool turn)
+	{
+		m_scene->enumerate_units([&](scene::unit_ptr unit) { unit->store_position(); });
+		if (action)
+		{
+			action();
+		}
+		if (turn)
+		{
+			auto units = m_scene->units(); // copy to avoid iterator invalidation
+			for (auto &u : units)
+			{
+				u.second->act(*this);
+			}
+			m_scene->tick(1);
+		}
+		fill_perception();
 	}
 
 	void game::fill_perception()
@@ -264,30 +286,6 @@ namespace px
 
 		point start = m_player->position() - perc_center;
 		m_perception.swap(start);
-
-		//m_scene.enumerate_units([&](scene::unit_ptr unit)
-		//{
-		//	unit->store_position();
-		//});
-		//auto units = m_scene.units();
-		//for (auto &u : units)
-		//{
-		//	auto path = path::find(u.first, m_player->position(), 50, [&](const point &p)
-		//	{
-		//		return m_scene.traversable(p);
-		//	});
-		//	if (path)
-		//	{
-		//		auto it = path->begin();
-		//		if (it != path->end())
-		//		{
-		//			if (m_scene.traversable(*it))
-		//			{
-		//				m_scene.move(u.second, *it);
-		//			}
-		//		}
-		//	}
-		//}
 
 		// units
 		shadowcasting player_fov(m_fov_fn, m_player->position(), perc_range);
@@ -352,33 +350,32 @@ namespace px
 			{
 				if (blocking->useable(*this, m_player))
 				{
-					m_player->store_position();
-					blocking->use(*this, m_player);
-					fill_perception();
+					act([&]()
+					{
+						blocking->use(*this, m_player);
+					}, false);
 				}
 				else if (!blocking->invincible())
 				{
-					m_player->store_position();
-					// attack
-					fill_perception();
+					cast(0, blocking);
 				}
 			}
 			else
 			{
 				if (m_scene->traversable(destination))
 				{
-					// move
-					m_player->store_position();
-					m_scene->focus(destination);
-					m_scene->move(m_player, destination);
-					fill_perception();
+					act([&]()
+					{
+						m_scene->focus(destination);
+						m_scene->move(m_player, destination);
+					}, true);
 				}
 			}
 		}
 		return true;
 	}
 
-	bool game::action(unsigned int command)
+	bool game::cast(unsigned int command)
 	{
 		if (m_player)
 		{
@@ -387,26 +384,35 @@ namespace px
 			{
 				if (skill->targeted())
 				{
-					auto target = aquire_target();
-					if (target && !target->invincible() && skill->useable(target))
-					{
-						m_player->store_position();
-						skill->use(target);
-						fill_perception();
-					}
+					cast(command, aquire_target());
 				}
 				else
 				{
 					auto position = m_player->position() + m_hover;
 					if (skill->useable(position))
 					{
-						m_player->store_position();
-						skill->use(position);
-						fill_perception();
+						act([&](){ skill->use(position); }, true);
 					}
 				}
 			}
 			return true;
+		}
+		return false;
+	}
+
+	bool game::cast(unsigned int command, target_ptr target)
+	{
+		if (m_player)
+		{
+			auto skill = m_player->skill(command);
+			if (skill && skill->targeted() && target && !target->invincible() && skill->useable(target))
+			{
+				act([&]()
+				{
+					skill->use(target);
+				}, true);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -416,9 +422,7 @@ namespace px
 		auto target = aquire_target();
 		if (useable(target))
 		{
-			m_player->store_position();
-			target->use(*this, m_player);
-			fill_perception();
+			act([&](){ target->use(*this, m_player); }, false);
 		}
 		return true;
 	}
@@ -430,8 +434,7 @@ namespace px
 		{
 			if (useable(m_target))
 			{
-				// use lmb
-				return false;
+				return use();
 			}
 			else
 			{
@@ -473,6 +476,10 @@ namespace px
 	{
 		return m_player;
 	}
+	std::shared_ptr<game::scene_t> game::scene()
+	{
+		return m_scene;
+	}
 
 	const ui::canvas& game::canvas() const
 	{
@@ -513,8 +520,7 @@ namespace px
 			m_scene->add(m_player);
 
 			broadcast(broadcast_t("autosaving...", 0xffffff, m_player->position()));
-			m_player->store_position();
-			fill_perception();
+			act([&](){}, false);
 		}
 	}
 
@@ -532,6 +538,6 @@ namespace px
 		m_scene->add(m_player);
 
 		broadcast(broadcast_t("loaded autosave", 0xffffff, m_player->position()));
-		fill_perception();
+		act([&](){}, false);
 	}
 }

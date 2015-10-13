@@ -36,7 +36,11 @@ namespace px
 			return true;
 		}
 
-		bool unit::useable_unit(const environment &current_environment, user_t user) const
+		void unit::action_unit(environment &current)
+		{
+		}
+
+		bool unit::useable_unit(const environment &current, user_t user) const
 		{
 			return false;
 		}
@@ -90,7 +94,10 @@ namespace px
 		{
 			deserialize(node, s);
 		}
-
+		void unit::act(environment &current)
+		{
+			action_unit(current);
+		}
 		bool unit::traversable() const
 		{
 			return traversable_unit();
