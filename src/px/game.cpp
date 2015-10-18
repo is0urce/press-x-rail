@@ -130,6 +130,7 @@ namespace px
 
 				// status
 				rl::person::status_t poison(10);
+				poison.appearance({ '-', 0xffff00 });
 				poison.name("poison");
 				user->add_status(poison);
 

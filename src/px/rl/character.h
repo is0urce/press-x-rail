@@ -9,7 +9,6 @@
 #include <px/bar.h>
 #include <px/rl/statistics.h>
 #include <px/rl/status.h>
-
 #include <px/rl/attribute.h>
 
 #include <memory>

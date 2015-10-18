@@ -30,7 +30,8 @@ namespace px
 			{
 				std::stringstream ss("");
 				ss << s.name() << " (" << s.duration() << ")";
-				m_canvas->write({ 0, line }, ss.str(), 0xffffff);
+				m_canvas->write({ 1, line }, s.appearance().image, s.appearance().color);
+				m_canvas->write({ 3, line }, ss.str(), s.appearance().color);
 				++line;
 			});
 		}
