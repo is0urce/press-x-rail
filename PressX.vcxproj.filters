@@ -250,7 +250,10 @@
     <ClInclude Include="src\px\rl\serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\writer_node.h">
+    <ClInclude Include="src\px\reader_node.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\writer_node.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -337,6 +340,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\rl\person.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

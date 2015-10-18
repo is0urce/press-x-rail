@@ -14,7 +14,7 @@
 #define PX_WRITER_H
 
 #include <px/io.h>
-#include <px/writer_node.h>
+#include <px/writer_node.hpp>
 
 #include <fstream>
 #include <string>
@@ -27,11 +27,11 @@ namespace px
 	{
 	public:
 		typedef writer_node node;
-		typedef writer_node::stream_t stream_t;
+		typedef writer_node::stream_t stream;
 		typedef node::ptr node_ptr;
 
 	private:
-		stream_t m_stream;
+		stream m_stream;
 		node_ptr m_top;
 
 	public:

@@ -9,14 +9,13 @@
 #include <px/rl/entity.h>
 #include <px/point.h>
 
-#include "px/reader.h"
-
 #include <memory>
 #include <string>
 
 namespace px
 {
 	class writer_node;
+	class reader_node;
 	class game;
 
 	namespace rl
@@ -29,7 +28,7 @@ namespace px
 		public:
 			typedef std::string sign_t;
 			typedef std::shared_ptr<writer_node> o_node;
-			typedef reader::node i_node;
+			typedef const reader_node& i_node;
 
 			typedef std::shared_ptr<actor> user_t; // std::shared_ptr<actor>
 			typedef game environment;
@@ -59,7 +58,7 @@ namespace px
 			virtual void use_unit(environment &current_environment, user_t user);
 			virtual void apply_effect(effect &e);
 			virtual void serialize(o_node node, const serializer&) const;
-			virtual void deserialize(const i_node &node, const serializer&);
+			virtual void deserialize(i_node node, const serializer&);
 			virtual sign_t sign_unit() const;
 
 		public:

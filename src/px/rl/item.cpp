@@ -7,6 +7,9 @@
 
 #include "item.h"
 
+#include <px/reader_node.hpp>
+#include <px/writer_node.hpp>
+
 namespace px
 {
 	namespace rl
@@ -37,7 +40,7 @@ namespace px
 			node->write("weight", m_weight);
 			unit::serialize(node, s);
 		}
-		void item::deserialize(const i_node &node, const serializer& s)
+		void item::deserialize(i_node node, const serializer& s)
 		{
 			node["stacking"] >> m_stackable;
 			node["weight"] >> m_weight;

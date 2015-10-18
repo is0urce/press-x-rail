@@ -6,6 +6,7 @@
 #include <px/reader.h>
 
 #include <px/writer.cpp>
+#include <px/reader.cpp>
 
 using namespace px;
 

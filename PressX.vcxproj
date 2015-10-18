@@ -112,6 +112,7 @@
     <ClInclude Include="src\px\fn\delegate_builder.h" />
     <ClInclude Include="src\px\fn\station_builder.h" />
     <ClInclude Include="src\px\light.h" />
+    <ClInclude Include="src\px\reader_node.hpp" />
     <ClInclude Include="src\px\rectangle.h" />
     <ClInclude Include="src\px\rl\actor.h" />
     <ClInclude Include="src\px\rl\attribute.h" />
@@ -175,7 +176,7 @@
     <ClInclude Include="src\px\point.h" />
     <ClInclude Include="src\PressX.h" />
     <ClInclude Include="src\px\shell\renderer.h" />
-    <ClInclude Include="src\px\writer_node.h" />
+    <ClInclude Include="src\px\writer_node.hpp" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\targetver.h" />
     <ClInclude Include="src\px\rl\unit.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="src\px\core.cpp" />
     <ClCompile Include="src\px\fn\cave_builder.cpp" />
     <ClCompile Include="src\px\fn\station_builder.cpp" />
+    <ClCompile Include="src\px\reader.cpp" />
     <ClCompile Include="src\px\rl\character.cpp" />
     <ClCompile Include="src\px\game.cpp" />
     <ClCompile Include="src\px\rl\container.cpp" />

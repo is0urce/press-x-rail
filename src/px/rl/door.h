@@ -8,6 +8,9 @@
 
 #include <px/rl/unit.h>
 
+#include <px/writer_node.hpp>
+#include <px/reader_node.hpp>
+
 namespace px
 {
 	namespace rl

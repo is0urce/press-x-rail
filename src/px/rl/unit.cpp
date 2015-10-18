@@ -7,6 +7,9 @@
 
 #include "unit.h"
 
+#include <px/reader_node.hpp>
+#include <px/writer_node.hpp>
+
 namespace px
 {
 	namespace rl
@@ -66,7 +69,7 @@ namespace px
 		{
 			return "unit";
 		}
-		void unit::serialize(writer::node_ptr node, const serializer &s) const
+		void unit::serialize(o_node node, const serializer &s) const
 		{
 			node->write("x", m_position.X);
 			node->write("y", m_position.Y);
@@ -75,7 +78,7 @@ namespace px
 			entity::store(node);
 		}
 
-		void unit::deserialize(const reader::node &node, const serializer &s)
+		void unit::deserialize(i_node node, const serializer &s)
 		{
 			node["x"] >> m_position.X;
 			node["y"] >> m_position.Y;
@@ -86,11 +89,12 @@ namespace px
 
 		// methods
 
-		void unit::save(writer::node_ptr node, const serializer &s) const
+		void unit::save(o_node node, const serializer &s) const
 		{
+			if (!node) throw std::logic_error("px::rl::unit::save(node,s) - node is null");
 			serialize(node, s);
 		}
-		void unit::load(const reader::node &node, const serializer &s)
+		void unit::load(i_node node, const serializer &s)
 		{
 			deserialize(node, s);
 		}

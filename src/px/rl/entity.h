@@ -9,13 +9,13 @@
 #include <px/appearance.h>
 #include <px/light.h>
 
-#include "px/reader.h"
-#include "px/writer.h"
-
+#include <memory>
 #include <string>
 
 namespace px
 {
+	class writer_node;
+	class reader_node;
 	namespace rl
 	{
 		class entity
@@ -26,6 +26,8 @@ namespace px
 			typedef std::string tag_t;
 			typedef unsigned int fraction_t;
 			typedef light light_t;
+			typedef std::shared_ptr<writer_node> o_node;
+			typedef const reader_node& i_node;
 
 		protected:
 			name_t m_name;
@@ -40,8 +42,8 @@ namespace px
 			virtual ~entity();
 
 		protected:
-			void store(writer::node_ptr node) const;
-			void restore(const reader::node &node);
+			void store(o_node node) const;
+			void restore(i_node node);
 
 		public:
 			// attribute accessors

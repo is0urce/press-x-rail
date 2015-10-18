@@ -7,6 +7,9 @@
 
 #include "entity.h"
 
+#include <px/reader_node.hpp>
+#include <px/writer_node.hpp>
+
 // ctor & dtor
 
 namespace px
@@ -66,7 +69,7 @@ namespace px
 			return reputation(member.m_fraction);
 		}
 
-		void entity::store(writer::node_ptr node) const
+		void entity::store(o_node node) const
 		{
 			node->write("name", m_name);
 			node->write("tag", m_tag);
@@ -75,7 +78,7 @@ namespace px
 			node->write("light", m_light);
 		}
 
-		void entity::restore(const reader::node &node)
+		void entity::restore(i_node node)
 		{
 			node["name"] >> m_name;
 			node["tag"] >> m_tag;

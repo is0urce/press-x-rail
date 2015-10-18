@@ -35,7 +35,7 @@ namespace px
 			virtual void activate_item(activator_ptr activator);
 			virtual sign_t sign_unit() const override;
 			virtual void serialize(o_node node, const serializer& s) const override;
-			virtual void deserialize(const i_node &node, const serializer& s) override;
+			virtual void deserialize(i_node node, const serializer& s) override;
 
 		public:
 			void activate(activator_ptr activator);

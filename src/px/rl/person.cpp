@@ -24,7 +24,7 @@ namespace px
 			e.apply(*this);
 		}
 		std::string person::sign_unit() const  { return signature(); }
-		void person::serialize(o_node node, const serializer &s) const
+		void person::serialize(unit::o_node node, const serializer &s) const
 		{
 			auto skills = node->open("skills");
 			for (auto &skill : m_skills)
@@ -34,10 +34,10 @@ namespace px
 			unit::serialize(node, s);
 			character::store(node);
 		}
-		void person::deserialize(const i_node &node, const serializer &s)
+		void person::deserialize(unit::i_node node, const serializer &s)
 		{
 			m_skills.clear();
-			node["skills"].enumerate([&](i_node skill_node)
+			node["skills"].enumerate([&](unit::i_node skill_node)
 			{
 				add_skill(s.library()->prototype<action_t>(skill_node.read()));
 			});

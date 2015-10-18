@@ -7,7 +7,7 @@
 
 #include "scene.h"
 
-#include <px/writer_node.h>
+#include <px/writer_node.hpp>
 #include <px/reader.h>
 #include <px/rl/unit.h>
 #include <px/rl/serializer.h>

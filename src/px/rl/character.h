@@ -17,11 +17,15 @@
 
 namespace px
 {
+	class writer_node;
+	class reader_node;
 	namespace rl
 	{
 		class character
 		{
 		public:
+			typedef std::shared_ptr<writer_node> o_node;
+			typedef const reader_node &i_node;
 			typedef int stat_value;
 			typedef bar<stat_value> resource_t;
 			//typedef enhancement<attribute, stat_value> enhancement_t;
@@ -41,8 +45,8 @@ namespace px
 			virtual ~character();
 
 		protected:
-			void store(writer::node_ptr node) const;
-			void restore(const reader::node &node);
+			void store(o_node node) const;
+			void restore(i_node node);
 
 		public:
 			resource_t& health();
