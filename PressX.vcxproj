@@ -119,6 +119,7 @@
     <ClInclude Include="src\px\rl\container.h" />
     <ClInclude Include="src\px\rl\equipment.h" />
     <ClInclude Include="src\px\rl\serializer.h" />
+    <ClInclude Include="src\px\rl\visitor.h" />
     <ClInclude Include="src\px\shell\avatar.h" />
     <ClInclude Include="src\px\bar.h" />
     <ClInclude Include="src\px\broadcast.h" />

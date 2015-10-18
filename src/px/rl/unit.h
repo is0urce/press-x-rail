@@ -20,9 +20,9 @@ namespace px
 
 	namespace rl
 	{
-		class serializer;
-		class effect;
 		class actor;
+		class serializer;
+		class visitor;
 		class unit : public entity
 		{
 		public:
@@ -56,7 +56,7 @@ namespace px
 			virtual void action_unit(environment &current);
 			virtual bool useable_unit(const environment &current_environment, user_t user) const;
 			virtual void use_unit(environment &current_environment, user_t user);
-			virtual void apply_effect(effect &e);
+			virtual void accept_visitor(visitor&);
 			virtual void serialize(o_node node, const serializer&) const;
 			virtual void deserialize(i_node node, const serializer&);
 			virtual sign_t sign_unit() const;
@@ -81,7 +81,7 @@ namespace px
 			void position(const point& position, const point& previous);
 			void store_position();
 
-			void apply(effect &e);
+			void accept(visitor&);
 
 			void destroy();
 			bool destroying() const;

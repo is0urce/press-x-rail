@@ -14,8 +14,6 @@
 #include "px/ability.h"
 #include "px/user_ability.h"
 
-#include "px/rl/effect.h"
-
 namespace px
 {
 	namespace rl
@@ -47,7 +45,7 @@ namespace px
 			static std::string signature();
 
 		protected:
-			virtual void apply_effect(effect &e) override;
+			virtual void accept_visitor(visitor&) override;
 			virtual std::string sign_unit() const override;
 			virtual void serialize(unit::o_node node, const serializer &s) const override;
 			virtual void deserialize(unit::i_node node, const serializer &s) override;

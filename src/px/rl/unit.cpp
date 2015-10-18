@@ -52,7 +52,7 @@ namespace px
 		{
 		}
 
-		void unit::apply_effect(effect &e)
+		void unit::accept_visitor(visitor &v)
 		{
 		}
 
@@ -168,9 +168,9 @@ namespace px
 			m_invincible = is_invincible;
 		}
 
-		void unit::apply(effect &e)
+		void unit::accept(visitor &v)
 		{
-			apply_effect(e);
+			accept_visitor(v);
 		}
 	}
 }

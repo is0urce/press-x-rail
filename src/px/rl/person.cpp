@@ -8,6 +8,7 @@
 #include "person.h"
 
 #include <px/rl/serializer.h>
+#include <px/rl/visitor.h>
 #include <px/library.h>
 
 namespace px
@@ -28,9 +29,9 @@ namespace px
 
 		std::string person::signature() { return "person"; }
 
-		void person::apply_effect(effect &e)
+		void person::accept_visitor(visitor &v)
 		{
-			e.apply(*this);
+			v.expose(*this);
 		}
 		std::string person::sign_unit() const  { return signature(); }
 		void person::serialize(unit::o_node node, const serializer &s) const

@@ -8,24 +8,36 @@
 #ifndef PX_RL_EFFECT_H
 #define PX_RL_EFFECT_H
 
+#include <px/rl/visitor.h>
+#include <px/rl/person.h>
+
 namespace px
 {
 	namespace rl
 	{
-		class character;
-		class effect
+		class effect : public visitor
 		{
+		public:
+			typedef person::status_t status_t;
+
+		private:
+			status_t m_status;
+
 			// ctor & dtor
 		public:
-			virtual ~effect() = 0;
+			effect(status_t affect) : m_status(affect)
+			{
+			}
+			virtual ~effect()
+			{
+			}
 
 			// virtual methods
 		protected:
-			virtual void apply_effect(character &mobile) = 0;
-
-			// methods
-		public:
-			void apply(character &u) { apply_effect(u); }
+			virtual void expose_person(person &mobile) override
+			{
+				mobile.add_status(m_status);
+			}
 		};
 	}
 }

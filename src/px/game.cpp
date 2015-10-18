@@ -13,13 +13,14 @@
 
 #include <px/rl/player.h>
 #include <px/rl/serializer.h>
+#include <px/rl/effect.h>
 
 #include <px/ui/main_panel.h>
 #include <px/ui/status_panel.h>
 #include <px/ui/inventory_panel.h>
 
-#include "px/writer.h"
-#include "px/reader.h"
+#include <px/writer.h>
+#include <px/reader.h>
 
 #include <px/shadowcasting.h>
 
@@ -140,7 +141,7 @@ namespace px
 				point start = user->position();
 
 				// status
-				user->add_status(m_library->prototype<rl::person::status_t>("poison"));
+				unit->accept(rl::effect(m_library->prototype<rl::person::status_t>("poison")));
 
 				// popup
 				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.5);
