@@ -9,6 +9,7 @@
 #include <list>
 #include <functional>
 #include <algorithm>
+#include <numeric>
 
 namespace px
 {

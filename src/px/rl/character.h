@@ -29,15 +29,12 @@ namespace px
 			typedef bar<stat_value> resource_t;
 			//typedef enhancement<attribute, stat_value> enhancement_t;
 			typedef statistics<stat_value> stats_t;
-			typedef status<character> status_t;
 
 		protected:
 			resource_t m_hp;
 			resource_t m_mp;
 			stats_t m_base;
 			stats_t m_computed; // + modifiers
-
-			std::list<status_t> m_affect;
 
 			// ctor & dtor
 		public:
@@ -53,10 +50,6 @@ namespace px
 			const resource_t& health() const;
 			resource_t& energy();
 			const resource_t& energy() const;
-
-			void add_status(status_t affect);
-			void tick(status_t::timer_t span);
-			void enumerate_affects(std::function<void(const status_t&)>) const;
 
 			bool dead() const;
 

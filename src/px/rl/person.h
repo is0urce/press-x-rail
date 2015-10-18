@@ -29,12 +29,14 @@ namespace px
 			typedef person caster_t;
 			typedef std::shared_ptr<unit> target_t;
 			typedef delegate_action<caster_t*, target_t> action_t;
-
 			typedef ability<target_t> ability_t; // value-type to save intristic values - cd
 			typedef std::unique_ptr<ability_t> ability_ptr;
 
+			typedef status<person> status_t; // buffs
+
 		protected:
 			std::vector<action_t> m_skills;
+			std::list<status_t> m_affect;
 
 			// ctor & dtor
 		public:
@@ -53,8 +55,18 @@ namespace px
 			virtual void action_unit(environment&) override;
 
 		public:
+
+			// skills
+
 			ability_ptr skill(unsigned int slot);
 			void add_skill(action_t skill);
+
+			// buffs
+
+			void add_status(status_t affect, bool silent);
+			void add_status(status_t affect);
+			void tick(status_t::timer_t span);
+			void enumerate_affects(std::function<void(status_t&)>);
 		};
 	}
 }

@@ -23,7 +23,7 @@ namespace px
 		void status_panel::draw_panel()
 		{
 			m_canvas->write({ 0, 0 }, "health:");
-			m_canvas->write_integer({ 12, 0 }, 100);
+			m_canvas->write_integer({ 12, 0 }, m_target->health());
 			
 			int line = 3;
 			m_target->enumerate_affects([&](const target::status_t& s)

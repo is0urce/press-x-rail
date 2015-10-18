@@ -19,8 +19,8 @@ namespace px
 		{
 		public:
 			typedef unsigned int timer_t;
-			typedef _T& _R;
-			typedef std::function<void(_R, timer_t duration)> effect_fn;
+			typedef _T target_t;
+			typedef std::function<void(_T&, status&)> effect_fn;
 
 		private:
 			timer_t m_duration;
@@ -40,37 +40,54 @@ namespace px
 			{
 				return m_duration;
 			}
+			void duration(time_t duration_value)
+			{
+				m_duration = duration_value;
+			}
 			bool expired() const
 			{
 				return m_duration == 0;
 			}
+			void register_tick(effect_fn fn)
+			{
+				m_tick = fn;
+			}
+			void register_apply(effect_fn fn)
+			{
+				m_apply = fn;
+			}
+			void register_expire(effect_fn fn)
+			{
+				m_expire = fn;
+			}
 
-			void on_apply(_R target) const
+
+			void on_apply(target_t& target)
 			{
 				if (m_apply)
 				{
-					m_apply(target, m_duration);
+					m_apply(target, *this);
 				}
 			}
-			void on_expire(_R target) const
+			void on_expire(target_t& target)
 			{
 				if (m_expire)
 				{
-					m_expire(target, m_duration);
+					m_expire(target, *this);
 				}
 			}
-			void on_tick(_R target)
+			void on_tick(target_t& target)
 			{
 				if (!expired())
 				{
 					if (m_tick)
 					{
-						m_tick(target, m_duration);
+						m_tick(target, *this);
 					}
 					--m_duration;
 				}
 			}
-			void on_tick(_R target, timer_t delta)
+			void on_tick(target_t& target, timer_t delta)
 			{
 				for (unsigned int i = 0; i < delta; ++i)
 				{

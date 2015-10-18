@@ -119,6 +119,17 @@ namespace px
 	{
 		if (!m_library) throw std::logic_error("px::game::generate_library() - library is null");
 
+		// buffs
+		rl::person::status_t poison(10, [&](rl::person &c, rl::person::status_t &s) { c.health() = c.health() - 1; });
+		poison.register_apply([&](rl::person &target, rl::person::status_t &s)
+		{
+			m_broadcasts.emplace_back("* poisoned *", color(0, 1, 0), target.position(), 0.5);
+		});
+		poison.appearance({ '-', 0xffff00 });
+		poison.name("Poison");
+		poison.tag("poison");
+		m_library->insert(poison);
+
 		// skills
 
 		rl::person::action_t::range_t bite_range(0, 1);
@@ -129,10 +140,7 @@ namespace px
 				point start = user->position();
 
 				// status
-				rl::person::status_t poison(10);
-				poison.appearance({ '-', 0xffff00 });
-				poison.name("poison");
-				user->add_status(poison);
+				user->add_status(m_library->prototype<rl::person::status_t>("poison"));
 
 				// popup
 				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.5);

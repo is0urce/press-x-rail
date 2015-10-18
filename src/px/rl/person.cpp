@@ -14,6 +14,15 @@ namespace px
 {
 	namespace rl
 	{
+		namespace
+		{
+			template <typename _T>
+			bool status_expired(const status<_T>& s)
+			{
+				return s.expired();
+			}
+		}
+
 		person::person() {}
 		person::~person() {}
 
@@ -66,6 +75,35 @@ namespace px
 		void person::add_skill(action_t skill)
 		{
 			m_skills.push_back(skill);
+		}
+
+		void person::add_status(status_t affect, bool silent)
+		{
+			m_affect.push_back(affect);
+			if (!silent)
+			{
+				affect.on_apply(*this);
+			}
+		}
+		void person::add_status(status_t affect)
+		{
+			add_status(affect, false);
+		}
+		void person::tick(status_t::timer_t span)
+		{
+			for (auto &s : m_affect)
+			{
+				s.on_tick(*this, span);
+				if (s.expired())
+				{
+					s.on_expire(*this);
+				}
+			}
+			m_affect.erase(std::remove_if(m_affect.begin(), m_affect.end(), status_expired<rl::person>), m_affect.end());
+		}
+		void person::enumerate_affects(std::function<void(status_t&)> enum_fn)
+		{
+			std::for_each(m_affect.begin(), m_affect.end(), enum_fn);
 		}
 	}
 }

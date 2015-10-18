@@ -21,13 +21,13 @@
 namespace px
 {
 	class library :
+		public resource<rl::person::status_t>,
 		public resource<rl::person::action_t>,
 		public resource<rl::unit>,
 		public resource<rl::npc>,
 		public resource<rl::item>,
 		public resource<rl::door>,
-		public resource<rl::container>,
-		public resource<rl::status<std::shared_ptr<rl::unit>>>
+		public resource<rl::container>
 	{
 	public:
 		template <typename _T>
