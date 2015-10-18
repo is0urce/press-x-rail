@@ -50,6 +50,12 @@ namespace px
 			return false;// reputation(*user) < 0;
 		}
 
+		void person::action_unit(environment &env)
+		{
+			actor::action_unit(env);
+			tick(1);
+		}
+
 		person::ability_ptr person::skill(unsigned int slot)
 		{
 			return slot < m_skills.size() ?

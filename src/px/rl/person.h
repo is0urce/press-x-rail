@@ -50,6 +50,7 @@ namespace px
 			virtual void serialize(unit::o_node node, const serializer &s) const override;
 			virtual void deserialize(unit::i_node node, const serializer &s) override;
 			virtual bool useable_unit(const environment&, user_t user) const override;
+			virtual void action_unit(environment&) override;
 
 		public:
 			ability_ptr skill(unsigned int slot);

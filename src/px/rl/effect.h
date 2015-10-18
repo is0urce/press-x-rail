@@ -25,7 +25,7 @@ namespace px
 
 			// methods
 		public:
-			void apply(character &mobile) { apply_effect(mobile); }
+			void apply(character &u) { apply_effect(u); }
 		};
 	}
 }

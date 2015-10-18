@@ -64,7 +64,7 @@ namespace px
 		public:
 			sign_t sign() const;
 			void save(o_node node, const serializer &s) const;
-			void load(const i_node &node, const serializer &s);
+			void load(i_node node, const serializer &s);
 
 			bool traversable() const;
 			bool transparent() const;

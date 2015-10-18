@@ -21,7 +21,8 @@ namespace px
 		class status_panel : public panel
 		{
 		public:
-			typedef std::shared_ptr<rl::person> target_ptr;
+			typedef rl::person target;
+			typedef std::shared_ptr<target> target_ptr;
 
 		private:
 			target_ptr m_target;

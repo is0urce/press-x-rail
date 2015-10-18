@@ -24,9 +24,10 @@ namespace px
 		private:
 			timer_t m_duration;
 			effect_fn m_apply, m_expire, m_tick;
-			std::string m_name;
 
 		public:
+			status(timer_t duration)
+				: m_duration(duration) {}
 			status(timer_t duration, effect_fn tick, effect_fn apply, effect_fn expire)
 				: m_duration(duration), m_tick(tick), m_apply(apply), m_expire(expire) {}
 			status(timer_t duration, effect_fn tick)
@@ -34,15 +35,47 @@ namespace px
 			~status() {}
 
 		public:
-			time_t duration() const { return m_duration; }
-			bool expired() { return m_duration == 0; }
+			time_t duration() const
+			{
+				return m_duration;
+			}
+			bool expired() const
+			{
+				return m_duration == 0;
+			}
 
-			void on_apply(_R target) { if (m_apply) m_apply(target, m_duration); }
-			void on_expire(_R target) { if (m_expire) m_expire(target, m_duration); }
-			void on_tick(_R target) { if (!expired && m_tick) m_tick(target, m_duration); --_duration; }
-			void on_tick(_R target, timer_t delta) { for (unsigned int i = 0; i < delta; ++i) on_tick(actor); }
-
-			std::string display() const { std::stringstream ss; ss << m_name << " (" << m_duration << ")"; return ss.str(); }
+			void on_apply(_R target) const
+			{
+				if (m_apply)
+				{
+					m_apply(target, m_duration);
+				}
+			}
+			void on_expire(_R target) const
+			{
+				if (m_expire)
+				{
+					m_expire(target, m_duration);
+				}
+			}
+			void on_tick(_R target)
+			{
+				if (!expired())
+				{
+					if (m_tick)
+					{
+						m_tick(target, m_duration);
+					}
+					--m_duration;
+				}
+			}
+			void on_tick(_R target, timer_t delta)
+			{
+				for (unsigned int i = 0; i < delta; ++i)
+				{
+					on_tick(target);
+				}
+			}
 		};
 	}
 }

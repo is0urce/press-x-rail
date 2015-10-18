@@ -56,6 +56,31 @@ namespace px
 			return m_mp;
 		}
 
+		void character::add_status(status_t affect)
+		{
+			m_affect.push_back(affect);
+			affect.on_apply(*this);
+		}
+		void character::tick(status_t::timer_t span)
+		{
+			for (auto &s : m_affect)
+			{
+				s.on_tick(*this, span);
+				if (s.expired())
+				{
+					s.on_expire(*this);
+				}
+			}
+			m_affect.erase(std::remove_if(m_affect.begin(), m_affect.end(), [](const status_t &s)
+			{
+				return s.expired();
+			}), m_affect.end());
+		}
+		void character::enumerate_affects(std::function<void(const status_t&)> enum_fn) const
+		{
+			std::for_each(m_affect.begin(), m_affect.end(), enum_fn);
+		}
+
 		bool character::dead() const
 		{
 			return m_hp.empty();

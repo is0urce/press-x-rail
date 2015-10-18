@@ -25,11 +25,12 @@ namespace px
 		{
 		public:
 			typedef std::shared_ptr<writer_node> o_node;
-			typedef const reader_node &i_node;
+			typedef const reader_node& i_node;
 			typedef int stat_value;
 			typedef bar<stat_value> resource_t;
 			//typedef enhancement<attribute, stat_value> enhancement_t;
 			typedef statistics<stat_value> stats_t;
+			typedef status<character> status_t;
 
 		protected:
 			resource_t m_hp;
@@ -37,7 +38,7 @@ namespace px
 			stats_t m_base;
 			stats_t m_computed; // + modifiers
 
-			std::list<status<character>> m_affect;
+			std::list<status_t> m_affect;
 
 			// ctor & dtor
 		public:
@@ -53,6 +54,10 @@ namespace px
 			const resource_t& health() const;
 			resource_t& energy();
 			const resource_t& energy() const;
+
+			void add_status(status_t affect);
+			void tick(status_t::timer_t span);
+			void enumerate_affects(std::function<void(const status_t&)>) const;
 
 			bool dead() const;
 

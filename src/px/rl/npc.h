@@ -40,6 +40,8 @@ namespace px
 			virtual sign_t sign_unit() const override { return signature(); }
 			virtual void action_unit(environment &current) override
 			{
+				person::action_unit(current);
+
 				point dest = current.player()->position();
 				auto scene = current.scene();
 				auto path = path::find(position(), dest, 50, [&](const point &p) { return scene->traversable(p); });

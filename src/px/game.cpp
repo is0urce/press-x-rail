@@ -127,8 +127,16 @@ namespace px
 			if (user && unit)
 			{
 				point start = user->position();
-				m_broadcasts.emplace_back("* nom *", color(1, 0, 0), user->position(), 0.5);
+
+				// status
+				rl::person::status_t poison(10);
+				poison.name("poison");
+				user->add_status(poison);
+
+				// popup
 				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.5);
+
+				// visual
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
 					[start, unit](projectile::timespan_t phase)
 				{
