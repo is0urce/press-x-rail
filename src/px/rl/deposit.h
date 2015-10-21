@@ -17,23 +17,31 @@ namespace px
 		class deposit : public unit
 		{
 		public:
-			typedef std::shared_ptr<item> resource_ptr;
+			typedef std::shared_ptr<item> resource_t;
 		private:
 			bool m_depleted;
-			resource_ptr m_item;
+			resource_t m_item;
 
 			// ctor & dtor
 		public:
-			deposit(resource_ptr resource) : m_depleted(false), m_item(resource) {}
-			virtual ~deposit() {}
+			deposit();
+			deposit(resource_t resource);
+			virtual ~deposit();
+
+		public:
+			static sign_t signature();
 
 			// vitrual
 		protected:
-			virtual bool useable_unit(const environment&, user_t user) const override { return !depleted(); }
-			virtual void use_unit(environment&, user_t user) override { user->add_item(m_item); m_depleted = true; m_item.reset(); m_appearance.color.shift_brightness(0.5); }
+			virtual bool useable_unit(const environment&, user_t user) const override;
+			virtual void use_unit(environment&, user_t user) override;
+			virtual sign_t sign_unit() const override;
+			virtual void serialize(o_node node, const serializer &s) const override;
+			virtual void deserialize(const i_node &node, const serializer &s) override;
 
 		public:
-			bool depleted() const { return m_depleted; }
+			void renew(resource_t resource);
+			bool depleted() const;
 		};
 	}
 }

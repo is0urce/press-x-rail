@@ -58,6 +58,39 @@ namespace px
 				while (walls.at(pos));
 				fetch_fn(vein, pos);
 			}
+
+			for (unsigned int n = 0; n < 10; ++n)
+			{
+				auto flora = m_library->make<rl::deposit>("fireflower");
+				point pos;
+				do
+				{
+					pos = { std::rand() % cell_map.width(), std::rand() % cell_map.height() };
+				} while (walls.at(pos));
+				fetch_fn(flora, pos);
+			}
+
+			for (unsigned int n = 0; n < 10; ++n)
+			{
+				auto flora = m_library->make<rl::deposit>("iceflower");
+				point pos;
+				do
+				{
+					pos = { std::rand() % cell_map.width(), std::rand() % cell_map.height() };
+				} while (walls.at(pos));
+				fetch_fn(flora, pos);
+			}
+
+			for (unsigned int n = 0; n < 10; ++n)
+			{
+				auto flora = m_library->make<rl::deposit>("felflower");
+				point pos;
+				do
+				{
+					pos = { std::rand() % cell_map.width(), std::rand() % cell_map.height() };
+				} while (walls.at(pos));
+				fetch_fn(flora, pos);
+			}
 			
 			auto chest = std::make_shared<rl::container>();
 			chest->appearance({ 'c', 0xffff00 });

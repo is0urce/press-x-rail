@@ -190,10 +190,12 @@
     <ClCompile Include="src\px\core.cpp" />
     <ClCompile Include="src\px\fn\cave_builder.cpp" />
     <ClCompile Include="src\px\fn\station_builder.cpp" />
+    <ClCompile Include="src\px\game.lib.cpp" />
     <ClCompile Include="src\px\reader.cpp" />
     <ClCompile Include="src\px\rl\character.cpp" />
     <ClCompile Include="src\px\game.cpp" />
     <ClCompile Include="src\px\rl\container.cpp" />
+    <ClCompile Include="src\px\rl\deposit.cpp" />
     <ClCompile Include="src\px\rl\item.cpp" />
     <ClCompile Include="src\px\rl\person.cpp" />
     <ClCompile Include="src\px\ui\canvas.cpp" />

@@ -8,11 +8,10 @@
 
 #include "resource.h"
 
-#include <px/rl/unit.h>
 #include <px/rl/npc.h>
+#include <px/rl/deposit.h>
 #include <px/rl/door.h>
 #include <px/rl/container.h>
-#include <px/rl/status.h>
 
 #include <string>
 #include <stdexcept>
@@ -23,6 +22,7 @@ namespace px
 	class library :
 		public resource<rl::person::status_t>,
 		public resource<rl::person::action_t>,
+		public resource<rl::deposit>,
 		public resource<rl::unit>,
 		public resource<rl::npc>,
 		public resource<rl::item>,

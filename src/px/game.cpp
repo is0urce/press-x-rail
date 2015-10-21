@@ -3,6 +3,8 @@
 // desc: class implementation
 // auth: is0urce
 
+// generate_library method implemented in game.lib.cpp
+
 #include "stdafx.h"
 
 #include "game.h"
@@ -35,20 +37,11 @@ namespace px
 		const point perc_reach = point(perc_range * 2 + 1, perc_range * 2 + 1);
 		const unsigned int action_distance = 1;
 		const unsigned int light_range = 10;
-		const double light_range_inverted = 1.0 / light_range;
 
-		unsigned int distance(const point &a, const point &b)
+		// light fade from distance
+		double fade(double distance)
 		{
-			return a.king_distance(b);
-		}
-
-		double saturate(double x)
-		{
-			return std::min(1.0, std::max(0.0, x));
-		}
-		double fade(double d)
-		{
-			return saturate(1.0 - pow(d * light_range_inverted, 4.0)) / (d * d + 1.0);
+			return 1 / (1 + distance * distance);
 		}
 	}
 
@@ -64,11 +57,11 @@ namespace px
 		m_fov_fn([&](const point &position) { return m_scene->transparent(position); })
 	{
 		// library
-		m_library = std::make_shared<library>();
 		generate_library();
 
 		// register serializer objects
 		m_serializer = std::make_shared<rl::serializer>(m_library);
+		m_serializer->register_method<rl::deposit>();
 		m_serializer->register_method<rl::unit>();
 		m_serializer->register_method<rl::door>();
 		m_serializer->register_method<rl::container>();
@@ -116,167 +109,9 @@ namespace px
 	{
 	}
 
-	void game::generate_library()
+	unsigned int game::distance(const point &a, const point &b) const
 	{
-		if (!m_library) throw std::logic_error("px::game::generate_library() - library is null");
-
-		// buffs
-		rl::person::status_t poison(10, [&](rl::person &c, rl::person::status_t &s) { c.health() = c.health() - 1; });
-		poison.register_apply([&](rl::person &target, rl::person::status_t &s)
-		{
-			m_broadcasts.emplace_back("* poisoned *", color(0, 1, 0), target.position(), 0.5);
-		});
-		poison.appearance({ '-', 0xffff00 });
-		poison.name("Poison");
-		poison.tag("poison");
-		m_library->insert(poison);
-
-		// skills
-
-		rl::person::action_t::range_t bite_range(0, 1);
-		rl::person::action_t bite(rl::person::action_t::target_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
-		{
-			if (user && unit)
-			{
-				point start = user->position();
-
-				// status
-				unit->accept(rl::effect(m_library->prototype<rl::person::status_t>("poison")));
-
-				// popup
-				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.5);
-
-				// visual
-				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
-					[start, unit](projectile::timespan_t phase)
-				{
-					point fin = unit->position();
-					vector pos = fin + vector((fin - start).normalized()) * -0.25;
-					vector up = pos + vector(0, 0.25);
-					return up.lerp(pos, (std::min)(phase, 1.0));
-				}, 3.14 * -0.5, 0.25));
-				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
-					[start, unit](projectile::timespan_t phase)
-				{
-					point fin = unit->position();
-					vector pos = fin + vector((fin - start).normalized()) * -0.25 + vector(0.15, 0);
-					vector up = pos + vector(0, 0.25);
-					return up.lerp(pos, (std::min)(phase, 1.0));
-				}, 3.14 * -0.5, 0.25));
-				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
-					[start, unit](projectile::timespan_t phase)
-				{
-					point fin = unit->position();
-					vector pos = fin + vector((fin - start).normalized()) * -0.25 - vector(0.15, 0);
-					vector up = pos + vector(0, 0.25);
-					return up.lerp(pos, (std::min)(phase, 1.0));
-				}, 3.14 * -0.5, 0.25));
-				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
-					[start, unit](projectile::timespan_t phase)
-				{
-					point fin = unit->position();
-					vector pos = fin + vector((fin - start).normalized()) * -0.25;
-					vector down = pos - vector(0, 0.25);
-					return down.lerp(pos, (std::min)(phase, 1.0));
-				}, 3.14 * 0.5, 0.25));
-				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
-					[start, unit](projectile::timespan_t phase)
-				{
-					point fin = unit->position();
-					vector pos = fin + vector((fin - start).normalized()) * -0.25 + vector(0.15, 0);
-					vector down = pos - vector(0, 0.25);
-					return down.lerp(pos, (std::min)(phase, 1.0));
-				}, 3.14 * 0.5, 0.25));
-				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
-					[start, unit](projectile::timespan_t phase)
-				{
-					point fin = unit->position();
-					vector pos = fin + vector((fin - start).normalized()) * -0.25 - vector(0.15, 0);
-					vector down = pos - vector(0, 0.25);
-					return down.lerp(pos, (std::min)(phase, 1.0));
-				}, 3.14 * 0.5, 0.25));
-			}
-		}), rl::person::action_t::target_check_fn([&, bite_range](rl::person::caster_t *user, rl::person::target_t unit)
-		{
-			return user && unit && user != unit.get() && rl::person::action_t::in_range(bite_range, distance(user->position(), unit->position()));
-		}));
-		bite.name("Bite");
-		bite.range(bite_range);
-		bite.tag("bite");
-		m_library->insert(bite);
-
-		rl::person::action_t pyroblast(rl::person::action_t::target_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
-		{
-			if (user)
-			{
-				//broadcast({ "puff!", 0xffffff, user->position() });
-			}
-			if (user && unit)
-			{
-				vector start = user->position();
-				vector fin = unit->position();
-				//m_projectiles.push_back(projectile('*', 0xff0000, color(30, 10, 10), [=](projectile::timespan_t phase) { return start.lerp(fin, (std::min)(phase, 1.0)); }));
-			}
-		}), rl::person::action_t::target_check_fn([&](rl::person::caster_t *user, rl::person::target_t unit)
-		{
-			return true;
-		}));
-		pyroblast.tag("pyroblast");
-		m_library->insert(pyroblast);
-
-		// heal
-		rl::person::action_t::ground_fn h([&](rl::person::caster_t *user, const point &position)
-		{
-			user->health() = user->health() + 1;
-		});
-		rl::person::action_t::ground_check_fn hc([&](rl::person::caster_t *user, const point &position)
-		{
-			return true;
-		});
-		rl::person::action_t heal(h, hc);
-		heal.tag("heal");
-		m_library->insert(heal);
-
-		// teleport
-		rl::person::action_t::ground_fn teleport_fn([&](rl::person::caster_t *user, const point &position)
-		{
-			m_scene->focus(position);
-			m_scene->move(m_player, position);
-		});
-		rl::person::action_t::ground_check_fn teleport_check_fn([&](rl::person::caster_t *user, const point &position)
-		{
-			return true;
-		});
-		rl::person::action_t teleport(teleport_fn, teleport_check_fn);
-		teleport.tag("teleport");
-		m_library->insert(teleport);
-
-		// npc
-
-		rl::npc rat;
-		rat.fraction(0);
-		rat.appearance({ 'r', 0xff0000, 0.62f });
-		rat.health() = 100;
-		rat.tag("mob_rat");
-		rat.name("Rat");
-		rat.add_skill(bite);
-		m_library->insert(rat);
-
-		rl::item ore;
-		ore.appearance('o');
-		ore.name("copper ore");
-		ore.tag("ore_copper");
-		ore.stackable(true);
-		m_library->insert("ore_copper", ore);
-
-		rl::unit lantern;
-		lantern.appearance({ ' ', color(1, 1, 1) });
-		lantern.light({ { 3, 3, 3 }, true, true });
-		m_library->insert("lantern", lantern);
-
-		rl::door door;
-		door.appearance({ ' ', 0x333333 }, { '+', 0x333333 });
-		m_library->insert("door", door);
+		return a.king_distance(b);
 	}
 
 	void game::act(std::function<void()> action, bool turn)
@@ -531,6 +366,9 @@ namespace px
 			m_scene->remove(m_player);
 
 			writer save(path);
+
+			save->write("version", 1);
+
 			m_player->save(save->open("player"), *m_serializer);
 			m_world->save(save->open("world"), *m_serializer);
 			m_scene->save(save->open("scene"), *m_serializer);
