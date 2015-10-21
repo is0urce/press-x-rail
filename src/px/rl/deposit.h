@@ -7,13 +7,12 @@
 #define PX_RL_DEPOSIT_H
 
 #include <px/rl/unit.h>
-#include <px/rl/item.h>
-#include <px/rl/actor.h>
 
 namespace px
 {
 	namespace rl
 	{
+		class item;
 		class deposit : public unit
 		{
 		public:

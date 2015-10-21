@@ -9,7 +9,7 @@
 #define PX_RL_EFFECT_H
 
 #include <px/rl/visitor.h>
-#include <px/rl/person.h>
+#include <px/rl/person.h> 
 
 namespace px
 {

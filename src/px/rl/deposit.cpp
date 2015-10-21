@@ -9,10 +9,8 @@
 
 #include <px/game.h>
 
+#include <px/rl/actor.h>
 #include <px/rl/serializer.h>
-
-#include <px/ui/main_panel.h>
-#include <px/ui/container_panel.h>
 
 namespace px
 {
