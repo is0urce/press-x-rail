@@ -63,7 +63,6 @@ namespace px
 		virtual ~game();
 
 	private:
-		unsigned int distance(const point &a, const point &b) const;
 		void generate_library();
 		void fill_perception();
 		target_ptr aquire_target(); // select target from hovering position
@@ -71,6 +70,9 @@ namespace px
 		void act(std::function<void()> action, bool turn);
 
 	public:
+		// settings
+		unsigned int distance(const point &a, const point &b) const;
+
 		// controls
 		bool step(const point &move);
 		bool cast(unsigned int cmd);

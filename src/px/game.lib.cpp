@@ -7,6 +7,8 @@
 
 #include "game.h"
 
+#include <px/scene.h>
+
 #include <px/library.h>
 #include <px/rl/effect.h>
 
@@ -40,7 +42,7 @@ namespace px
 				unit->accept(rl::effect(m_library->prototype<rl::person::status_t>("poison")));
 
 				// popup
-				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.5);
+				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.75);
 
 				// visual
 				m_projectiles.push_back(projectile({ '>', 0xff0000 }, {},
@@ -137,7 +139,7 @@ namespace px
 		rl::person::action_t::ground_fn teleport_fn([&](rl::person::caster_t *user, const point &position)
 		{
 			m_scene->focus(position);
-			m_scene->move(m_player, position);
+			m_scene->move(*user, position);
 		});
 		rl::person::action_t::ground_check_fn teleport_check_fn([&](rl::person::caster_t *user, const point &position)
 		{

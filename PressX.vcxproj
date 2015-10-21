@@ -198,6 +198,7 @@
     <ClCompile Include="src\px\rl\container.cpp" />
     <ClCompile Include="src\px\rl\deposit.cpp" />
     <ClCompile Include="src\px\rl\item.cpp" />
+    <ClCompile Include="src\px\rl\npc.cpp" />
     <ClCompile Include="src\px\rl\person.cpp" />
     <ClCompile Include="src\px\ui\canvas.cpp" />
     <ClCompile Include="src\px\rl\entity.cpp" />

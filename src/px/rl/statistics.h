@@ -34,11 +34,18 @@ namespace px
 			}
 
 			template <typename _A>
-			void enhance(_A stat, _T modify) { m_values.at((unsigned int)stat) += modify; }
+			void enhance(_A stat, _T modify)
+			{
+				m_values.at((unsigned int)stat) += modify;
+			}
 			template <typename _A>
-			void enhance(const enhancement<_A, _T> &enchant) { enhance(enchant.attribute(), enchant.value()); }
+			void enhance(const enhancement<_A, _T> &enchant)
+			{
+				enhance(enchant.attribute(), enchant.value());
+			}
 			template <typename _L>
-			void enhance(const _L &list) {
+			void enhance(const _L &list)
+			{
 				std::for_each(list.begin(), list.end(), [&](const _L::value_type &e) { enhance(e); });
 			}
 

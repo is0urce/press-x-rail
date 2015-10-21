@@ -8,10 +8,10 @@
 #include "renderer.h"
 
 #include <px/game.h>
+#include <px/ui/canvas.h>
 #include <px/shell/font.h>
 #include <px/shell/perception.h>
 #include <px/shell/glsl.h>
-#include <px/ui/canvas.h>
 #include <px/vector.h>
 #include <px/color.h>
 #include <px/string.h>
@@ -742,7 +742,7 @@ namespace px
 			glUniform2f(glGetUniformLocation(m_projectiles.program, "center"), (GLfloat)m_center.X, (GLfloat)m_center.Y);
 			glUniform1i(glGetUniformLocation(m_projectiles.program, "img"), 0);
 			glActiveTexture(GL_TEXTURE0 + 0);
-			glBindTexture(GL_TEXTURE_2D, m_glyph.texture);
+			glBindTexture(GL_TEXTURE_2D, m_popup.texture);
 			glBindSampler(0, m_sampler);
 			m_projectiles.vao.draw();
 
@@ -790,7 +790,7 @@ namespace px
 			fill_bg(perception);
 			fill_tiles(perception, *m_glyph.font);
 			fill_units(perception, *m_glyph.font);
-			fill_projectiles(perception, *m_glyph.font, m_move_phase);
+			fill_projectiles(perception, *m_popup.font, m_move_phase);
 			fill_notifications(perception, *m_popup.font);
 			fill_ui(gui, *m_ui.font);
 			fill_lightmap(perception);

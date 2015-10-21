@@ -80,6 +80,10 @@ namespace px
 		{
 			return m_current <= 0;
 		}
+		bool full() const
+		{
+			return m_current == m_max;
+		}
 		bar& operator=(_T c)
 		{
 			set(c);

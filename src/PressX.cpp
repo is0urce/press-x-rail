@@ -166,7 +166,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance; // Store instance handle in our global variable
-	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+
+	bool fullscreen = true;
+	unsigned int style = fullscreen ? WS_POPUP : WS_OVERLAPPED;
+	hWnd = CreateWindow(szWindowClass, szTitle, style,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
 	if (!hWnd)
@@ -174,7 +177,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
-	ShowWindow(hWnd, nCmdShow);
+	ShowWindow(hWnd, fullscreen ? SW_MAXIMIZE : nCmdShow);
 	UpdateWindow(hWnd);
 
 	return TRUE;
