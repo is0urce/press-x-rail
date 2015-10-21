@@ -61,6 +61,16 @@ namespace px
 			m_out = pos_out;
 			read_header();
 		}
+		reader_node first()
+		{
+			if (m_size == 0) throw std::runtime_error("px::reader_node::first() - no nodes");
+
+			auto pos = m_pos;
+			auto pos_out = m_pos;
+			pos += header_size;
+			pos_out += header_size + m_size;
+			return reader_node(m_stream_ptr, pos, pos_out);
+		}
 		bool last() const
 		{
 			auto next_pos = m_pos;

@@ -103,6 +103,7 @@
   <ItemGroup>
     <Text Include="include\readme.txt" />
     <Text Include="ReadMe.txt" />
+    <Text Include="src\px\rl\readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h" />

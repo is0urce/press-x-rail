@@ -52,7 +52,7 @@ namespace px
 			node->write("depleted", m_depleted);
 			if (!m_depleted)
 			{
-				//s.save(m_item, node->open("res"));
+				s.save(m_item, node->open("res"));
 			}
 		}
 
@@ -63,7 +63,9 @@ namespace px
 			node["depleted"] >> m_depleted;
 			if (!m_depleted)
 			{
-				//m_item = std::dynamic_pointer_cast<rl::item, rl::unit>(s.load(node["res"]));
+				m_item = std::dynamic_pointer_cast<rl::item, rl::unit>(s.load(node["res"].first()));
+
+				if (!m_item) throw std::runtime_error("px::deposit::deserialize(..) - cast failed");
 			}
 		}
 
