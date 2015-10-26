@@ -167,9 +167,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance; // Store instance handle in our global variable
 
-	bool fullscreen = true;
-	unsigned int style = fullscreen ? WS_POPUP : WS_OVERLAPPED;
-	hWnd = CreateWindow(szWindowClass, szTitle, style,
+	bool fullscreen = false;
+
+	hWnd = CreateWindow(szWindowClass, szTitle, fullscreen ? WS_POPUP : WS_OVERLAPPED,
 		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
 	if (!hWnd)

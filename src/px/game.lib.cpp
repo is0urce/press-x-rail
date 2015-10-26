@@ -39,7 +39,7 @@ namespace px
 				point start = user->position();
 
 				// status
-				unit->accept(rl::effect(m_library->prototype<rl::person::status_t>("poison")));
+				//unit->accept(rl::effect(m_library->prototype<rl::person::status_t>("poison")));
 
 				// popup
 				m_broadcasts.emplace_back(std::to_string(-8), color(1, 0, 0), unit->position(), 0.75);
@@ -160,6 +160,7 @@ namespace px
 		rat.add_skill(bite);
 		m_library->insert(rat);
 
+		// ore
 		rl::item ore;
 		ore.appearance('o');
 		ore.name("copper ore");
@@ -167,6 +168,7 @@ namespace px
 		ore.stackable(true);
 		m_library->insert(ore);
 
+		// placeables
 		rl::unit lantern;
 		lantern.appearance({ ' ', color(1, 1, 1) });
 		lantern.light({ { 3, 3, 3 }, true, true });
@@ -178,13 +180,28 @@ namespace px
 		door.tag("door");
 		m_library->insert(door);
 
+		// items
+		{
+			rl::item ff;
+			ff.name("Firetail Mushroom");
+			ff.tag("f_red");
+			m_library->insert(ff);
+		}
+		{
+			rl::item flora;
+			flora.name("Glowing Moss");
+			flora.tag("f_green");
+			m_library->insert(flora);
+		}
+		{
+			rl::item flora;
+			flora.name("Cave Lily");
+			flora.tag("f_blue");
+			m_library->insert(flora);
+		}
 
-		rl::item ff;
-		ff.name("Gribus Ogmelisius");
-		ff.tag("ff");
-		m_library->insert(ff);
-
-		rl::deposit f1(m_library->make<rl::item>("ff"));
+		// flora
+		rl::deposit f1(m_library->make<rl::item>("f_red"));
 		f1.tag("fireflower");
 		f1.name("Gribus Ognelisius");
 		f1.appearance({ '*', color(1, 0, 0), 0.75 });
@@ -192,14 +209,14 @@ namespace px
 		f1.invincible(true);
 		m_library->insert(f1);
 
-		rl::deposit f2(std::make_shared<rl::item>());
+		rl::deposit f2(m_library->make<rl::item>("f_blue"));
 		f2.tag("iceflower");
 		f2.appearance({ '*', color(0, 0, 1), 0.75 });
 		f2.light({ { 0, 0, 3 }, true, true });
 		f2.invincible(true);
 		m_library->insert(f2);
 
-		rl::deposit flower(std::make_shared<rl::item>());
+		rl::deposit flower(m_library->make<rl::item>("f_green"));
 		flower.tag("felflower");
 		flower.appearance({ '*', color(0, 1, 0), 0.75 });
 		flower.light({ { 0, 3, 0 }, true, true });
